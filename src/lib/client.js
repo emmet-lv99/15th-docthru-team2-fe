@@ -69,12 +69,49 @@ function toApiError(error) {
 
 // 2xx 응답은 data 만, 204 는 null 을 돌려줘요.
 // 실패 응답은 아래 인터셉터에서 ApiError 로 바꿉니다.
+
+// 401 세션 갱신 — 동시에 여러 요청이 401 을 받아도 한 번만 호출합니다(single-flight).
+//   우리 계약에는 refresh 전용 경로가 없어서 GET /auth/me 로 갱신을 트리거합니다.
+//   (BE 의 전역 authenticate 가 access 만료 시 refresh 쿠키로 새 토큰을 발급해요)
+const AUTH_PATHS = ['/auth/login', '/auth/signup', '/auth/logout', '/auth/me'];
+
+let refreshPromise = null;
+
+export function refreshSession() {
+  if (!refreshPromise) {
+    refreshPromise = httpClient.get('/auth/me').finally(() => {
+      refreshPromise = null;
+    });
+  }
+
+  return refreshPromise;
+}
+
+function isAuthPath(url = '') {
+  return AUTH_PATHS.some((path) => url.startsWith(path));
+}
+
 httpClient.interceptors.response.use(
   (response) => (response.status === 204 ? null : response.data),
-  // TODO(③): 401이면 /auth/me로 세션을 한 번 갱신하고 원 요청을 1회 재시도해 주세요.
-  //   · 로그인·가입·로그아웃 401은 갱신 대상에서 제외합니다.
-  //   · 동시 401은 single-flight로 한 번만 갱신합니다.
-  (error) => Promise.reject(toApiError(error)),
+  async (error) => {
+    const originalRequest = error.config ?? {};
+    const status = error.response?.status;
+
+    // 로그인·가입·로그아웃·/auth/me 의 401 은 갱신 대상이 아니에요.
+    if (status === 401 && !originalRequest._retry && !isAuthPath(originalRequest.url)) {
+      originalRequest._retry = true;
+
+      try {
+        await refreshSession();
+      } catch {
+        return Promise.reject(toApiError(error));
+      }
+
+      return httpClient(originalRequest);
+    }
+
+    return Promise.reject(toApiError(error));
+  },
 );
 
 // 화면에서 쓰는 짧은 이름들 — get / post / patch / put / del

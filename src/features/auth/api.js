@@ -1,19 +1,25 @@
-// TODO(③): 인증 API를 구현해 주세요.
-//   · GET /auth/me
-//   · POST /auth/login
-//   · POST /auth/logout
+// ③ 담당 인증 API — 화면은 apiClient 만 쓰고, 401 정책은 src/lib/client.js 가 담당합니다.
 //
-// 구현할 때는 src/lib/client.js 의 apiClient를 사용합니다.
-// 401 처리와 세션 갱신 정책도 ③ 담당 범위예요.
+// 강사님 정본(nextjs-user-auth-completed/client/src/lib/api.js)과 같은 역할이에요.
+//   · getMe  — 로그인하지 않았으면 null (401 을 오류로 던지지 않음)
+//   · login  — 성공 시 user 본문 + httpOnly 쿠키
+//   · logout — 204 (멱등)
+import { apiClient } from '@/lib/client';
 
 export async function getMe() {
-  throw new Error('TODO(③): GET /auth/me 를 구현해 주세요.');
+  try {
+    return await apiClient.get('/auth/me');
+  } catch (error) {
+    // 비로그인(401)은 "사용자 없음"으로 다뤄요 — 강사님 정본 getMe 와 동일합니다.
+    if (error?.status === 401) return null;
+    throw error;
+  }
 }
 
-export async function login() {
-  throw new Error('TODO(③): POST /auth/login 을 구현해 주세요.');
+export async function login({ email, password }) {
+  return apiClient.post('/auth/login', { email, password });
 }
 
 export async function logout() {
-  throw new Error('TODO(③): POST /auth/logout 을 구현해 주세요.');
+  return apiClient.post('/auth/logout');
 }
