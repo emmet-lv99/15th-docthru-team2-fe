@@ -27,6 +27,12 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
+import { AuthGuard } from '@/components/AuthGuard';
+
 export default function ApplicationDetailPage() {
-  return <span>제안 상세 — TODO(팀원 ⑤): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>;
+  return (
+    <AuthGuard>
+      <span>제안 상세 — TODO(팀원 ⑤): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>
+    </AuthGuard>
+  );
 }

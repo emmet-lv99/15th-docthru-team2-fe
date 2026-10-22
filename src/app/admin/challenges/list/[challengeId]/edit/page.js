@@ -31,10 +31,14 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
+import { AuthGuard } from '@/components/AuthGuard';
+
 export default function AdminChallengeEditPage() {
   return (
-    <span>
-      관리자 — 챌린지 수정 — TODO(팀원 ①): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
-    </span>
+    <AuthGuard role="ADMIN">
+      <span>
+        관리자 — 챌린지 수정 — TODO(팀원 ①): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
+      </span>
+    </AuthGuard>
   );
 }
