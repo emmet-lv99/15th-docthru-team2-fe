@@ -9,7 +9,13 @@
 FROM node:24-slim AS deps
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@12.5.1 --activate
+# ⚠️ npm 레지스트리가 가끔 503 / 타임아웃을 흘려서 corepack 이 pnpm 을 못 받는 일이 있어요.
+#    그래서 3번까지 재시도해요 (15초 · 30초 대기).
+#    한 번 실패했을 때 그대로 두면 빌드 전체가 2분 wasted 되기 때문이에요.
+RUN corepack enable \
+    && (corepack prepare pnpm@12.5.1 --activate \
+        || (echo "corepack 준비 실패 — 15초 뒤 다시 시도" && sleep 15 && corepack prepare pnpm@12.5.1 --activate) \
+        || (echo "corepack 준비 실패 — 30초 뒤 다시 시도" && sleep 30 && corepack prepare pnpm@12.5.1 --activate))
 
 # ⚠️ pnpm-workspace.yaml 도 함께 복사해요 — 그 안의 allowBuilds 가 없으면
 #    pnpm 12 가 설치 스크립트를 건너뛰어 ERR_PNPM_IGNORED_BUILDS 로 실패합니다.
@@ -20,7 +26,13 @@ RUN pnpm install --frozen-lockfile
 FROM node:24-slim AS build
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@12.5.1 --activate
+# ⚠️ npm 레지스트리가 가끔 503 / 타임아웃을 흘려서 corepack 이 pnpm 을 못 받는 일이 있어요.
+#    그래서 3번까지 재시도해요 (15초 · 30초 대기).
+#    한 번 실패했을 때 그대로 두면 빌드 전체가 2분 wasted 되기 때문이에요.
+RUN corepack enable \
+    && (corepack prepare pnpm@12.5.1 --activate \
+        || (echo "corepack 준비 실패 — 15초 뒤 다시 시도" && sleep 15 && corepack prepare pnpm@12.5.1 --activate) \
+        || (echo "corepack 준비 실패 — 30초 뒤 다시 시도" && sleep 30 && corepack prepare pnpm@12.5.1 --activate))
 
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
 COPY next.config.mjs jsconfig.json ./
