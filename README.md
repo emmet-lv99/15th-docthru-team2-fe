@@ -368,14 +368,34 @@ pnpm build            # 프로덕션 빌드 확인
 > BE 를 함께 켜려면 backend repo 를 실행하세요. 주소가 다르면 `.env.local` 에
 > `BACKEND_BASE_URL=http://localhost:5010/api/v1` 처럼 지정하면 됩니다.
 
-- CI/CD: PR·push는 `ci.yml`이 검사하고, 배포는 **수동 실행만** 열려 있어요. 수동 배포도 `ci` job을 먼저 통과한 뒤 진행됩니다(`needs: ci`). 자동배포는 아직 꺼져 있어요.
+- CI/CD: PR·push는 `ci.yml`이 검사해요. **자동 배포는 Cloud Build 가 담당**합니다 — `main` 에 머지되면 3~5분 뒤 Cloud Run 에 반영돼요.
+  상세(브랜치 규칙·빌드 인자·배포 주소·문제 해결)는 **[`docs/배포-런북.md`](./docs/배포-런북.md)** 을 보세요.
 
 ## 8. 스타일 팁
 
 - vanilla-extract 파일(`*.css.js`)은 색을 hex 로 직접 쓰지 말고 `src/styles/theme.css.js` 의 vars 토큰만 쓰세요.
   한 곳만 고치면 전 화면에 반영돼요.
 
-## 9. 관련 문서
+## 9. 배포 · 브랜치 규칙
+
+```text
+develop 에서 개발 → push → CI 자동 검사 → PR → main 머지 → 자동 배포 🚀
+```
+
+| 항목        | 값                                                                      |
+| ----------- | ----------------------------------------------------------------------- |
+| 배포 주소   | `https://docthru-alysvay2yq-du.a.run.app`                               |
+| 백엔드 주소 | `https://docthru-be-xwfe2o3yfa-du.a.run.app/api/v1`                     |
+| 자동 배포   | Cloud Build + [`cloudbuild.yaml`](./cloudbuild.yaml) (`main` push 감시) |
+| CI          | GitHub Actions `ci.yml` (PR·push) — 비밀값 0개                          |
+
+> ⚠️ `BACKEND_BASE_URL` · `NEXT_PUBLIC_SITE_URL` 은 **빌드 시점에** 박힙니다.
+> 값을 바꾸려면 `cloudbuild.yaml` 의 `substitutions` 을 고치고 `main` 에 머지하세요.
+
+자세한 절차·문제 해결은 **[`docs/배포-런북.md`](./docs/배포-런북.md)** 에 있습니다.
+
+## 10. 관련 문서
 
 - **요구사항 추적표** — [`docs/화면-라우트-API-대조.md`](./docs/화면-라우트-API-대조.md): **라우트 ↔ 요구 ↔ API** 한 표 (미커버·과잉·편차 점검)
+- **배포 · 브랜치 런북** — [`docs/배포-런북.md`](./docs/배포-런북.md): 브랜치 규칙 · CI/배포 흐름 · 빌드 인자 · 로컬 개발 · 자주 나는 문제
 - [`docs/FE-요구사항.md`](./docs/FE-요구사항.md) · `docthru-backend/docs/API-명세.md`
