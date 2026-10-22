@@ -72,3 +72,9 @@ substitutions:
 
 images:
   - ${_AR_HOSTNAME}/${_AR_PROJECT_ID}/${_AR_REPOSITORY}/${_REPO_NAME}/${_SERVICE_NAME}:$COMMIT_SHA
+
+options:
+  # 빌드 로그를 Cloud Logging 에만 남깁니다.
+  # (트리거에 서비스 계정이 지정되어 있으면 로그 버킷을 따로 정해야 해서
+  #  이 옵션을 안 주면 트리거가 "invalid argument" 로 막힙니다)
+  logging: CLOUD_LOGGING_ONLY
