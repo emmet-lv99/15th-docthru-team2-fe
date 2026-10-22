@@ -31,6 +31,13 @@ COPY . .
 ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
+# ⚠️ BACKEND_BASE_URL 도 **빌드 시점에 박힙니다**.
+#    next.config.mjs 의 rewrites(브라우저 → 백엔드 프록시 주소)가
+#    빌드 때 정해져서, 실행 시 환경변수를 줘도 rewrite 주소는 안 바뀌어요.
+#    그래서 build-arg 로 받아서 여기서 ENV 로 확정해 줍니다.
+ARG BACKEND_BASE_URL=http://localhost:5010/api/v1
+ENV BACKEND_BASE_URL=$BACKEND_BASE_URL
+
 RUN pnpm install --frozen-lockfile \
     && pnpm build
 
@@ -38,8 +45,13 @@ RUN pnpm install --frozen-lockfile \
 FROM node:24-slim AS runtime
 WORKDIR /app
 
+# ⚠️ 서버 컴포넌트(src/lib/api.js)는 **실행 시점**에 주소를 읽어요.
+#    빌드 때 받은 값을 이 스테이지로 이어받아 이미지 안에도 남겨 둡니다.
+#    그래야 이미지만 배포해도 API 주소가 비어 있지 않아요.
+ARG BACKEND_BASE_URL=http://localhost:5010/api/v1
 ENV NODE_ENV=production \
-    PORT=8080
+    PORT=8080 \
+    BACKEND_BASE_URL=$BACKEND_BASE_URL
 
 # standalone 은 .next/standalone 에 필요한 최소 서버만 만든다.
 COPY --from=build /app/.next/standalone ./
