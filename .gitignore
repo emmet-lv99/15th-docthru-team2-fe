@@ -1,0 +1,46 @@
+# ══════════════════════════════════════════════════════════════
+#  frontend repo — Git 제외 규칙
+#
+#  ⚠️ 가장 많이 발생하는 사고: .env.local 이 커밋되어 값이 공개되는 것.
+#     커밋 전에 반드시 확인하세요:
+#       git check-ignore -v .env.local .env.example
+#     ".env.local → 무시됨" 이 나오면 안전합니다.
+# ══════════════════════════════════════════════════════════════
+
+# ── 의존성 ──
+node_modules/
+.pnpm-store/
+
+# ── 환경 변수 (예시만 공유) ──
+.env
+.env.*
+!.env.example
+
+# ── Next.js 빌드 산출물 ──
+.next/
+out/
+next-env.d.ts
+
+# ── 테스트·린트 캐시 ──
+coverage/
+*.lcov
+.eslintcache
+
+# ── 로그 ──
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+
+# ── OS · 에디터 ──
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+
+# ── 잠금파일 규칙 ──
+# pnpm-lock.yaml 은 **커밋합니다** (재현 가능한 설치의 핵심).
+package-lock.json
+yarn.lock

@@ -1,0 +1,47 @@
+// src/components/QueryBoundary/QueryBoundary.jsx
+//
+// Suspense 로딩 + 오류 재시도를 한 묶음으로 감싸는 부품이에요.
+//   · 로딩 중 → Loading (Suspense fallback)
+//   · 오류 발생 → Warn + "다시 시도" 버튼
+//   · "다시 시도"를 누르면 QueryErrorResetBoundary 가 실패한 쿼리를 초기화하고 다시 그려요.
+'use client';
+
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { Button } from '@/components/Button';
+import { Loading } from '@/components/Loading';
+import { Warn } from '@/components/Warn';
+import * as styles from './QueryBoundary.css.js';
+
+function DefaultErrorFallback({ onRetry }) {
+  return (
+    <div className={styles.errorFallback}>
+      <Warn title="문제가 발생했어요" description="잠시 후 다시 시도해 주세요." />
+      <Button onClick={onRetry} className={styles.retryButton}>
+        다시 시도
+      </Button>
+    </div>
+  );
+}
+
+export default function QueryBoundary({ children }) {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <DefaultErrorFallback onRetry={resetErrorBoundary} />
+          )}
+        >
+          <Suspense
+            fallback={<Loading title="로딩 중이에요" description="잠시만 기다려 주세요." />}
+          >
+            {children}
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
+}

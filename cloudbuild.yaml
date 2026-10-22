@@ -1,0 +1,80 @@
+# cloudbuild.yaml — 프론트엔드 배포 파이프라인 (Cloud Build)
+#
+# 왜 이 파일이 있나요?
+#   ─────────────────────────────────────────────────────────────
+#   Cloud Build 트리거를 콘솔에서 만들면 "빌드 명령"이 트리거 안에
+#   박혀 있어서, 백엔드 주소가 바뀔 때마다 콘솔을 열어야 했어요.
+#   이 파일을 repo 에 두면 **빌드 인자와 배포 주소가 코드처럼 보이기** 하고,
+#   변경 이력도 git 에 남습니다.
+#   트리거는 이 파일을 가리키도록(`--build-config=cloudbuild.yaml`) 설정해 뒀어요.
+#   ─────────────────────────────────────────────────────────────
+#
+# ⚠️ 빌드 인자는 왜 필요해요?
+#   NEXT_PUBLIC_SITE_URL · BACKEND_BASE_URL 은 **빌드 시점에 이미지 안에 박힙니다.**
+#   (next.config.mjs 의 rewrites 와 layout.js 의 metadataBase)
+#   실행 시 환경변수를 줘도 이미 박힌 값은 안 바뀌어요.
+#
+#   값을 바꿀 때
+#     ① 여기 substitutions 의 기본값을 고치고
+#     ② 트리거를 재실행하면 새 이미지가 만들어집니다.
+#
+#   값은 공개 주소라 secret 이 아니라 substitution 으로 둡니다.
+steps:
+  - id: Build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --no-cache
+      - -t
+      - ${_AR_HOSTNAME}/${_AR_PROJECT_ID}/${_AR_REPOSITORY}/${_REPO_NAME}/${_SERVICE_NAME}:$COMMIT_SHA
+      - --build-arg
+      - NEXT_PUBLIC_SITE_URL=${_NEXT_PUBLIC_SITE_URL}
+      - --build-arg
+      - BACKEND_BASE_URL=${_BACKEND_BASE_URL}
+      - -f
+      - Dockerfile
+      - .
+
+  - id: Push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_AR_HOSTNAME}/${_AR_PROJECT_ID}/${_AR_REPOSITORY}/${_REPO_NAME}/${_SERVICE_NAME}:$COMMIT_SHA
+
+  - id: Deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - services
+      - update
+      - ${_SERVICE_NAME}
+      - --platform=managed
+      - --image=${_AR_HOSTNAME}/${_AR_PROJECT_ID}/${_AR_REPOSITORY}/${_REPO_NAME}/${_SERVICE_NAME}:$COMMIT_SHA
+      # 실행 시점에도 같은 값을 넘겨 줍니다. (서버 컴포넌트가 읽는 값)
+      - --set-env-vars=BACKEND_BASE_URL=${_BACKEND_BASE_URL}
+      - --region=${_DEPLOY_REGION}
+      - --quiet
+
+substitutions:
+  # Artifact Registry 좌표
+  _AR_HOSTNAME: asia-northeast3-docker.pkg.dev
+  _AR_PROJECT_ID: th-docthru-team2-fe
+  _AR_REPOSITORY: cloud-run-source-deploy
+  _REPO_NAME: 15th-docthru-team2-fe
+  _SERVICE_NAME: docthru
+  _DEPLOY_REGION: asia-northeast3
+  # ── 빌드 시점에 박히는 값 ─────────────────────────────
+  # 프론트엔드 공개 주소 (metadataBase · OG 이미지)
+  _NEXT_PUBLIC_SITE_URL: https://docthru-alysvay2yq-du.a.run.app
+  # 백엔드 주소 + /api/v1 (rewrite 프록시 대상 · 서버 컴포넌트 호출 대상)
+  _BACKEND_BASE_URL: https://docthru-be-xwfe2o3yfa-du.a.run.app/api/v1
+
+images:
+  - ${_AR_HOSTNAME}/${_AR_PROJECT_ID}/${_AR_REPOSITORY}/${_REPO_NAME}/${_SERVICE_NAME}:$COMMIT_SHA
+
+options:
+  # 빌드 로그를 Cloud Logging 에만 남깁니다.
+  # (트리거에 서비스 계정이 지정되어 있으면 로그 버킷을 따로 정해야 해서
+  #  이 옵션을 안 주면 트리거가 "invalid argument" 로 막힙니다)
+  logging: CLOUD_LOGGING_ONLY

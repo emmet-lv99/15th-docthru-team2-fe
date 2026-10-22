@@ -1,0 +1,16 @@
+# 빌드 산출물 — 포맷 대상이 아니다
+.next/
+out/
+dist/
+node_modules/
+
+# 생성 파일 — 직접 만든 것이 아니라 자동 생성 (포맷해도 의미 없음)
+next-env.d.ts
+openapi.yaml
+
+# 잠금파일은 서식 검사를 하지 않는다
+pnpm-lock.yaml
+
+# 참조 문서 — 원본 그대로 보존한다 (자동 서식 대상이 아니다)
+API-명세.md
+요구사항.md
