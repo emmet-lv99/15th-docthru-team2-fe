@@ -379,7 +379,8 @@ pnpm build            # 프로덕션 빌드 확인
 ## 9. 배포 · 브랜치 규칙
 
 ```text
-develop 에서 개발 → push → CI 자동 검사 → PR → main 머지 → 자동 배포 🚀
+develop 에서 개발 → push → CI 자동 검사 → PR 머지(develop)
+        → Sync main (자동) → main → Cloud Build 자동 배포 🚀
 ```
 
 | 항목        | 값                                                                      |
@@ -387,10 +388,11 @@ develop 에서 개발 → push → CI 자동 검사 → PR → main 머지 → �
 | 배포 주소   | `https://docthru-alysvay2yq-du.a.run.app`                               |
 | 백엔드 주소 | `https://docthru-be-xwfe2o3yfa-du.a.run.app/api/v1`                     |
 | 자동 배포   | Cloud Build + [`cloudbuild.yaml`](./cloudbuild.yaml) (`main` push 감시) |
+| 자동 동기화 | GitHub Actions `sync-main.yml` — **develop 머지 시 main 자동 반영**     |
 | CI          | GitHub Actions `ci.yml` (PR·push) — 비밀값 0개                          |
 
 > ⚠️ `BACKEND_BASE_URL` · `NEXT_PUBLIC_SITE_URL` 은 **빌드 시점에** 박힙니다.
-> 값을 바꾸려면 `cloudbuild.yaml` 의 `substitutions` 을 고치고 `main` 에 머지하세요.
+> 값을 바꾸려면 `cloudbuild.yaml` 의 `substitutions` 을 고치고 **develop 에 머지**하세요 (자동으로 main 에 동기화됩니다).
 
 자세한 절차·문제 해결은 **[`docs/배포-런북.md`](./docs/배포-런북.md)** 에 있습니다.
 
