@@ -14,8 +14,7 @@ RUN corepack enable && corepack prepare pnpm@12.5.1 --activate
 # ⚠️ pnpm-workspace.yaml 도 함께 복사해요 — 그 안의 allowBuilds 가 없으면
 #    pnpm 12 가 설치 스크립트를 건너뛰어 ERR_PNPM_IGNORED_BUILDS 로 실패합니다.
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # ══ 2. 빌드 ═════════════════════════════════════════════════
 FROM node:24-slim AS build
@@ -32,8 +31,7 @@ COPY . .
 ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile \
+RUN pnpm install --frozen-lockfile \
     && pnpm build
 
 # ══ 3. 런타임 ════════════════════════════════════════════════
