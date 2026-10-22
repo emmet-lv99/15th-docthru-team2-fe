@@ -1,0 +1,14 @@
+# frontend
+node_modules
+.next
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+Dockerfile
+.dockerignore
+README.md
+.eslintcache
+*.log
+.DS_Store
