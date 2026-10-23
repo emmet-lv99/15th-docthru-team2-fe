@@ -8,7 +8,14 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { getMe, login as loginRequest, logout as logoutRequest } from '@/features/auth/api';
+import {
+  deleteMe as deleteMeRequest,
+  getMe,
+  login as loginRequest,
+  logout as logoutRequest,
+  signUp as signUpRequest,
+  updateMe as updateMeRequest,
+} from '@/features/auth/api';
 import { queryKeys } from '@/lib/queryKeys';
 
 const AuthContext = createContext({
@@ -16,10 +23,19 @@ const AuthContext = createContext({
   isPending: false,
   isLoggingIn: false,
   loginError: null,
+  isSigningUp: false,
+  signUpError: null,
   isLoggingOut: false,
   logoutError: null,
+  isUpdatingMe: false,
+  updateMeError: null,
+  isDeletingMe: false,
+  deleteMeError: null,
   login: async () => {},
+  signUp: async () => {},
   logout: async () => {},
+  updateMe: async () => {},
+  deleteMe: async () => {},
 });
 
 export function AuthProvider({ children, initialUser = null, hasSession = false }) {
@@ -47,6 +63,14 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
     },
   });
 
+  const signUpMutation = useMutation({
+    mutationFn: ({ email, nickname, password }) => signUpRequest({ email, nickname, password }),
+    onSuccess: (signedUpUser) => {
+      queryClient.setQueryData(queryKeys.me.info(), signedUpUser ?? null);
+      router.refresh();
+    },
+  });
+
   const logoutMutation = useMutation({
     mutationFn: logoutRequest,
     onSuccess: () => {
@@ -56,15 +80,42 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
     },
   });
 
+  const updateMeMutation = useMutation({
+    mutationFn: ({ nickname, password }) => updateMeRequest({ nickname, password }),
+    onSuccess: (updatedMe) => {
+      queryClient.setQueryData(queryKeys.me.info(), updatedMe ?? null);
+      router.refresh();
+    },
+  });
+
+  const deleteMeMutation = useMutation({
+    mutationFn: deleteMeRequest,
+    onSuccess: () => {
+      queryClient.setQueryData(queryKeys.me.info(), null);
+      queryClient.removeQueries({ queryKey: queryKeys.me.all() });
+      router.replace('/');
+      router.refresh();
+    },
+  });
+
   const value = {
     user,
     isPending: canQuery ? isPending : false,
     isLoggingIn: loginMutation.isPending,
     loginError: loginMutation.error,
+    isSigningUp: signUpMutation.isPending,
+    signUpError: signUpMutation.error,
     isLoggingOut: logoutMutation.isPending,
     logoutError: logoutMutation.error,
+    isUpdatingMe: updateMeMutation.isPending,
+    updateMeError: updateMeMutation.error,
+    isDeletingMe: deleteMeMutation.isPending,
+    deleteMeError: deleteMeMutation.error,
     login: loginMutation.mutateAsync,
+    signUp: signUpMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
+    updateMe: updateMeMutation.mutateAsync,
+    deleteMe: deleteMeMutation.mutateAsync,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

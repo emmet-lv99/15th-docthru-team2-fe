@@ -26,14 +26,13 @@
 //    ② 자리표 텍스트(TODO)가 화면에 더 이상 남지 않는지
 //    ③ 본인 화면의 디자인 근거(PNG · 토큰)를 충실히 따라 어긋나는 것이 없는지
 //
-// 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
-
 import { AuthGuard } from '@/components/AuthGuard';
+import { MyPageContent } from '@/features/auth/components/MyPage';
 
 export default function MyPagePage() {
   return (
     <AuthGuard>
-      <span>마이페이지 — TODO(팀원 ③): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>
+      <MyPageContent />
     </AuthGuard>
   );
 }

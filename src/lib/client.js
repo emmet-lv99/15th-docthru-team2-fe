@@ -73,7 +73,13 @@ function toApiError(error) {
 // 401 세션 갱신 — 동시에 여러 요청이 401 을 받아도 한 번만 호출합니다(single-flight).
 //   우리 계약에는 refresh 전용 경로가 없어서 GET /auth/me 로 갱신을 트리거합니다.
 //   (BE 의 전역 authenticate 가 access 만료 시 refresh 쿠키로 새 토큰을 발급해요)
-const AUTH_PATHS = ['/auth/login', '/auth/signup', '/auth/logout', '/auth/me'];
+const AUTH_PATHS = [
+  '/auth/login',
+  '/auth/signup',
+  '/auth/logout',
+  '/auth/me',
+  '/auth/password-reset',
+];
 
 let refreshPromise = null;
 

@@ -20,6 +20,33 @@ export async function login({ email, password }) {
   return apiClient.post('/auth/login', { email, password });
 }
 
+export async function signUp({ email, nickname, password }) {
+  return apiClient.post('/auth/signup', { email, nickname, password });
+}
+
 export async function logout() {
   return apiClient.post('/auth/logout');
+}
+
+/** PATCH /auth/me — { nickname?, password? } 중 보낸 값만 수정해요. */
+export async function updateMe({ nickname, password }) {
+  const body = {};
+  if (nickname !== undefined) body.nickname = nickname;
+  if (password !== undefined) body.password = password;
+  return apiClient.patch('/auth/me', body);
+}
+
+/** DELETE /auth/me — 소프트 삭제 후 204. apiClient 가 null 을 돌려줘요. */
+export async function deleteMe() {
+  return apiClient.del('/auth/me');
+}
+
+/** POST /auth/password-reset/request — 계정 존재 여부와 무관하게 같은 안내. */
+export async function requestPasswordReset({ email }) {
+  return apiClient.post('/auth/password-reset/request', { email });
+}
+
+/** POST /auth/password-reset/confirm — 메일 링크 토큰 + 새 비밀번호. */
+export async function confirmPasswordReset({ token, newPassword }) {
+  return apiClient.post('/auth/password-reset/confirm', { token, newPassword });
 }
