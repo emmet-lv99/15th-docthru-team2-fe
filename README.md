@@ -34,12 +34,12 @@
 
 ### 1-2. 현재 구현 상태
 
-| 영역                  | 상태                                                               | 담당    |
-| --------------------- | ------------------------------------------------------------------ | ------- |
-| 화면                  | **20 page 뼈대** · components **22 dirs**                          | ①~⑤     |
-| 인증 FE               | `AuthProvider`·`useAuth`·API·SessionRefresh·401 정책 **개인 담당** | ③       |
-| 테스트                | Vitest **5/5** · build **20 routes**                               | 🔷 공용 |
-| 계정 수정(`updateMe`) | 요구사항·시안에 없어 **채택하지 않음**                             | —       |
+| 영역                  | 상태                                                            | 담당    |
+| --------------------- | --------------------------------------------------------------- | ------- |
+| 화면                  | **22 page** · components **22 dirs**                            | ①~⑤     |
+| 인증 FE               | 로그인·가입·로그아웃·내 정보 수정·탈퇴·비밀번호 재설정 **구현** | ③       |
+| 테스트                | Vitest **8/8** · build **22 routes**                            | 🔷 공용 |
+| 계정 수정(`updateMe`) | **채택** — `/mypage`에서 닉네임·비밀번호 수정                   | ③       |
 
 ### 1-3. 문서 정본 순서와 동기화
 
@@ -71,7 +71,9 @@ docthru-frontend/                                                               
 │   │   ├── page.js                                                                     # 랜딩 (로그인 전)                          ①
 │   │   ├── login/page.js                                                               # 로그인                                    ③
 │   │   ├── signup/page.js                                                              # 회원가입                                  ③
-│   │   ├── mypage/page.js                                                              # 마이페이지 (정보·로그아웃)                ③
+│   │   ├── password-reset/page.js                                                      # 비밀번호 재설정 요청                      ③
+│   │   ├── password-reset/confirm/page.js                                              # 새 비밀번호 설정 (메일 토큰)              ③
+│   │   ├── mypage/page.js                                                              # 마이페이지 (정보 수정·탈퇴·로그아웃)      ③
 │   │   ├── challenges/page.js                                                          # 챌린지 목록 (필터·검색)                   ①
 │   │   ├── challenges/[challengeId]/page.js                                            # 챌린지 상세 (도전·포기)                   ①
 │   │   ├── challenges/[challengeId]/edit/page.js                                       # 작업 에디터 (제출·임시저장)               ②
@@ -141,13 +143,13 @@ docthru-frontend/                                                               
 
 | 경로                      | 하는 일                                                                                     |
 | ------------------------- | ------------------------------------------------------------------------------------------- |
-| `src/app/`                | 화면 라우트 20개 — 폴더 경로가 그대로 URL                                                   |
+| `src/app/`                | 화면 라우트 22개 — 폴더 경로가 그대로 URL                                                   |
 | `src/app/layout.js`       | 전 화면 공통 껍데기 — GNB·세션 갱신·폰트·`AppProviders`를 자동 적용                         |
 | `src/contexts/`           | ③ 인증 Context — 개인 담당 · `AuthProvider`·`useAuth` 인터페이스                            |
 | `src/providers/`          | 앱 전역 Provider 조립 — `QueryClient` + `AuthProvider` 중첩                                 |
 | `src/components/`         | **공용** 부품 창고 — 구현 6종 + 뼈대 16종(공용 3종 포함)                                    |
 | `src/features/`           | **도메인** 계층 — 화면별 `api · hooks · components · constants.js` (React Query + features) |
-| `src/features/auth/`      | ③ 인증 API — 개인 담당 · `getMe` · `login` · `logout`                                       |
+| `src/features/auth/`      | ③ 인증 API · `getMe` · `signUp` · `login` · `logout` · `updateMe` · `deleteMe` · 재설정     |
 | `src/lib/api.js`          | 서버 fetch helper — 쿠키 전달을 자동으로 해 줘요 (직접 fetch 금지)                          |
 | `src/lib/client.js`       | 공용 axios helper — timeout·오류 변환 · **401 세션 갱신은 ③ 개인 담당**                     |
 | `src/lib/client.test.js`  | 공용 axios 테스트 — 응답·오류·timeout·네트워크 (Vitest)                                     |
@@ -167,7 +169,7 @@ docthru-frontend/                                                               
 | 팀원 ⑤  | 경래           | **내 제안 목록**<br>`src/app/my-applications/page.js`<br>**새 챌린지 제안**<br>`src/app/my-applications/new/page.js`<br>**제안 상세**<br>`src/app/my-applications/[applicationId]/page.js`<br>**관리자 신청 관리**<br>`src/app/admin/challenges/page.js`<br>**관리자 신청 상세**<br>`src/app/admin/challenges/[applicationId]/page.js` | 중     | 제안 작성·취소·상세 · 관리자 승인/거절                           | `src/components/Dropdown/`(드롭다운)<br>`src/components/Checkbox/`(체크박스, ③ 공동)<br>`src/components/Tabs/`(탭, ③ 공동)                                                                                                                                                                                                                                                           |
 | 🔷 공용 | 보일러플레이트 | **공용 부품 스타일가이드**<br>`src/app/styleguide/page.js`                                                                                                                                                                                                                                                                             | —      | 공용 부품 제공·유지·검증                                         | `src/components/Button/`(버튼)<br>`src/components/GNB/`(상단 내비게이션)<br>`src/components/Container/`(레이아웃 컨테이너)<br>`src/components/FontLoader/`(폰트 로더)<br>`src/components/layouts/`(레이아웃)<br>`src/components/Loading/`(로딩)<br>`src/components/QueryBoundary/`(쿼리 경계)<br>`src/components/Warn/`(경고)                                                        |
 
-- **페이지 합계 20개** — ① 5 · ② 3 · ③ 5 · ④ 1 · ⑤ 5 · 공용 스타일가이드 1.
+- **페이지 합계 22개** — ① 5 · ② 3 · ③ 7 · ④ 1 · ⑤ 5 · 공용 스타일가이드 1.
 - `src/app/admin/challenges/`는 부모 폴더를 공유해요 — `list/`는 ①, 루트 `page.js`·`[applicationId]/`는 ⑤예요.
 - `src/app/challenges/[challengeId]/works/[workId]/`는 ② 담당이고, 작업물 상세와 수정이 이 안에 있어요.
 - `ConfirmDialog`는 ②·③ 공동, `Checkbox`·`Tabs`는 ③·⑤ 공동이에요.
