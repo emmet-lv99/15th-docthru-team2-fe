@@ -56,6 +56,120 @@ export const form = style({
   gap: '24px',
 });
 
+// ── 입력 필드 ────────────────────────────────────────────────
+// 공용 Input 이 아직 뼈대라, 인증 화면 안에서만 쓰는 로컬 필드를 둡니다.
+// (공용 부품을 침범하지 않으면서 로그인·가입이 실제로 동작하게 하기 위해서예요)
+export const field = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+});
+
+export const label = style({
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-14)',
+  fontWeight: '600',
+  color: vars.colorGray800,
+});
+
+export const input = style({
+  width: '100%',
+  height: '48px',
+  padding: '0 14px',
+  border: `1px solid ${vars.colorGray200}`,
+  borderRadius: '10px',
+  backgroundColor: vars.colorGray50,
+  color: vars.colorGray900,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-16)',
+  outline: 'none',
+  boxSizing: 'border-box',
+  selectors: {
+    '&::placeholder': { color: vars.colorGray400 },
+    '&:focus': { borderColor: vars.colorBrand1 },
+  },
+});
+
+export const inputError = style([
+  input,
+  {
+    borderColor: vars.colorRedError,
+    selectors: {
+      '&:focus': { borderColor: vars.colorRedError },
+    },
+  },
+]);
+
+export const inputWrap = style({
+  position: 'relative',
+});
+
+export const toggleButton = style({
+  position: 'absolute',
+  top: '50%',
+  right: '8px',
+  transform: 'translateY(-50%)',
+  /** 24px 아이콘 + 사방 4px 여백 = 누르기 쉬운 32px 버튼 */
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '32px',
+  height: '32px',
+  padding: 0,
+  border: 'none',
+  background: 'transparent',
+  cursor: 'pointer',
+});
+
+export const hint = style({
+  margin: 0,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-13)',
+  color: vars.colorGray500,
+});
+
+export const errorText = style({
+  margin: 0,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-13)',
+  color: vars.colorRedError,
+});
+
+export const formError = style({
+  margin: 0,
+  padding: '12px 14px',
+  borderRadius: '10px',
+  backgroundColor: '#FDECEC',
+  color: vars.colorRedError,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-14)',
+  lineHeight: vars.lineHeightRelaxed,
+});
+
+export const successText = style({
+  margin: 0,
+  padding: '12px 14px',
+  borderRadius: '10px',
+  backgroundColor: vars.colorGray100,
+  color: vars.colorGray800,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-14)',
+  lineHeight: vars.lineHeightRelaxed,
+});
+
+export const forgotRow = style({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  marginTop: '-8px',
+});
+
+export const subtleLink = style({
+  color: vars.colorGray500,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-13)',
+  textDecoration: 'underline',
+});
+
 export const submitButton = style({
   marginTop: '8px',
 });

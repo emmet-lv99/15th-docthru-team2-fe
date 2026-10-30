@@ -20,6 +20,12 @@ export const BASE_URL =
   'http://localhost:5010/api/v1';
 
 /**
+ * 서버 요청 상한 — 브라우저(client.js)의 10초 timeout 과 맞춰 두었어요.
+ * 이게 없으면 백엔드가 응답을 안 줄 때 페이지 렌더가 그대로 멈춥니다.
+ */
+const REQUEST_TIMEOUT_MS = 10_000;
+
+/**
  * 인증이 필요한 API 호출.
  * @param {string} path  예: '/challenges?page=1&size=20'
  * @param {{ cache?: RequestCache, method?: string, body?: unknown }} options
@@ -39,6 +45,9 @@ export async function apiFetch(path, options = {}) {
       ...(body && { 'Content-Type': 'application/json' }),
     },
     ...(body && { body: JSON.stringify(body) }),
+    // 응답이 없으면 10초 뒤 스스로 중단해요 (그대로 두면 렌더가 멈춥니다).
+    // 참고: signal 을 넘기면 같은 렌더 안의 fetch 메모이제이션은 적용되지 않아요.
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
 
   return response;
@@ -47,9 +56,18 @@ export async function apiFetch(path, options = {}) {
 /**
  * JSON 을 파싱해 주는 헬퍼.
  * 404 여부를 함께 돌려줘야 page.js 에서 notFound() 를 호출할 수 있다.
+ *
+ * ⚠️ 본문이 없는 응답(204)은 파싱하지 않아요.
+ *   우리 명세에서 logout · DELETE /auth/me · password-reset/confirm 이 204 라서,
+ *   빈 본문에 response.json() 을 부르면 SyntaxError 가 납니다.
  */
 export async function apiGet(path, options = {}) {
   const response = await apiFetch(path, options);
+
+  // 204 No Content — 성공이지만 본문이 없어요.
+  if (response.status === 204) {
+    return { ok: true, status: 204, data: null };
+  }
 
   if (response.status === 404) {
     return { ok: false, status: 404, data: null };
@@ -60,7 +78,16 @@ export async function apiGet(path, options = {}) {
     return { ok: false, status: response.status, data: error };
   }
 
-  return { ok: true, status: response.status, data: await response.json() };
+  // 200 이어도 본문이 비어 있을 수 있어서 text 로 먼저 확인해요.
+  const text = await response.text();
+  if (!text) return { ok: true, status: response.status, data: null };
+
+  try {
+    return { ok: true, status: response.status, data: JSON.parse(text) };
+  } catch {
+    // JSON 이 아닌 200 응답(프록시 오류 페이지 등)은 빈 데이터로 처리해요.
+    return { ok: true, status: response.status, data: null };
+  }
 }
 
 /**

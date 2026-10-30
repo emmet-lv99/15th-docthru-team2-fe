@@ -40,8 +40,14 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
+import { AuthGuard } from '@/components/AuthGuard';
+
 export default function ChallengeEditPage() {
   return (
-    <span>작업 도전 (에디터) — TODO(팀원 ②): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>
+    <AuthGuard>
+      <span>
+        작업 도전 (에디터) — TODO(팀원 ②): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
+      </span>
+    </AuthGuard>
   );
 }

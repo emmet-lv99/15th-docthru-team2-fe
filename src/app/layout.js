@@ -50,10 +50,16 @@ async function getViewer() {
   const jar = await cookies();
   if (!jar.get('accessToken') && !jar.get('refreshToken')) return null;
 
-  const { ok, data: me } = await apiGet('/auth/me');
-  if (!ok || !me) return null;
+  try {
+    const { ok, data: me } = await apiGet('/auth/me');
+    if (!ok || !me) return null;
 
-  return me;
+    return me;
+  } catch {
+    // 백엔드가 느리거나(10초 타임아웃) 응답이 깨져도 레이아웃은 정상 렌더해요.
+    // (여기서 던지면 루트 레이아웃이 깨져 모든 페이지가 500 이 됩니다)
+    return null;
+  }
 }
 
 export default async function RootLayout({ children }) {

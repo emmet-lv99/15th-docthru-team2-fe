@@ -1,45 +1,134 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+// ③ 담당 인증 상태 — 강사님 정본(AuthProvider + useAuth(required)) 패턴을 따릅니다.
+//
+//   · 인증 상태는 React Query 의 GET /auth/me 캐시 하나로 관리해요.
+//   · 보호 화면은 feature 컴포넌트에서 useAuth(true) 한 줄로 로그인 여부를 확인합니다.
+//   · 로그인/로그아웃 성공 시 router.refresh() 로 서버 컴포넌트(GNB·layout)도 새 쿠키를 읽게 합니다.
+import { createContext, useContext, useEffect, useRef } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import {
+  deleteMe as deleteMeRequest,
+  getMe,
+  login as loginRequest,
+  logout as logoutRequest,
+  signUp as signUpRequest,
+  updateMe as updateMeRequest,
+} from '@/features/auth/api';
+import { queryKeys } from '@/lib/queryKeys';
 
-// ③ 담당 인증 인프라 — 실제 구현은 담당자가 이 파일의 TODO를 채웁니다.
-//   · 서버 데이터: GET /auth/me
-//   · 로그인·로그아웃: POST /auth/login · POST /auth/logout
-//   · 보호 라우트: useAuth(true)에서 /login 이동
-//   · SSR 시드: initialUser·hasSession
 const AuthContext = createContext({
   user: null,
   isPending: false,
-  error: null,
   isLoggingIn: false,
   loginError: null,
+  isSigningUp: false,
+  signUpError: null,
   isLoggingOut: false,
   logoutError: null,
-  login: async () => {
-    throw new Error('TODO(③): login을 구현해 주세요.');
-  },
-  logout: async () => {
-    throw new Error('TODO(③): logout을 구현해 주세요.');
-  },
+  isUpdatingMe: false,
+  updateMeError: null,
+  isDeletingMe: false,
+  deleteMeError: null,
+  login: async () => {},
+  signUp: async () => {},
+  logout: async () => {},
+  updateMe: async () => {},
+  deleteMe: async () => {},
 });
 
-export function AuthProvider({ children, initialUser = null }) {
-  // TODO(③): useQuery(getMe) · useMutation(login/logout) · initialData/enabled · router.refresh
-  // TODO(③): hasSession prop을 받아 익명 401 요청을 막아 주세요.
+export function AuthProvider({ children, initialUser = null, hasSession = false }) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  // 쿠키가 없는 익명 방문자는 /auth/me 를 부르지 않아요 (콘솔 401 방지).
+  // 대신 isPending 을 false 로 내려서 useAuth(true) 가 즉시 /login 으로 보낼 수 있게 합니다.
+  const canQuery = hasSession || Boolean(initialUser);
+
+  const { data: user = null, isPending } = useQuery({
+    queryKey: queryKeys.me.info(),
+    queryFn: getMe,
+    initialData: initialUser ?? undefined,
+    enabled: canQuery,
+    retry: false,
+  });
+
+  // 서버 렌더에서 /auth/me 가 일시 실패하면 initialUser 가 비어 GNB 가 로그아웃 상태로 그려져요.
+  // (레이아웃이 죽지 않도록 getViewer 가 null 로 흘려보내기 때문입니다)
+  // 클라이언트 조회가 성공하면 서버 레이아웃을 **한 번** 새로 고쳐 GNB 상태를 복구합니다.
+  const didRecoverRef = useRef(false);
+
+  useEffect(() => {
+    if (!canQuery || initialUser || !user || didRecoverRef.current) return;
+
+    didRecoverRef.current = true;
+    router.refresh();
+  }, [canQuery, initialUser, user, router]);
+
+  const loginMutation = useMutation({
+    mutationFn: ({ email, password }) => loginRequest({ email, password }),
+    onSuccess: (loggedInUser) => {
+      // 로그인 응답은 user 본문이에요 — 캐시를 즉시 채워 쿼리가 꺼져 있어도 화면이 바뀝니다.
+      queryClient.setQueryData(queryKeys.me.info(), loggedInUser ?? null);
+      router.refresh();
+    },
+  });
+
+  const signUpMutation = useMutation({
+    mutationFn: ({ email, nickname, password }) => signUpRequest({ email, nickname, password }),
+    onSuccess: (signedUpUser) => {
+      queryClient.setQueryData(queryKeys.me.info(), signedUpUser ?? null);
+      router.refresh();
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: logoutRequest,
+    onSuccess: () => {
+      queryClient.setQueryData(queryKeys.me.info(), null);
+      queryClient.removeQueries({ queryKey: queryKeys.me.all() });
+      router.refresh();
+    },
+  });
+
+  const updateMeMutation = useMutation({
+    mutationFn: ({ nickname, password }) => updateMeRequest({ nickname, password }),
+    onSuccess: (updatedMe) => {
+      queryClient.setQueryData(queryKeys.me.info(), updatedMe ?? null);
+      router.refresh();
+    },
+  });
+
+  const deleteMeMutation = useMutation({
+    mutationFn: ({ password, withdrawalConsent }) =>
+      deleteMeRequest({ password, withdrawalConsent }),
+    onSuccess: () => {
+      queryClient.setQueryData(queryKeys.me.info(), null);
+      queryClient.removeQueries({ queryKey: queryKeys.me.all() });
+      router.replace('/');
+      router.refresh();
+    },
+  });
+
   const value = {
-    user: initialUser,
-    isPending: false,
-    error: null,
-    isLoggingIn: false,
-    loginError: null,
-    isLoggingOut: false,
-    logoutError: null,
-    login: async () => {
-      throw new Error('TODO(③): login을 구현해 주세요.');
-    },
-    logout: async () => {
-      throw new Error('TODO(③): logout을 구현해 주세요.');
-    },
+    user,
+    isPending: canQuery ? isPending : false,
+    isLoggingIn: loginMutation.isPending,
+    loginError: loginMutation.error,
+    isSigningUp: signUpMutation.isPending,
+    signUpError: signUpMutation.error,
+    isLoggingOut: logoutMutation.isPending,
+    logoutError: logoutMutation.error,
+    isUpdatingMe: updateMeMutation.isPending,
+    updateMeError: updateMeMutation.error,
+    isDeletingMe: deleteMeMutation.isPending,
+    deleteMeError: deleteMeMutation.error,
+    login: loginMutation.mutateAsync,
+    signUp: signUpMutation.mutateAsync,
+    logout: logoutMutation.mutateAsync,
+    updateMe: updateMeMutation.mutateAsync,
+    deleteMe: deleteMeMutation.mutateAsync,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -47,11 +136,14 @@ export function AuthProvider({ children, initialUser = null }) {
 
 export function useAuth(required = false) {
   const context = useContext(AuthContext);
+  const router = useRouter();
 
-  // TODO(③): required && !isPending && !user 이면 router.replace('/login')
-  if (required) {
-    // 보호 라우트 이동은 담당자가 구현합니다.
-  }
+  // 강사님 정본과 동일 — 로그인/비로그인 판정이 끝난 뒤에만 이동합니다.
+  useEffect(() => {
+    if (required && !context.user && !context.isPending) {
+      router.push('/login');
+    }
+  }, [context.user, context.isPending, router, required]);
 
   return context;
 }
