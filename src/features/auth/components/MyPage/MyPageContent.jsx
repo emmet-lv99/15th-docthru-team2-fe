@@ -42,6 +42,8 @@ function MyPageView() {
   const [nickname, setNickname] = useState(user.nickname);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [deletePassword, setDeletePassword] = useState('');
+  const [withdrawalConsent, setWithdrawalConsent] = useState(false);
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -118,9 +120,22 @@ function MyPageView() {
 
   const handleDelete = async () => {
     setFormError(null);
+
+    if (!withdrawalConsent) {
+      setFormError('탈퇴 동의 체크가 필요해요.');
+      return;
+    }
+
+    if (!deletePassword.trim()) {
+      setFormError('비밀번호를 입력해 주세요.');
+      return;
+    }
+
     try {
-      await deleteMe();
+      await deleteMe({ password: deletePassword, withdrawalConsent });
       setIsDeleteOpen(false);
+      setDeletePassword('');
+      setWithdrawalConsent(false);
     } catch (error) {
       setFormError(error?.message ?? '탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요.');
     }
@@ -281,13 +296,39 @@ function MyPageView() {
               탈퇴하면 이메일·닉네임 등 개인정보가 익명 처리되고 다시 로그인할 수 없어요. 챌린지
               참여 기록과 작업물은 보존됩니다.
             </p>
+
+            <div className={styles.confirmBox}>
+              <label className={styles.confirmRow}>
+                <input
+                  type="checkbox"
+                  checked={withdrawalConsent}
+                  onChange={(event) => setWithdrawalConsent(event.target.checked)}
+                />
+                <span>위 내용을 모두 확인했고, 회원 탈퇴에 동의합니다.</span>
+              </label>
+
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={(event) => setDeletePassword(event.target.value)}
+                placeholder="비밀번호를 다시 입력해 주세요"
+                className={styles.confirmInput}
+                autoComplete="current-password"
+              />
+            </div>
+
             {formError && <p className={styles.feedback}>{formError}</p>}
             <div className={styles.dialogActions}>
               <Button
                 type="button"
                 variant="outline"
                 size="md"
-                onClick={() => setIsDeleteOpen(false)}
+                onClick={() => {
+                  setIsDeleteOpen(false);
+                  setDeletePassword('');
+                  setWithdrawalConsent(false);
+                  setFormError(null);
+                }}
                 disabled={isDeletingMe}
               >
                 취소
@@ -297,7 +338,7 @@ function MyPageView() {
                 variant="filledTonal"
                 size="md"
                 onClick={handleDelete}
-                disabled={isDeletingMe}
+                disabled={isDeletingMe || !withdrawalConsent || !deletePassword.trim()}
               >
                 {isDeletingMe ? '탈퇴 처리 중…' : '탈퇴하기'}
               </Button>
