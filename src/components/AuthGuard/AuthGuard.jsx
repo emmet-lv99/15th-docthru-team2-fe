@@ -22,5 +22,10 @@ export function AuthGuard({ role = null, children }) {
     }
   }, [role, isPending, user, router]);
 
+  // 로딩 중·미인증·역할 불일치일 때는 화면을 그리지 않아요.
+  // (리다이렉트가 끝나기 전에 children 을 그리면 화면이 깜빡이고 불필요한 요청이 나갑니다)
+  if (isPending || !user) return null;
+  if (role && user.role !== role) return null;
+
   return children;
 }

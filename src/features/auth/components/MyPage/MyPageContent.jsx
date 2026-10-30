@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/Button';
 import { useAuth } from '@/contexts/AuthProvider';
-import { AuthField } from '../AuthForm/AuthField.jsx';
+import { AuthField } from '@/features/auth/components/AuthForm';
 import * as styles from './MyPage.css.js';
 
 const BCRYPT_MAX_BYTES = 72;
@@ -46,6 +46,7 @@ function MyPageView() {
   const [withdrawalConsent, setWithdrawalConsent] = useState(false);
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -119,15 +120,15 @@ function MyPageView() {
   };
 
   const handleDelete = async () => {
-    setFormError(null);
+    setDeleteError(null);
 
     if (!withdrawalConsent) {
-      setFormError('탈퇴 동의 체크가 필요해요.');
+      setDeleteError('탈퇴 동의 체크가 필요해요.');
       return;
     }
 
     if (!deletePassword.trim()) {
-      setFormError('비밀번호를 입력해 주세요.');
+      setDeleteError('비밀번호를 입력해 주세요.');
       return;
     }
 
@@ -137,7 +138,7 @@ function MyPageView() {
       setDeletePassword('');
       setWithdrawalConsent(false);
     } catch (error) {
-      setFormError(error?.message ?? '탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      setDeleteError(error?.message ?? '탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요.');
     }
   };
 
@@ -273,7 +274,10 @@ function MyPageView() {
           <button
             type="button"
             className={styles.dangerButton}
-            onClick={() => setIsDeleteOpen(true)}
+            onClick={() => {
+              setDeleteError(null);
+              setIsDeleteOpen(true);
+            }}
           >
             회원 탈퇴
           </button>
@@ -317,7 +321,7 @@ function MyPageView() {
               />
             </div>
 
-            {formError && <p className={styles.feedback}>{formError}</p>}
+            {deleteError && <p className={styles.feedback}>{deleteError}</p>}
             <div className={styles.dialogActions}>
               <Button
                 type="button"
@@ -327,7 +331,7 @@ function MyPageView() {
                   setIsDeleteOpen(false);
                   setDeletePassword('');
                   setWithdrawalConsent(false);
-                  setFormError(null);
+                  setDeleteError(null);
                 }}
                 disabled={isDeletingMe}
               >

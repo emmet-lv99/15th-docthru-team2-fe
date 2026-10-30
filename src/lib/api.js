@@ -80,7 +80,14 @@ export async function apiGet(path, options = {}) {
 
   // 200 이어도 본문이 비어 있을 수 있어서 text 로 먼저 확인해요.
   const text = await response.text();
-  return { ok: true, status: response.status, data: text ? JSON.parse(text) : null };
+  if (!text) return { ok: true, status: response.status, data: null };
+
+  try {
+    return { ok: true, status: response.status, data: JSON.parse(text) };
+  } catch {
+    // JSON 이 아닌 200 응답(프록시 오류 페이지 등)은 빈 데이터로 처리해요.
+    return { ok: true, status: response.status, data: null };
+  }
 }
 
 /**

@@ -5,7 +5,7 @@
 //   · 인증 상태는 React Query 의 GET /auth/me 캐시 하나로 관리해요.
 //   · 보호 화면은 feature 컴포넌트에서 useAuth(true) 한 줄로 로그인 여부를 확인합니다.
 //   · 로그인/로그아웃 성공 시 router.refresh() 로 서버 컴포넌트(GNB·layout)도 새 쿠키를 읽게 합니다.
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import {
@@ -54,6 +54,18 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
     retry: false,
   });
 
+  // 서버 렌더에서 /auth/me 가 일시 실패하면 initialUser 가 비어 GNB 가 로그아웃 상태로 그려져요.
+  // (레이아웃이 죽지 않도록 getViewer 가 null 로 흘려보내기 때문입니다)
+  // 클라이언트 조회가 성공하면 서버 레이아웃을 **한 번** 새로 고쳐 GNB 상태를 복구합니다.
+  const didRecoverRef = useRef(false);
+
+  useEffect(() => {
+    if (!canQuery || initialUser || !user || didRecoverRef.current) return;
+
+    didRecoverRef.current = true;
+    router.refresh();
+  }, [canQuery, initialUser, user, router]);
+
   const loginMutation = useMutation({
     mutationFn: ({ email, password }) => loginRequest({ email, password }),
     onSuccess: (loggedInUser) => {
@@ -89,7 +101,8 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
   });
 
   const deleteMeMutation = useMutation({
-    mutationFn: ({ password, withdrawalConsent }) => deleteMeRequest({ password, withdrawalConsent }),
+    mutationFn: ({ password, withdrawalConsent }) =>
+      deleteMeRequest({ password, withdrawalConsent }),
     onSuccess: () => {
       queryClient.setQueryData(queryKeys.me.info(), null);
       queryClient.removeQueries({ queryKey: queryKeys.me.all() });
