@@ -89,7 +89,8 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
   });
 
   const deleteMeMutation = useMutation({
-    mutationFn: ({ password, withdrawalConsent }) => deleteMeRequest({ password, withdrawalConsent }),
+    mutationFn: ({ password, withdrawalConsent }) =>
+      deleteMeRequest({ password, withdrawalConsent }),
     onSuccess: () => {
       queryClient.setQueryData(queryKeys.me.info(), null);
       queryClient.removeQueries({ queryKey: queryKeys.me.all() });
