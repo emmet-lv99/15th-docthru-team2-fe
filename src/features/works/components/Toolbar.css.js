@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css';
 export const toolbar = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '24px',
+  gap: '15px',
   padding: '16px 0',
 });
 

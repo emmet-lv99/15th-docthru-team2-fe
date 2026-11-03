@@ -4,7 +4,9 @@ import { useEditorState } from '@tiptap/react';
 import clsx from 'clsx';
 import Image from 'next/image.js';
 import iconBold from '../assets/icon_bold.svg';
+import iconBullet from '../assets/icon_bullet.svg';
 import iconItalic from '../assets/icon_italic.svg';
+import iconNumbering from '../assets/icon_numbering.svg';
 import iconUnderline from '../assets/icon_underline.svg';
 import * as styles from './Toolbar.css.js';
 
@@ -15,6 +17,8 @@ function Toolbar({ editor }) {
       isBold: ctx.editor?.isActive('bold') ?? false,
       isItalic: ctx.editor?.isActive('italic') ?? false,
       isUnderline: ctx.editor?.isActive('underline') ?? false,
+      isBulletList: ctx.editor?.isActive('bulletList') ?? false,
+      isOrderList: ctx.editor?.isActive('orderedList') ?? false,
     }),
   });
 
@@ -26,7 +30,6 @@ function Toolbar({ editor }) {
       <div className={styles.buttonGroup}>
         <button
           type="button"
-          onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
             editor.chain().focus().toggleBold().run();
           }}
@@ -54,9 +57,38 @@ function Toolbar({ editor }) {
         </button>
       </div>
       {/* 그룹 2: 정렬 (3개) */}
-      <div className={styles.buttonGroup}>{/* 정렬 버튼 3개 */}</div>
+      <div className={styles.buttonGroup}>
+        <button
+          type="button"
+          onClick={() => {
+            editor.chain().focus().toggleBulletList().run();
+          }}
+          className={clsx(styles.toolbarButton, editorState.isBulletList && styles.activeButton)}
+        >
+          <Image src={iconBullet} alt="불릿 목록 아이콘" />
+        </button>
+      </div>
       {/* 그룹 3: 목록 (2개) */}
-      <div className={styles.buttonGroup}>{/* 목록 버튼 2개 */}</div>
+      <div className={styles.buttonGroup}>
+        <button
+          type="button"
+          onClick={() => {
+            editor.chain().focus().toggleBulletList().run();
+          }}
+          className={clsx(styles.toolbarButton, editorState.isBulletList && styles.activeButton)}
+        >
+          <Image src={iconBullet} alt="불릿 목록 아이콘" />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            editor.chain().focus().toggleOrderedList().run();
+          }}
+          className={clsx(styles.toolbarButton, editorState.isOrderList && styles.activeButton)}
+        >
+          <Image src={iconNumbering} alt="번호 목록 아이콘" />
+        </button>
+      </div>
       {/* 그룹 4: 페인트통 (1개) */}
       <div className={styles.buttonGroup}>{/* 페인트통 버튼 */}</div>
     </div>

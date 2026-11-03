@@ -32,3 +32,23 @@ globalStyle(`${editorContent} .tiptap p.is-editor-empty:first-child::before`, {
   pointerEvents: 'none',
   height: 0,
 });
+
+// 1. 불릿 목록 (disc 점 + 들여쓰기)
+globalStyle(`${editorContent} .tiptap ul`, {
+  listStyleType: 'disc',
+  paddingLeft: '24px',
+  margin: '8px 0',
+});
+// 2. 번호 목록 (1, 2, 3 숫자 + 들여쓰기)
+globalStyle(`${editorContent} .tiptap ol`, {
+  listStyleType: 'decimal',
+  paddingLeft: '24px',
+  margin: '8px 0',
+});
+// 3. 목록 항목 간 여백
+globalStyle(`${editorContent} .tiptap li`, {
+  margin: '4px 0',
+});
+globalStyle(`${editorContent} .tiptap li p`, {
+  margin: 0, // li 내부 문단 기본 여백 제거
+});
