@@ -1,6 +1,7 @@
 'use client';
 
 import { Placeholder } from '@tiptap/extension-placeholder';
+import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Toolbar from './Toolbar';
@@ -11,6 +12,9 @@ function WorkEditor({ initialContent = '', onChange }) {
     immediatelyRender: false,
     extensions: [
       StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
       Placeholder.configure({
         placeholder: '번역 내용을 적어주세요',
       }),
