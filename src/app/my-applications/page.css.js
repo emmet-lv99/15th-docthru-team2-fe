@@ -170,6 +170,10 @@ export const challengeTitle = style({
   color: '#404040',
 });
 
+/* =============
+상태별색상적용
+================= */
+
 //상태 기본 스타일
 export const statusBadge = style({
   display: 'inline-block',
@@ -179,6 +183,26 @@ export const statusBadge = style({
   fontWeight: '600',
   backgroundColor: '#FFFDE7',
   color: '#F2BC00',
+});
+
+export const pendingBadge = style({
+  backgroundColor: '#FFFDE7',
+  color: '#f2b200',
+});
+
+export const approvedBadge = style({
+  backgroundColor: '#DFF0FF',
+  color: '#4095DE',
+});
+
+export const rejectedBadge = style({
+  backgroundColor: '#FFF0F0',
+  color: '#E54946',
+});
+
+export const deletedBadge = style({
+  backgroundColor: '#E5E5E5',
+  color: '#737373',
 });
 
 export const tableRow = style({

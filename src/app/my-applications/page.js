@@ -55,7 +55,7 @@ const applications = [
     maxParticipants: 5,
     appliedAt: '24/01/16',
     deadline: '24/02/23',
-    status: 'PENDING',
+    status: 'APPROVED',
   },
   {
     id: 1021,
@@ -65,7 +65,7 @@ const applications = [
     maxParticipants: 10,
     appliedAt: '24/01/16',
     deadline: '24/02/22',
-    status: 'PENDING',
+    status: 'REJECTED',
   },
   {
     id: 1020,
@@ -135,7 +135,7 @@ const applications = [
     maxParticipants: 10,
     appliedAt: '24/01/16',
     deadline: '24/02/22',
-    status: 'APPROVED',
+    status: 'DELETED',
   },
   {
     id: 1014,
@@ -150,14 +150,26 @@ const applications = [
 ];
 
 export default function MeApplicationsPage() {
+  //현재 선택된 페이지
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(applications.length / itemsPerPage);
+  //검색창에 입력한 글자
+  const [searchKeyword, setSearchKeyword] = useState('');
+  
 
-  // 현재페이지에서 시작할 데이터 위치
+  const itemsPerPage = 10;
+
+  //검색어와 일치하는 데이터만 추출
+  const filteredApplications = applications.filter((application) =>
+    application.title.toLowerCase().includes(searchKeyword.trim().toLowerCase()),
+  );
+
+  const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
+
+  // 현재페이지에서 시작 위치
   const startIndex = (currentPage - 1) * itemsPerPage;
+
   //현재 페이지에 표시할 데이터
-  const currentApplications = applications.slice(startIndex, startIndex + itemsPerPage);
+  const currentApplications = filteredApplications.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <AuthGuard>
@@ -190,6 +202,11 @@ export default function MeApplicationsPage() {
               placeholder="챌린지 이름을 검색해 보세요"
               aria-label="챌린지 검색"
               className={styles.searchInput}
+              value={searchKeyword}
+              onChange={(e) => {
+                setSearchKeyword(e.target.value);
+                setCurrentPage(1);
+              }}
             />
 
             <select
@@ -239,7 +256,17 @@ export default function MeApplicationsPage() {
                     <td className={styles.tableCell}>{application.appliedAt}</td>
                     <td className={styles.tableCell}>{application.deadline}</td>
                     <td className={styles.tableCell}>
-                      <span className={styles.statusBadge}>
+                      <span
+                        className={`${styles.statusBadge} ${
+                          application.status === 'PENDING'
+                            ? styles.pendingBadge
+                            : application.status === 'APPROVED'
+                              ? styles.approvedBadge
+                              : application.status === 'REJECTED'
+                                ? styles.rejectedBadge
+                                : styles.deletedBadge
+                        }`}
+                      >
                         {application.status === 'PENDING'
                           ? '승인 대기'
                           : application.status === 'APPROVED'
