@@ -10,6 +10,7 @@ import iconBold from '../assets/icon_bold.svg';
 import iconBullet from '../assets/icon_bullet.svg';
 import iconItalic from '../assets/icon_italic.svg';
 import iconNumbering from '../assets/icon_numbering.svg';
+import iconPaint from '../assets/icon_paint.svg';
 import iconUnderline from '../assets/icon_underline.svg';
 import * as styles from './Toolbar.css.js';
 
@@ -115,7 +116,19 @@ function Toolbar({ editor }) {
         </button>
       </div>
       {/* 그룹 4: 페인트통 (1개) */}
-      <div className={styles.buttonGroup}>{/* 페인트통 버튼 */}</div>
+      <div className={styles.buttonGroup}>
+        <label
+          className={clsx(styles.toolbarButton, editorState.hasColor && styles.activeButton)}
+          title="글자 색상"
+        >
+          <Image src={iconPaint} alt="글자 색상 아이콘" />
+          <input
+            type="color"
+            onInput={(e) => editor.chain().focus().setColor(e.target.value).run()}
+            style={{ display: 'none' }}
+          />
+        </label>
+      </div>
     </div>
   );
 }

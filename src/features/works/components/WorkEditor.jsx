@@ -1,7 +1,9 @@
 'use client';
 
+import { Color } from '@tiptap/extension-color';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
+import { TextStyle } from '@tiptap/extension-text-style';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Toolbar from './Toolbar';
@@ -18,6 +20,8 @@ function WorkEditor({ initialContent = '', onChange }) {
       Placeholder.configure({
         placeholder: '번역 내용을 적어주세요',
       }),
+      TextStyle,
+      Color,
     ],
     content: initialContent,
     onUpdate: ({ editor }) => {
