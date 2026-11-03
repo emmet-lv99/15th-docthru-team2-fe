@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import * as styles from './Toolbar.css.js';
 
 function Toolbar({ editor }) {
@@ -7,9 +8,36 @@ function Toolbar({ editor }) {
     <div className={styles.toolbar}>
       {/* 그룹 1: 서식 (3개) */}
       <div className={styles.buttonGroup}>
-        <button>B</button>
-        <button>I</button>
-        <button>U</button>
+        <button
+          type="button"
+          onClick={() => {
+            editor.chain().focus().toggleBold().run();
+          }}
+          className={clsx(styles.toolbarButton, editor.isActive('bold') && styles.activeButton)}
+        >
+          B
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            editor.chain().focus().toggleItalic().run();
+          }}
+          className={clsx(styles.toolbarButton, editor.isActive('italic') && styles.activeButton)}
+        >
+          I
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            editor.chain().focus().toggleUnderline().run();
+          }}
+          className={clsx(
+            styles.toolbarButton,
+            editor.isActive('underline') && styles.activeButton,
+          )}
+        >
+          U
+        </button>
       </div>
       {/* 그룹 2: 정렬 (3개) */}
       <div className={styles.buttonGroup}>{/* 정렬 버튼 3개 */}</div>

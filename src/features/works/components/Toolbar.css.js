@@ -6,8 +6,13 @@ export const toolbar = style({
   gap: '24px',
   padding: '16px 0',
 });
+
 export const buttonGroup = style({
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
 });
+
+export const toolbarButton = style({});
+
+export const activeButton = style({});
