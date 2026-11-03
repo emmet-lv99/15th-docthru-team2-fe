@@ -33,80 +33,208 @@ import { AuthGuard } from '@/components/AuthGuard';
 import Link from 'next/link';
 import * as styles from './page.css.js';
 
+// 임시 신청 데이터
+const applications = [
+  {
+    id: 1023,
+    field: '공식문서',
+    category: 'Next.js',
+    title: 'Next.js - App Router: Routing Fundamentals',
+    maxParticipants: 10,
+    appliedAt: '24/01/16',
+    deadline: '24/02/24',
+    status: 'PENDING',
+  },
+  {
+    id: 1022,
+    field: '블로그',
+    category: 'API',
+    title: 'Fetch API, 너는 에러를 제대로 핸들링 하고 있는가?',
+    maxParticipants: 5,
+    appliedAt: '24/01/16',
+    deadline: '24/02/23',
+    status: 'PENDING',
+  },
+  {
+    id: 1021,
+    field: '공식문서',
+    category: 'API',
+    title: 'Fetch API 사용법 번역 챌린지',
+    maxParticipants: 10,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'PENDING',
+  },
+  {
+    id: 1020,
+    field: '블로그',
+    category: 'Career',
+    title: '개발자로서 자신만의 브랜드를 구축하는 방법',
+    maxParticipants: 5,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'REJECTED',
+  },
+  {
+    id: 1019,
+    field: '공식문서',
+    category: 'Next.js',
+    title: 'Next.js - App Router: Routing Fundamentals',
+    maxParticipants: 10,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'APPROVED',
+  },
+  {
+    id: 1018,
+    field: '공식문서',
+    category: 'API',
+    title: 'Fetch API 에러 핸들링 챌린지',
+    maxParticipants: 5,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'REJECTED',
+  },
+  {
+    id: 1017,
+    field: '공식문서',
+    category: 'API',
+    title: 'Fetch API 활용하기',
+    maxParticipants: 10,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'APPROVED',
+  },
+  {
+    id: 1016,
+    field: '블로그',
+    category: 'Career',
+    title: '개발자로서 자신만의 브랜드를 구축하는 방법',
+    maxParticipants: 5,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'APPROVED',
+  },
+  {
+    id: 1015,
+    field: '블로그',
+    category: 'Next.js',
+    title: 'Next.js - App Router: Routing Fundamentals',
+    maxParticipants: 10,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'APPROVED',
+  },
+  {
+    id: 1014,
+    field: '블로그',
+    category: 'Next.js',
+    title: 'Next.js - App Router: Routing Fundamentals',
+    maxParticipants: 10,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'DELETED',
+  },
+];
+
 export default function MeApplicationsPage() {
   return (
     <AuthGuard>
-      <main className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>나의 챌린지</h1>
-          <Link href="/my-applications/new" className={styles.newButton}>
-            신규 챌린지 신청 +
-          </Link>
-        </div>
+      <div className={styles.pageBackground}>
+        <main className={styles.container}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>나의 챌린지</h1>
+            <Link href="/my-applications/new" className={styles.newButton}>
+              신규 챌린지 신청 +
+            </Link>
+          </div>
 
-        {/* 탭메뉴 */}
-        <nav className={styles.tabs} aria-label="나의 챌린지 메뉴">
-          <Link href="/my-challenges/participating" className={styles.tab}>
-            참여중인 챌린지
-          </Link>
-          <Link href="/my-challenges/completed" className={styles.tab}>
-            완료한 챌린지
-          </Link>
-          <Link href="/my-applications" className={`${styles.tab} ${styles.activeTab}`}>
-            신청한 챌린지
-          </Link>
-        </nav>
+          {/* 탭메뉴 */}
+          <nav className={styles.tabs} aria-label="나의 챌린지 메뉴">
+            <Link href="/my-challenges/participating" className={styles.tab}>
+              참여중인 챌린지
+            </Link>
+            <Link href="/my-challenges/completed" className={styles.tab}>
+              완료한 챌린지
+            </Link>
+            <Link href="/my-applications" className={`${styles.tab} ${styles.activeTab}`}>
+              신청한 챌린지
+            </Link>
+          </nav>
 
-        {/* 검색 및 필터 */}
-        <div className={styles.filterBar}>
-          <input
-            type="search"
-            placeholder="챌린지 이름을 검색해 보세요"
-            aria-label="챌린지 검색"
-            className={styles.searchInput}
-          />
+          {/* 검색 및 필터 */}
+          <div className={styles.filterBar}>
+            <input
+              type="search"
+              placeholder="챌린지 이름을 검색해 보세요"
+              aria-label="챌린지 검색"
+              className={styles.searchInput}
+            />
 
-          <select
-            className={styles.statusSelect}
-            defaultValue="PENDING"
-            aria-label="신청 상태 필터"
-          >
-            <option value="ALL">전체 상태</option>
-            <option value="PENDING">승인 대기</option>
-            <option value="APPROVED">신청 승인</option>
-            <option value="REJECTED">신청 거절</option>
-            <option value="CANCELLED">신청 취소</option>
-          </select>
-        </div>
+            <select
+              className={styles.statusSelect}
+              defaultValue="PENDING"
+              aria-label="신청 상태 필터"
+            >
+              <option value="ALL">전체 상태</option>
+              <option value="PENDING">승인 대기</option>
+              <option value="APPROVED">신청 승인</option>
+              <option value="REJECTED">신청 거절</option>
+              <option value="CANCELLED">신청 취소</option>
+            </select>
+          </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>No.</th>
-              <th>분야</th>
-              <th>카테고리</th>
-              <th>챌린지 제목</th>
-              <th>모집 인원</th>
-              <th>신청일</th>
-              <th>마감 기한</th>
-              <th>상태</th>
-            </tr>
-          </thead>
+          {/* 신청한 챌린지 목록 */}
+          <div className={styles.tableWrapper}>
+            <table className={styles.table}>
+              <thead className={styles.tableHeader}>
+                <tr>
+                  <th className={styles.tableHeading}>No.</th>
+                  <th className={styles.tableHeading}>분야</th>
+                  <th className={styles.tableHeading}>카테고리</th>
+                  <th className={styles.tableHeading}>챌린지 제목</th>
+                  <th className={styles.tableHeading}>모집 인원</th>
+                  <th className={styles.tableHeading}>신청일</th>
+                  <th className={styles.tableHeading}>마감 기한</th>
+                  <th className={styles.tableHeading}>상태</th>
+                </tr>
+              </thead>
 
-          <tbody>
-            <tr>
-              <td>1023</td>
-              <td>공식문서</td>
-              <td>API</td>
-              <td>번역 챌린지</td>
-              <td>10</td>
-              <td>24/01/16</td>
-              <td>24/02/24</td>
-              <td>승인대기</td>
-            </tr>
-          </tbody>
-        </table>
-      </main>
+              <tbody>
+                {applications.map((application) => (
+                  <tr
+                    key={application.id}
+                    className={
+                      application.status === 'DELETED' ? styles.deletedRow : styles.tableRow
+                    }
+                  >
+                    <td className={styles.tableCell}>{application.id}</td>
+                    <td className={styles.tableCell}>{application.field}</td>
+                    <td className={styles.tableCell}>{application.category}</td>
+                    <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
+                      {application.title}
+                    </td>
+                    <td className={styles.tableCell}>{application.maxParticipants}</td>
+                    <td className={styles.tableCell}>{application.appliedAt}</td>
+                    <td className={styles.tableCell}>{application.deadline}</td>
+                    <td className={styles.tableCell}>
+                      <span className={styles.statusBadge}>
+                        {application.status === 'PENDING'
+                          ? '승인 대기'
+                          : application.status === 'APPROVED'
+                            ? '신청 승인'
+                            : application.status === 'REJECTED'
+                              ? '신청 거절'
+                              : '챌린지 삭제'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
     </AuthGuard>
   );
 }
