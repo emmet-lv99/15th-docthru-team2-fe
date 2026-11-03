@@ -40,14 +40,45 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
+'use client';
+
 import { AuthGuard } from '@/components/AuthGuard';
+import EditorActionBar from '@/features/works/components/EditorActionBar';
+import SourceViewer from '@/features/works/components/SourceViewer.jsx';
+import WorkEditor from '@/features/works/components/WorkEditor';
+import { useState } from 'react';
+import * as styles from './page.css.js';
 
 export default function ChallengeEditPage() {
+  const [isSourceOpen, setIsSourceOpen] = useState(false);
+
   return (
     <AuthGuard>
-      <span>
-        작업 도전 (에디터) — TODO(팀원 ②): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
-      </span>
+      <div className={styles.pageLayout}>
+        {/* 좌측 에디터 영역 */}
+        <div className={styles.mainContent}>
+          <div className={styles.innerContainer}>
+            {/* 상단 전용 액션 바 */}
+            <EditorActionBar />
+            {/* 챌린지 원문 제목 */}
+            <h1 className={styles.challengeTitle}>챌린지 타이틀</h1>
+            {/* 에디터 */}
+            <WorkEditor />
+          </div>
+        </div>
+        {/* 우측 원문 패널 */}
+        {isSourceOpen && <SourceViewer onClose={() => setIsSourceOpen(false)} />}
+        {/* 우측 원문 보기 플로팅 버튼 */}
+        {!isSourceOpen && (
+          <button
+            type="button"
+            onClick={() => setIsSourceOpen(true)}
+            className={styles.floatingSourceButton}
+          >
+            원문
+          </button>
+        )}
+      </div>
     </AuthGuard>
   );
 }
