@@ -30,14 +30,83 @@
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
 import { AuthGuard } from '@/components/AuthGuard';
+import Link from 'next/link';
+import * as styles from './page.css.js';
 
 export default function MeApplicationsPage() {
   return (
     <AuthGuard>
-      <span>
-        내 제안 목록 — TODO(팀원 ⑤ (목록은 팀원 ③ 협력)): 이 파일 상단의 주석 가이드를 따라 구현해
-        주세요
-      </span>
+      <main className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>나의 챌린지</h1>
+          <Link href="/my-applications/new" className={styles.newButton}>
+            신규 챌린지 신청 +
+          </Link>
+        </div>
+
+        {/* 탭메뉴 */}
+        <nav className={styles.tabs} aria-label="나의 챌린지 메뉴">
+          <Link href="/my-challenges/participating" className={styles.tab}>
+            참여중인 챌린지
+          </Link>
+          <Link href="/my-challenges/completed" className={styles.tab}>
+            완료한 챌린지
+          </Link>
+          <Link href="/my-applications" className={`${styles.tab} ${styles.activeTab}`}>
+            신청한 챌린지
+          </Link>
+        </nav>
+
+        {/* 검색 및 필터 */}
+        <div className={styles.filterBar}>
+          <input
+            type="search"
+            placeholder="챌린지 이름을 검색해 보세요"
+            aria-label="챌린지 검색"
+            className={styles.searchInput}
+          />
+
+          <select
+            className={styles.statusSelect}
+            defaultValue="PENDING"
+            aria-label="신청 상태 필터"
+          >
+            <option value="ALL">전체 상태</option>
+            <option value="PENDING">승인 대기</option>
+            <option value="APPROVED">신청 승인</option>
+            <option value="REJECTED">신청 거절</option>
+            <option value="CANCELLED">신청 취소</option>
+          </select>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>분야</th>
+              <th>카테고리</th>
+              <th>챌린지 제목</th>
+              <th>모집 인원</th>
+              <th>신청일</th>
+              <th>마감 기한</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>1023</td>
+              <td>공식문서</td>
+              <td>API</td>
+              <td>번역 챌린지</td>
+              <td>10</td>
+              <td>24/01/16</td>
+              <td>24/02/24</td>
+              <td>승인대기</td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
     </AuthGuard>
   );
 }
