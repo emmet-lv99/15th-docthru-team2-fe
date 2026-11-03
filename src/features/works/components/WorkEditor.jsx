@@ -1,7 +1,6 @@
 'use client';
 
 import { Placeholder } from '@tiptap/extension-placeholder';
-import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Toolbar from './Toolbar';
@@ -12,7 +11,6 @@ function WorkEditor({ initialContent = '', onChange }) {
     immediatelyRender: false,
     extensions: [
       StarterKit,
-      Underline,
       Placeholder.configure({
         placeholder: '번역 내용을 적어주세요',
       }),

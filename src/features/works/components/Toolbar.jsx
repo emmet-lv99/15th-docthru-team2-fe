@@ -1,7 +1,23 @@
+'use client';
+
+import { useEditorState } from '@tiptap/react';
 import clsx from 'clsx';
+import Image from 'next/image.js';
+import iconBold from '../assets/icon_bold.svg';
+import iconItalic from '../assets/icon_italic.svg';
+import iconUnderline from '../assets/icon_underline.svg';
 import * as styles from './Toolbar.css.js';
 
 function Toolbar({ editor }) {
+  const editorState = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isBold: ctx.editor?.isActive('bold') ?? false,
+      isItalic: ctx.editor?.isActive('italic') ?? false,
+      isUnderline: ctx.editor?.isActive('underline') ?? false,
+    }),
+  });
+
   if (!editor) return null;
 
   return (
@@ -10,33 +26,31 @@ function Toolbar({ editor }) {
       <div className={styles.buttonGroup}>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
             editor.chain().focus().toggleBold().run();
           }}
-          className={clsx(styles.toolbarButton, editor.isActive('bold') && styles.activeButton)}
+          className={clsx(styles.toolbarButton, editorState.isBold && styles.activeButton)}
         >
-          B
+          <Image src={iconBold} alt="굵게 아이콘" />
         </button>
         <button
           type="button"
           onClick={() => {
             editor.chain().focus().toggleItalic().run();
           }}
-          className={clsx(styles.toolbarButton, editor.isActive('italic') && styles.activeButton)}
+          className={clsx(styles.toolbarButton, editorState.isItalic && styles.activeButton)}
         >
-          I
+          <Image src={iconItalic} alt="기울여 쓰기 아이콘" />
         </button>
         <button
           type="button"
           onClick={() => {
             editor.chain().focus().toggleUnderline().run();
           }}
-          className={clsx(
-            styles.toolbarButton,
-            editor.isActive('underline') && styles.activeButton,
-          )}
+          className={clsx(styles.toolbarButton, editorState.isUnderline && styles.activeButton)}
         >
-          U
+          <Image src={iconUnderline} alt="밑줄 아이콘" />
         </button>
       </div>
       {/* 그룹 2: 정렬 (3개) */}
