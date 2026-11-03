@@ -4,6 +4,7 @@ import { style } from '@vanilla-extract/css';
 export const pageBackground = style({
   backgroundColor: '#FAFAFA',
   minHeight: '100dvh',
+  paddingTop: '30px',
 });
 
 //페이지 전체
@@ -22,12 +23,13 @@ export const header = style({
 
 //제목
 export const title = style({
-  fontSize: '24px',
-  fontWeight: ' 700',
+  fontSize: '20px',
+  fontWeight: '600',
 });
 
 //신규신청 버튼
 export const newButton = style({
+  height: '40px',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -43,8 +45,8 @@ export const newButton = style({
 //탭 메뉴 전체
 export const tabs = style({
   display: 'flex',
-  gap: '32px',
-  borderBottom: '1px solid #dddddd',
+  gap: '24px',
+  borderBottom: '1px solid #d4d4d4',
   marginBottom: '30px',
 });
 
@@ -53,14 +55,14 @@ export const tab = style({
   padding: '0 24px 16px',
   fontSize: '18px',
   fontWeight: '600',
-  color: '#777777',
+  color: '#737373',
   textDecoration: 'none',
 });
 
 //선택된탭
 export const activeTab = style({
-  color: '#222222',
-  borderBottom: '3px solid #222222',
+  color: '#262626',
+  borderBottom: '3px solid #262626',
   marginBottom: '-1px',
 });
 
@@ -76,9 +78,9 @@ export const searchInput = style({
   flex: 1,
   minWidth: 0,
   width: '844px',
-  height: '50px',
+  height: '40px',
   padding: '0 20px',
-  border: '1px solid #dddddd',
+  border: '1px solid #e5e5e5',
   borderRadius: '30px',
   backgroundColor: '#FFFFFF',
   fontSize: '16px',
@@ -93,10 +95,14 @@ export const searchInput = style({
 
 //드롭다운
 export const statusSelect = style({
-  width: '175px',
-  height: '50px',
-  padding: '0 16px',
+  width: '140px',
+  height: '40px',
+  padding: '10px',
   borderRadius: '30px',
+  border: '1px solid #e5e5e5',
+  color: '#a3a3a3',
+  fontSize: '16px',
+  fontWeight: '400',
 });
 
 //표전체
@@ -123,7 +129,7 @@ export const tableHeader = style({
 //표 제목 칸
 export const tableHeading = style({
   backgroundColor: '#262626',
-  padding: '16px 12px',
+  padding: '10px 16px',
   fontSize: '14px',
   fontWeight: '600',
   color: '#ffffff',
@@ -141,9 +147,11 @@ export const tableHeading = style({
 
 //표 데이터 칸
 export const tableCell = style({
-  padding: '20px 12px',
-  fontSize: '14px',
-  color: '#333333',
+  height: '48px',
+  padding: '15px 16px',
+  fontSize: '13px',
+  fontWeight: '400',
+  color: '#737373',
   borderBottom: '1px solid #eeeeee',
 
   selectors: {
@@ -157,17 +165,20 @@ export const tableCell = style({
 export const challengeTitle = style({
   textAlign: 'left',
   fontWeight: '600',
+  fontSize: '13px',
+  fontWidth: '500',
+  color: '#404040',
 });
 
 //상태 기본 스타일
 export const statusBadge = style({
   display: 'inline-block',
-  padding: '6px 12px',
-  borderRadius: '20px',
-  fontSize: '12px',
+  padding: '4px 8px',
+  borderRadius: '4px',
+  fontSize: '13px',
   fontWeight: '600',
-  backgroundColor: '#fff3d6',
-  color: '#a66a00',
+  backgroundColor: '#FFFDE7',
+  color: '#F2BC00',
 });
 
 export const tableRow = style({
