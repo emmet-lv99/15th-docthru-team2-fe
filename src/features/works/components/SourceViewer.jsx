@@ -1,7 +1,7 @@
 function SourceViewer({ onClose }) {
   return (
     <>
-      소스 뷰어
+      <iframe src="https://nextjs.org/docs" width={100} />
       <button onClick={() => onClose()}>닫기</button>
     </>
   );
