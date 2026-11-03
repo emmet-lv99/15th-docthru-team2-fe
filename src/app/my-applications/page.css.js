@@ -188,3 +188,37 @@ export const tableRow = style({
 export const deletedRow = style({
   backgroundColor: '#fafafa',
 });
+
+// ========= 페이지네이션
+
+//페이지 번호버튼
+export const pageButton = style({
+  width: '40px',
+  height: '40px',
+  border: 'none',
+  borderRadius: '8px',
+  backgroundColor: 'transparent',
+  color: '#A3A3A3',
+  fontSize: '16px',
+  cursor: 'pointer',
+});
+
+//선택된 페이지 버튼
+export const activePage = style({
+  width: '40px',
+  height: '40px',
+  border: 'none',
+  borderRadius: '8px',
+  backgroundColor: '#262626',
+  color: '#FFC117',
+  fontSize: '16px',
+  cursor: 'pointer',
+});
+
+export const pagination = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '12px',
+  marginTop: '40px',
+});

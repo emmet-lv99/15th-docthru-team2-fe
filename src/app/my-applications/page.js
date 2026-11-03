@@ -28,10 +28,12 @@
 //    ③ 본인 화면의 디자인 근거(PNG · 토큰)를 충실히 따라 어긋나는 것이 없는지
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
+'use client';
 
 import { AuthGuard } from '@/components/AuthGuard';
 import Link from 'next/link';
 import * as styles from './page.css.js';
+import { useState } from 'react';
 
 // 임시 신청 데이터
 const applications = [
@@ -126,6 +128,16 @@ const applications = [
     status: 'APPROVED',
   },
   {
+    id: 1013,
+    field: '블로그',
+    category: 'Next.js',
+    title: 'Next.js - App Router: Routing Fundamentals',
+    maxParticipants: 10,
+    appliedAt: '24/01/16',
+    deadline: '24/02/22',
+    status: 'APPROVED',
+  },
+  {
     id: 1014,
     field: '블로그',
     category: 'Next.js',
@@ -138,6 +150,15 @@ const applications = [
 ];
 
 export default function MeApplicationsPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(applications.length / itemsPerPage);
+
+  // 현재페이지에서 시작할 데이터 위치
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  //현재 페이지에 표시할 데이터
+  const currentApplications = applications.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <AuthGuard>
       <div className={styles.pageBackground}>
@@ -201,7 +222,7 @@ export default function MeApplicationsPage() {
               </thead>
 
               <tbody>
-                {applications.map((application) => (
+                {currentApplications.map((application) => (
                   <tr
                     key={application.id}
                     className={
@@ -233,6 +254,35 @@ export default function MeApplicationsPage() {
               </tbody>
             </table>
           </div>
+          {/* 페이지네이션 */}
+          <nav className={styles.pagination}>
+            <button
+              type="button"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              &lt;
+            </button>
+
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                type="button"
+                className={currentPage === pageNumber ? styles.activePage : styles.pageButton}
+                aria-current={currentPage === pageNumber ? 'page' : undefined}
+                onClick={() => setCurrentPage(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
+            <button
+              type="button"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              &gt;
+            </button>
+          </nav>
         </main>
       </div>
     </AuthGuard>
