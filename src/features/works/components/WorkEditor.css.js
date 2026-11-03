@@ -52,3 +52,37 @@ globalStyle(`${editorContent} .tiptap li`, {
 globalStyle(`${editorContent} .tiptap li p`, {
   margin: 0, // li 내부 문단 기본 여백 제거
 });
+
+// 1. 코드 블록 (```code```) - 깔끔한 다크 박스 스타일
+globalStyle(`${editorContent} .tiptap pre`, {
+  backgroundColor: '#1E1E1E', // 또는 vars.colorGray900
+  color: '#D4D4D4',
+  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+  padding: '16px',
+  borderRadius: '8px',
+  margin: '16px 0',
+  overflowX: 'auto',
+});
+globalStyle(`${editorContent} .tiptap pre code`, {
+  color: 'inherit',
+  padding: 0,
+  background: 'none',
+  fontSize: '0.9rem',
+});
+// 2. 인라인 코드 (`code`) - 가벼운 칩 스타일
+globalStyle(`${editorContent} .tiptap :not(pre) > code`, {
+  backgroundColor: '#F3F4F6',
+  color: '#EB5757',
+  padding: '2px 6px',
+  borderRadius: '4px',
+  fontFamily: 'ui-monospace, monospace',
+  fontSize: '0.875em',
+});
+// 3. 인용구 (> blockquote)
+globalStyle(`${editorContent} .tiptap blockquote`, {
+  borderLeft: '3px solid #E5E7EB',
+  paddingLeft: '16px',
+  margin: '16px 0',
+  color: '#6B7280',
+  fontStyle: 'italic',
+});
