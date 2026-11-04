@@ -11,7 +11,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { queryKeys } from '@/lib/queryKeys';
-import { getParticipating } from '../api.js';
+import { getParticipating } from '@/features/my-challenges/api.js';
 
 /**
  * @param {{ limit?: number }} [options]
