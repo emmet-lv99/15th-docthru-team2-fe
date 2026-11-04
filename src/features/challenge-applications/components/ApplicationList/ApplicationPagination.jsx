@@ -2,17 +2,14 @@
 
 import * as styles from './ApplicationList.css.js';
 
-export default function ApplicationPagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}) {
+export default function ApplicationPagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
 
   return (
     <nav className={styles.pagination} aria-label="신청 목록 페이지 이동">
       <button
         type="button"
+        aria-label="이전 페이지"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
       >
@@ -33,6 +30,7 @@ export default function ApplicationPagination({
 
       <button
         type="button"
+        aria-label="다음 페이지"
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
       >
