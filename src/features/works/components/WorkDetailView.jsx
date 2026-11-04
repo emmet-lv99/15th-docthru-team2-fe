@@ -9,7 +9,7 @@ import * as styles from './WorkDetailView.css.js';
 
 function WorkDetailView({ initialWork, challengeId, workId }) {
   const { data: work } = useQuery({
-    queryKey: queryKeys.works.detail(workId),
+    queryKey: queryKeys.works.detail(Number(workId)),
     queryFn: () => getWorkDetail(challengeId, workId),
     initialData: initialWork,
   });
