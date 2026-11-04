@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthProvider';
 
 import { queryKeys } from '@/lib/queryKeys.js';
 import { getMyApplications } from '@/features/challenge-applications/api.js';
@@ -12,6 +13,8 @@ import ApplicationPagination from './ApplicationPagination';
 import * as styles from '@/app/my-applications/page.css.js';
 
 export default function ApplicationList() {
+  const { user } = useAuth(true);
+
   //현재 선택된 페이지
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -26,15 +29,19 @@ export default function ApplicationList() {
 
   // 신청 목록 API 요청
   const { data, isPending, isError, error } = useQuery({
-    queryKey: queryKeys.applications.mine({
-      page: currentPage,
-      size: itemsPerPage,
-    }),
+    queryKey: [
+      ...queryKeys.applications.mine({
+        page: currentPage,
+        size: itemsPerPage,
+      }),
+      user?.id,
+    ],
     queryFn: () =>
       getMyApplications({
         page: currentPage,
         size: itemsPerPage,
       }),
+    enabled: user?.id != null,
   });
 
   // 실제 API 신청 목록
@@ -46,8 +53,7 @@ export default function ApplicationList() {
       .toLowerCase()
       .includes(searchKeyword.trim().toLowerCase());
 
-    const matchesStatus =
-      selectedStatus === 'ALL' || application.status === selectedStatus;
+    const matchesStatus = selectedStatus === 'ALL' || application.status === selectedStatus;
 
     return matchesSearch && matchesStatus;
   });
