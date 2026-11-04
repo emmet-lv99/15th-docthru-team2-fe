@@ -44,6 +44,7 @@
 
 import { AuthGuard } from '@/components/AuthGuard';
 import { getChallenge, getMyDraft, saveDraft } from '@/features/works/api.js';
+import DraftRestoreBanner from '@/features/works/components/DraftRestoreBanner.jsx';
 import EditorActionBar from '@/features/works/components/EditorActionBar';
 import SourceViewer from '@/features/works/components/SourceViewer.jsx';
 import WorkEditor from '@/features/works/components/WorkEditor';
@@ -57,6 +58,7 @@ import * as styles from './page.css.js';
 export default function ChallengeEditPage() {
   const [isSourceOpen, setIsSourceOpen] = useState(false);
   const [editor, setEditor] = useState(null);
+  const [isDraftDismissed, setIsDraftDismissed] = useState(false);
   const { challengeId } = useParams();
 
   const { data: challenge, isLoading: isChallengeLoading } = useQuery({
@@ -84,7 +86,12 @@ export default function ChallengeEditPage() {
     enabled: Boolean(challengeId),
   });
 
-  console.log(draftData);
+  const handleRestoreDraft = () => {
+    if (!editor || !draftData?.draft?.content) return;
+    editor.commands.setContent(draftData.draft.content);
+    toast.success('임시저장된 작업물을 불러왔습니다.');
+    setIsDraftDismissed(true);
+  };
 
   return (
     <AuthGuard>
@@ -126,6 +133,12 @@ export default function ChallengeEditPage() {
           </button>
         )}
       </div>
+      {Boolean(draftData?.draft?.content) && !isDraftDismissed && (
+        <DraftRestoreBanner
+          onRestore={handleRestoreDraft}
+          onClose={() => setIsDraftDismissed(true)}
+        />
+      )}
     </AuthGuard>
   );
 }
