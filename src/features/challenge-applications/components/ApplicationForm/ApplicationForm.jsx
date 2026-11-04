@@ -11,6 +11,9 @@ export default function ApplicationForm() {
   //문서타입
   const [documentType, setDocumentType] = useState('');
 
+  //마감일
+  const [desiredDeadline, setDesiredDeadline] = useState('');
+
   const categoryOptions = [
     { value: 'NEXT_JS', label: 'Next.js' },
     { value: 'API', label: 'API' },
@@ -76,7 +79,24 @@ export default function ApplicationForm() {
         {/* 마감일 */}
         <div className={styles.formGroup}>
           <label htmlFor="desiredDeadline">마감일</label>
-          <input id="desiredDeadline" name="desiredDeadline" type="date" required />
+
+          <div className={styles.dateWrapper}>
+            {!desiredDeadline && (
+              <span className={styles.datePlaceholder} aria-hidden="true">
+                YY/MM/DD
+              </span>
+            )}
+
+            <input
+              id="desiredDeadline"
+              name="desiredDeadline"
+              type="date"
+              value={desiredDeadline}
+              onChange={(e) => setDesiredDeadline(e.target.value)}
+              className={desiredDeadline ? styles.dateSelected : styles.dateEmpty}
+              required
+            />
+          </div>
         </div>
 
         {/* 최대인원 */}
@@ -86,6 +106,7 @@ export default function ApplicationForm() {
             id="maxParticipants"
             name="maxParticipants"
             type="number"
+            min="1"
             placeholder="인원을 입력해 주세요"
             required
           />

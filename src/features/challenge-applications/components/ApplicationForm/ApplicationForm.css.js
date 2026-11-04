@@ -45,7 +45,7 @@ globalStyle(`${formGroup} input, ${formGroup} select, ${formGroup} textarea`, {
   borderRadius: '10px',
   fontSize: '16px',
   fontWeight: '400',
-  color: '#a3a3a3',
+  color: '#262626',
   backgroundColor: '#FFFFFF',
   boxSizing: 'border-box',
 });
@@ -66,14 +66,10 @@ globalStyle(`${formGroup} textarea`, {
   minHeight: '180px',
 });
 
-// 입력 요소의 키보드 포커스 스타일 ??
-globalStyle(
-  `${formGroup} input:focus-visible, ${formGroup} select:focus-visible, ${formGroup} textarea:focus-visible`,
-  {
-    outline: '2px solid #262626',
-    outlineOffset: '2px',
-  },
-);
+// 입력창 포커스 시 기존 디자인을 유지하는 테두리
+globalStyle(`${formGroup} input:focus-visible, ${formGroup} textarea:focus-visible`, {
+  outline: '1px solid #D4D4D4',
+});
 
 // 신청하기 버튼
 export const submitButton = style({
@@ -187,4 +183,41 @@ export const dropdownOption = style({
       outlineOffset: '-2px',
     },
   },
+});
+
+// 마감일
+// 마감일 입력창을 감싸는 영역
+export const dateWrapper = style({
+  position: 'relative',
+  width: '100%',
+});
+
+// 날짜 미선택 시 안내 문구
+export const datePlaceholder = style({
+  position: 'absolute',
+  top: '50%',
+  left: '16px',
+  transform: 'translateY(-50%)',
+  color: '#B3B3B3',
+  fontSize: '16px',
+  pointerEvents: 'none',
+  zIndex: 1,
+});
+
+// 날짜를 선택하지 않은 상태
+export const dateEmpty = style({
+  color: 'transparent',
+  WebkitTextFillColor: 'transparent',
+
+  selectors: {
+    '&::-webkit-datetime-edit': {
+      color: 'transparent',
+    },
+  },
+});
+
+// 날짜를 선택한 상태
+export const dateSelected = style({
+  color: '#262626',
+  WebkitTextFillColor: '#262626',
 });
