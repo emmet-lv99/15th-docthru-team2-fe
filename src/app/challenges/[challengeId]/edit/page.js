@@ -43,7 +43,13 @@
 'use client';
 
 import { AuthGuard } from '@/components/AuthGuard';
-import { abandonChallenge, getChallenge, getMyDraft, saveDraft } from '@/features/works/api.js';
+import {
+  abandonChallenge,
+  getChallenge,
+  getMyDraft,
+  saveDraft,
+  submitWork,
+} from '@/features/works/api.js';
 import ConfirmModal from '@/features/works/components/ConfirmModal.jsx';
 import DraftRestoreBanner from '@/features/works/components/DraftRestoreBanner.jsx';
 import EditorActionBar from '@/features/works/components/EditorActionBar';
@@ -109,6 +115,20 @@ export default function ChallengeEditPage() {
     },
   });
 
+  const { mutate: handleSubmitWork, isPending: isSubmitting } = useMutation({
+    mutationFn: (content) => submitWork(challengeId, content),
+    onSuccess: () => {
+      toast.success('번역 작업물이 성공적으로 제출되었습니다!');
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(challengeId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.myWork(challengeId) });
+      // 제출된 작업물 상세 페이지(또는 챌린지 상세)로 이동
+      router.push(`/challenges/${challengeId}`);
+    },
+    onError: (error) => {
+      toast.error(error.message || '작업물 제출에 실패했습니다.');
+    },
+  });
+
   return (
     <AuthGuard>
       <div className={styles.pageLayout}>
@@ -128,6 +148,14 @@ export default function ChallengeEditPage() {
                 handleSaveDraft(editor.getHTML());
               }}
               isSaving={isSavingDraft}
+              onSubmit={() => {
+                if (!editor || editor.getText().trim() === '') {
+                  toast.warn('번역 본문을 입력해주세요.');
+                  return;
+                }
+                handleSubmitWork(editor.getHTML());
+              }}
+              isSubmitting={isSubmitting}
             />
             {/* 챌린지 원문 제목 */}
             <h1 className={styles.challengeTitle}>
