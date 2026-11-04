@@ -85,16 +85,17 @@ export async function GET(request) {
       throw new Error('원문 문서의 용량이 너무 큽니다. (최대 5MB 제한)');
     }
 
-    // 2. JSDOM에 올린 뒤 이미지/링크 상대 경로를 절대 경로로 변환
+    // 2. JSDOM에 올린 뒤 문서의 baseURI(CDN 주소 등) 기준으로 상대 경로를 절대 URL로 변환
     const dom = new JSDOM(html, { url: targetUrl });
     const doc = dom.window.document;
+    const baseUrl = doc.baseURI || targetUrl;
 
     // 상대 경로 이미지 src를 절대 URL로 보정
     doc.querySelectorAll('img').forEach((img) => {
       const src = img.getAttribute('src');
       if (src) {
         try {
-          img.setAttribute('src', new URL(src, targetUrl).href);
+          img.setAttribute('src', new URL(src, baseUrl).href);
         } catch {}
       }
     });
@@ -104,7 +105,7 @@ export async function GET(request) {
       const href = a.getAttribute('href');
       if (href) {
         try {
-          a.setAttribute('href', new URL(href, targetUrl).href);
+          a.setAttribute('href', new URL(href, baseUrl).href);
           a.setAttribute('target', '_blank');
           a.setAttribute('rel', 'noreferrer noopener');
         } catch {}
@@ -112,8 +113,8 @@ export async function GET(request) {
     });
 
     // 3. XSS 방어 소독 (Sanitization)
-    // 3-1. 실행 가능한 위험 태그 제거
-    doc.querySelectorAll('script, iframe, object, embed, base').forEach((el) => el.remove());
+    // 3-1. 실행 가능한 위험 태그 제거 (base는 Readability가 srcset/poster 등을 변환할 때 doc.baseURI를 유지할 수 있도록 유지)
+    doc.querySelectorAll('script, iframe, object, embed').forEach((el) => el.remove());
 
     // 3-2. 모든 요소에서 인라인 악성 이벤트 핸들러(on*) 및 위험 URL 스킴(javascript:) 제거
     doc.querySelectorAll('*').forEach((el) => {
