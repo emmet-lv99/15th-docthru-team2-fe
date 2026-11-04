@@ -24,7 +24,7 @@
 // 🧠 에디터 메모 (시안 '작업 도전하기')
 //    · 서식 툴바가 있는 **리치 텍스트 에디터**를 씁니다 — `@tiptap/react`·`@tiptap/starter-kit`·`@tiptap/extension-underline` 설치돼 있어요.
 //      참고 구현: 완성본 prisma-8 `src/features/works/editor/`(TiptapEditor·Toolbar).
-//    · 본문 저장 형식은 **TipTap JSON 문자열**(`JSON.stringify(editor.getJSON())`) — 계약 `content: string` 그대로예요.
+//    · 본문 저장 형식은 백엔드 계약 스펙에 따른 **TipTap HTML 문자열**(`editor.getHTML()`) — 계약 `content: string` 그대로예요.
 //    · 작업물 상세도 같은 에디터를 읽기전용(editable=false)으로 렌더하면 안전해요(dangerouslySetInnerHTML 금지).
 //
 // 💡 구현 메모
@@ -47,6 +47,7 @@ import {
   abandonChallenge,
   getChallenge,
   getMyDraft,
+  getMyWork,
   saveDraft,
   submitWork,
 } from '@/features/works/api.js';
@@ -58,7 +59,7 @@ import WorkEditor from '@/features/works/components/WorkEditor';
 import { queryKeys } from '@/lib/queryKeys.js';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import * as styles from './page.css.js';
 
@@ -89,11 +90,24 @@ export default function ChallengeEditPage() {
     },
   });
 
+  const { data: myWorkData } = useQuery({
+    queryKey: queryKeys.challenges.myWork(challengeId),
+    queryFn: () => getMyWork(challengeId),
+    enabled: Boolean(challengeId),
+  });
+
   const { data: draftData } = useQuery({
     queryKey: queryKeys.challenges.draft(challengeId),
     queryFn: () => getMyDraft(challengeId),
     enabled: Boolean(challengeId),
   });
+
+  // 기존 제출본이 존재하는 경우 에디터 초기 내용으로 채움
+  useEffect(() => {
+    if (editor && myWorkData?.work?.content && editor.isEmpty) {
+      editor.commands.setContent(myWorkData.work.content);
+    }
+  }, [editor, myWorkData]);
 
   const handleRestoreDraft = () => {
     if (!editor || !draftData?.draft?.content) return;

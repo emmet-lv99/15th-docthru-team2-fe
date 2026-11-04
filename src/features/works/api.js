@@ -4,6 +4,8 @@ export const getChallenge = (challengeId) => apiClient.get(`/challenges/${challe
 
 export const getMyDraft = (challengeId) => apiClient.get(`/challenges/${challengeId}/drafts/me`);
 
+export const getMyWork = (challengeId) => apiClient.get(`/challenges/${challengeId}/works/me`);
+
 export const saveDraft = (challengeId, content) =>
   apiClient.put(`/challenges/${challengeId}/drafts/me`, { content });
 
