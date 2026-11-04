@@ -11,7 +11,7 @@ export const pageBackground = style({
 export const container = style({
   maxWidth: '1000px',
   margin: '0 auto',
-  padding: '40px, 24px',
+  padding: '40px 24px',
 });
 
 //제목과 신규신청
@@ -86,9 +86,10 @@ export const searchInput = style({
   fontSize: '16px',
   outline: 'none',
 
-  selectorys: {
-    '&:focus': {
-      borderColor: '#262626',
+  selectors: {
+    '&:focus-visible': {
+      outline: '2px solid #262626',
+      outlineOffset: '2px',
     },
   },
 });
@@ -104,6 +105,3 @@ export const statusSelect = style({
   fontSize: '16px',
   fontWeight: '400',
 });
-
-
-
