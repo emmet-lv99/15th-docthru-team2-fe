@@ -44,6 +44,10 @@ export function ParticipatingList() {
                 title={item.challenge.title}
                 category={item.challenge.category}
                 documentType={item.challenge.documentType}
+                deadline={item.challenge.deadline}
+                participantCount={item.challenge.participantCount}
+                maxParticipants={item.challenge.maxParticipants}
+                isClosed={item.challenge.isClosed}
               />
             </li>
           ))}

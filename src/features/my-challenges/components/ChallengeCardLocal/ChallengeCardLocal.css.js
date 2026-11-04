@@ -75,3 +75,43 @@ export const docChip = style([
     color: vars.colorGray600,
   },
 ]);
+
+/** 카드 하단 — 구분선 + 마감일·인원 */
+export const footer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+  width: '100%',
+});
+
+export const divider = style({
+  height: '1px',
+  width: '100%',
+  border: 'none',
+  margin: 0,
+  backgroundColor: vars.colorGray200,
+});
+
+export const metaRow = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  gap: '12px',
+});
+
+export const metaLeft = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+  flexWrap: 'wrap',
+});
+
+export const metaItem = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-12)',
+  color: vars.colorGray600,
+});
