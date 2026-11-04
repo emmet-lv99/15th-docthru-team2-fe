@@ -1,3 +1,4 @@
+import { breakpoint } from '@/styles/breakpoints';
 import { vars } from '@/styles/theme.css';
 import { radius } from '@/styles/tokens';
 import { style } from '@vanilla-extract/css';
@@ -16,6 +17,11 @@ export const logoWrapper = style({
   fontFamily: 'var(--font-quantico)',
   fontWeight: '700',
   color: vars.colorGray600,
+  '@media': {
+    [breakpoint.maxMd]: {
+      fontSize: '18px',
+    },
+  },
 });
 
 export const actions = style({
@@ -34,6 +40,28 @@ export const actionDrop = style({
   color: vars.colorRedError,
   fontSize: 'var(--font-size-16)',
   fontWeight: '600',
+  cursor: 'pointer',
+  border: 'none',
+  transition: 'opacity 0.15s ease',
+  ':hover': {
+    opacity: 0.85,
+  },
+  '@media': {
+    [breakpoint.maxMd]: {
+      width: '40px',
+      padding: 0,
+      justifyContent: 'center',
+    },
+  },
+});
+
+export const actionDropText = style({
+  display: 'inline',
+  '@media': {
+    [breakpoint.maxMd]: {
+      display: 'none',
+    },
+  },
 });
 
 export const actionDraft = style({
@@ -44,6 +72,18 @@ export const actionDraft = style({
   color: vars.colorGray800,
   fontSize: 'var(--font-size-16)',
   fontWeight: '600',
+  backgroundColor: '#FFFFFF',
+  cursor: 'pointer',
+  transition: 'background-color 0.15s ease',
+  ':hover': {
+    backgroundColor: vars.colorGray50,
+  },
+  '@media': {
+    [breakpoint.maxMd]: {
+      padding: '0 12px',
+      fontSize: 'var(--font-size-14)',
+    },
+  },
 });
 
 export const actionSubmit = style({
@@ -54,4 +94,16 @@ export const actionSubmit = style({
   color: '#fff',
   fontSize: 'var(--font-size-16)',
   fontWeight: '600',
+  border: 'none',
+  cursor: 'pointer',
+  transition: 'background-color 0.15s ease',
+  ':hover': {
+    backgroundColor: vars.colorGray900,
+  },
+  '@media': {
+    [breakpoint.maxMd]: {
+      padding: '0 12px',
+      fontSize: 'var(--font-size-14)',
+    },
+  },
 });

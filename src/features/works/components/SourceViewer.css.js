@@ -1,6 +1,8 @@
+import { breakpoint } from '@/styles/breakpoints';
 import { globalStyle, style } from '@vanilla-extract/css';
 
 export const container = style({
+  position: 'relative',
   width: '520px',
   minWidth: '420px',
   maxWidth: '640px',
@@ -11,6 +13,51 @@ export const container = style({
   display: 'flex',
   flexDirection: 'column',
   flexShrink: 0,
+  '@media': {
+    '(min-width: 768px) and (max-width: 1024px)': {
+      width: '45%',
+      minWidth: '340px',
+    },
+    [breakpoint.maxMd]: {
+      width: '100%',
+      minWidth: '100%',
+      maxWidth: '100%',
+      height: '42vh',
+      borderLeft: 'none',
+      borderBottom: '1px solid #1E293B',
+    },
+  },
+});
+
+export const circleCloseButton = style({
+  display: 'none',
+  '@media': {
+    '(max-width: 1024px)': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'absolute',
+      left: '12px',
+      top: '8px',
+      width: '38px',
+      height: '38px',
+      borderRadius: '50%',
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      backdropFilter: 'blur(4px)',
+      color: '#0F172A',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
+      border: 'none',
+      cursor: 'pointer',
+      zIndex: 30,
+      fontSize: '18px',
+      fontWeight: 700,
+      transition: 'transform 0.15s ease, background-color 0.15s ease',
+      ':hover': {
+        backgroundColor: '#FFFFFF',
+        transform: 'scale(1.05)',
+      },
+    },
+  },
 });
 
 export const header = style({
@@ -23,6 +70,11 @@ export const header = style({
   position: 'sticky',
   top: 0,
   zIndex: 10,
+  '@media': {
+    '(max-width: 1024px)': {
+      paddingLeft: '58px',
+    },
+  },
 });
 
 export const title = style({
@@ -68,6 +120,11 @@ export const closeButton = style({
   transition: 'color 0.15s ease',
   ':hover': {
     color: '#F8FAFC',
+  },
+  '@media': {
+    '(max-width: 1024px)': {
+      display: 'none',
+    },
   },
 });
 

@@ -27,6 +27,16 @@ function SourceViewer({
 
   return (
     <aside className={styles.container}>
+      {/* 태블릿/모바일 전용 플로팅 원형 닫기 버튼 */}
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="원문 닫기"
+        className={styles.circleCloseButton}
+      >
+        ✕
+      </button>
+
       {/* 고정 상단 헤더 */}
       <header className={styles.header}>
         <h2 className={styles.title} title={data?.title || '원문 문서'}>
