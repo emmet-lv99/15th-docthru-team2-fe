@@ -111,6 +111,25 @@ export async function GET(request) {
       }
     });
 
+    // 3. XSS 방어 소독 (Sanitization)
+    // 3-1. 실행 가능한 위험 태그 제거
+    doc.querySelectorAll('script, iframe, object, embed, base').forEach((el) => el.remove());
+
+    // 3-2. 모든 요소에서 인라인 악성 이벤트 핸들러(on*) 및 위험 URL 스킴(javascript:) 제거
+    doc.querySelectorAll('*').forEach((el) => {
+      for (const attr of Array.from(el.attributes)) {
+        const attrName = attr.name.toLowerCase();
+        const attrValue = attr.value.trim().toLowerCase();
+        if (
+          attrName.startsWith('on') ||
+          attrValue.startsWith('javascript:') ||
+          attrValue.startsWith('data:text/html')
+        ) {
+          el.removeAttribute(attr.name);
+        }
+      }
+    });
+
     const reader = new Readability(doc);
     const article = reader.parse();
 
