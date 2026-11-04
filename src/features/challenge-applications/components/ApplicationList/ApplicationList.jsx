@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthProvider';
 
@@ -21,13 +21,24 @@ export default function ApplicationList() {
   //검색창에 입력한 글자
   const [searchKeyword, setSearchKeyword] = useState('');
 
+  //api 요청에 사용할 검색어
+  const [debouncedKeyword, setDebouncedKeyword] = useStatus('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedKeyword(searchKeyword.trim());
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchKeyword, setDebouncedKeyword]);
+
   //선택한 신청 상태
   const [selectedStatus, setSelectedStatus] = useState('ALL');
 
   // 한 페이지에 표시할 데이터 수
   const itemsPerPage = 10;
 
-  const searchQuery = searchKeyword.trim();
+  const searchQuery = debouncedKeyword;
 
   // 신청 목록 API 요청
   const { data, isPending, isError, error } = useQuery({
