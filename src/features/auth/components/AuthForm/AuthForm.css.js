@@ -107,14 +107,18 @@ export const inputWrap = style({
 export const toggleButton = style({
   position: 'absolute',
   top: '50%',
-  right: '12px',
+  right: '8px',
   transform: 'translateY(-50%)',
+  /** 24px 아이콘 + 사방 4px 여백 = 누르기 쉬운 32px 버튼 */
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '32px',
+  height: '32px',
+  padding: 0,
   border: 'none',
   background: 'transparent',
   cursor: 'pointer',
-  fontFamily: vars.fontFamily,
-  fontSize: 'var(--font-size-13)',
-  color: vars.colorGray500,
 });
 
 export const hint = style({

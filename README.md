@@ -11,20 +11,20 @@
 
 ### 1-1. 기술 스택
 
-| 영역         | 기술                                                              | 버전·메모                                        |
-| ------------ | ----------------------------------------------------------------- | ------------------------------------------------ |
-| Runtime      | Node.js · pnpm                                                    | `>=24` · `12.5.1`                                |
-| Framework    | Next.js App Router · React                                        | `16.3` · `19.2`                                  |
-| Rendering    | RSC + 동적 SSR + CSR                                              | 현재 SSG 미사용                                  |
-| Language     | JavaScript / JSX                                                  | TypeScript 아님                                  |
-| Styling      | vanilla-extract · Pretendard                                      | `1.21`                                           |
-| Server State | TanStack Query                                                    | `5.102`                                          |
-| Auth State   | Context API · `useAuth` custom hook                               | ③ 개인 담당 · React Query 파사드                 |
-| HTTP         | axios(브라우저) · fetch(RSC)                                      | `/api/backend` 프록시                            |
-| Editor       | TipTap                                                            | `3.32`                                           |
-| UI           | clsx · react-toastify · react-error-boundary                      | —                                                |
-| Quality      | Vitest · axios-mock-adapter · ESLint · Prettier                   | `Vitest 5`                                       |
-| Infra        | Docker · GitHub Actions · GCP Cloud Run · Artifact Registry · WIF | 현재 수동 배포 · 협업 시작 후 자동배포 전환 예정 |
+| 영역         | 기술                                                              | 버전·메모                                                |
+| ------------ | ----------------------------------------------------------------- | -------------------------------------------------------- |
+| Runtime      | Node.js · pnpm                                                    | `>=24` · `12.5.1`                                        |
+| Framework    | Next.js App Router · React                                        | `16.3` · `19.2`                                          |
+| Rendering    | RSC + 동적 SSR + CSR                                              | 현재 SSG 미사용                                          |
+| Language     | JavaScript / JSX                                                  | TypeScript 아님                                          |
+| Styling      | vanilla-extract · Pretendard                                      | `1.21`                                                   |
+| Server State | TanStack Query                                                    | `5.102`                                                  |
+| Auth State   | Context API · `useAuth` custom hook                               | ③ 개인 담당 · React Query 파사드                         |
+| HTTP         | axios(브라우저) · fetch(RSC)                                      | `/api/backend` 프록시                                    |
+| Editor       | TipTap                                                            | `3.32`                                                   |
+| UI           | clsx · react-toastify · react-error-boundary                      | —                                                        |
+| Quality      | Vitest · axios-mock-adapter · ESLint · Prettier                   | `Vitest 5`                                               |
+| Infra        | Docker · GitHub Actions · GCP Cloud Run · Artifact Registry · WIF | **자동 배포** (develop 머지 → main 동기화 → Cloud Build) |
 
 > **렌더링** — RSC는 SSG와 같은 말이 아니에요. RSC는 서버 컴포넌트 모델이고, 실제 HTML 생성 시점은 SSG/SSR/ISR 중 선택합니다. 현재는 인증 `cookies()` 때문에 동적 SSR을 사용하고 SSG는 쓰지 않아요.
 >
@@ -371,7 +371,7 @@ pnpm build            # 프로덕션 빌드 확인
 > `BACKEND_BASE_URL=http://localhost:5010/api/v1` 처럼 지정하면 됩니다.
 
 - CI/CD: PR·push는 `ci.yml`이 검사해요. **자동 배포는 Cloud Build 가 담당**합니다 — `main` 에 머지되면 3~5분 뒤 Cloud Run 에 반영돼요.
-  상세(브랜치 규칙·빌드 인자·배포 주소·문제 해결)는 **[`docs/배포-런북.md`](./docs/배포-런북.md)** 을 보세요.
+  상세(브랜치 규칙·빌드 인자·배포 주소·문제 해결)는 아래 **9. 배포 · 브랜치 규칙** 을 보세요.
 
 ## 8. 스타일 팁
 
@@ -396,10 +396,9 @@ develop 에서 개발 → push → CI 자동 검사 → PR 머지(develop)
 > ⚠️ `BACKEND_BASE_URL` · `NEXT_PUBLIC_SITE_URL` 은 **빌드 시점에** 박힙니다.
 > 값을 바꾸려면 `cloudbuild.yaml` 의 `substitutions` 을 고치고 **develop 에 머지**하세요 (자동으로 main 에 동기화됩니다).
 
-자세한 절차·문제 해결은 **[`docs/배포-런북.md`](./docs/배포-런북.md)** 에 있습니다.
+자세한 절차·문제 해결은 위 **9. 배포 · 브랜치 규칙** 표를 참고해 주세요.
 
 ## 10. 관련 문서
 
 - **요구사항 추적표** — [`docs/화면-라우트-API-대조.md`](./docs/화면-라우트-API-대조.md): **라우트 ↔ 요구 ↔ API** 한 표 (미커버·과잉·편차 점검)
-- **배포 · 브랜치 런북** — [`docs/배포-런북.md`](./docs/배포-런북.md): 브랜치 규칙 · CI/배포 흐름 · 빌드 인자 · 로컬 개발 · 자주 나는 문제
 - [`docs/FE-요구사항.md`](./docs/FE-요구사항.md) · `docthru-backend/docs/API-명세.md`

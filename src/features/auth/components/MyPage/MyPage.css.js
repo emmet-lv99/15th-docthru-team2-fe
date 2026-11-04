@@ -202,6 +202,39 @@ export const dialogText = style({
   color: vars.colorGray600,
 });
 
+export const confirmBox = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+  marginBottom: '20px',
+});
+
+export const confirmRow = style({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '10px',
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-14)',
+  lineHeight: vars.lineHeightRelaxed,
+  color: vars.colorGray700,
+});
+
+export const confirmInput = style({
+  width: '100%',
+  padding: '10px 12px',
+  border: `1px solid ${vars.borderColor}`,
+  borderRadius: '10px',
+  backgroundColor: vars.colorGray50,
+  color: vars.colorGray900,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-14)',
+  boxSizing: 'border-box',
+  outline: 'none',
+  ':focus': {
+    borderColor: vars.colorGray700,
+  },
+});
+
 export const dialogActions = style({
   display: 'flex',
   justifyContent: 'flex-end',
