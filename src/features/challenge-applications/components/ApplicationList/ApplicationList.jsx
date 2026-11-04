@@ -22,7 +22,7 @@ export default function ApplicationList() {
   const [searchKeyword, setSearchKeyword] = useState('');
 
   //api 요청에 사용할 검색어
-  const [debouncedKeyword, setDebouncedKeyword] = useStatus('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
