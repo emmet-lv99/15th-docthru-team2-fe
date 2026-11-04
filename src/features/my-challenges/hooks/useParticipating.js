@@ -17,16 +17,17 @@ import { getParticipating } from '@/features/my-challenges/api.js';
 import { queryKeys } from '@/lib/queryKeys';
 
 /**
- * @param {{ limit?: number }} [options]
+ * @param {{ limit?: number, q?: string }} [options]
  * @returns TanStack Query 의 useInfiniteQuery 결과
  */
-export function useParticipating({ limit = 10 } = {}) {
+export function useParticipating({ limit = 10, q = '' } = {}) {
   const { user } = useAuth();
   const userId = user?.id ?? null;
+  const keyword = q.trim();
 
   return useInfiniteQuery({
-    queryKey: queryKeys.myChallenges.participating({ userId, limit }),
-    queryFn: ({ pageParam }) => getParticipating({ cursor: pageParam, limit }),
+    queryKey: queryKeys.myChallenges.participating({ userId, limit, q: keyword }),
+    queryFn: ({ pageParam }) => getParticipating({ cursor: pageParam, limit, q: keyword }),
     initialPageParam: null,
     getNextPageParam: (lastPage) => (lastPage?.hasMore ? lastPage.cursor : undefined),
     // 사용자 정보가 준비된 뒤에만 요청해요 (id 없이 캐시되면 계정이 섞일 수 있어요)

@@ -3,6 +3,8 @@
 // 목록 배치 — 카드 사이 간격과 페이지 폭만 담당해요.
 import { style } from '@vanilla-extract/css';
 
+import { vars } from '@/styles/theme.css.js';
+
 export const page = style({
   width: '100%',
   maxWidth: '960px',
@@ -24,4 +26,36 @@ export const list = style({
   margin: 0,
   padding: 0,
   listStyle: 'none',
+});
+
+/** 검색 입력 — 돋보기 + placeholder (강사님 완성본 Search 부품 톤) */
+export const searchWrap = style({
+  position: 'relative',
+  marginBottom: '20px',
+});
+
+export const searchIcon = style({
+  position: 'absolute',
+  top: '50%',
+  left: '14px',
+  transform: 'translateY(-50%)',
+  pointerEvents: 'none',
+});
+
+export const searchInput = style({
+  width: '100%',
+  height: '44px',
+  padding: '0 14px 0 42px',
+  border: `1px solid ${vars.colorGray200}`,
+  borderRadius: '10px',
+  backgroundColor: vars.colorGray50,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-14)',
+  color: vars.colorGray900,
+  outline: 'none',
+  boxSizing: 'border-box',
+  selectors: {
+    '&::placeholder': { color: vars.colorGray400 },
+    '&:focus': { borderColor: vars.colorBrand1 },
+  },
 });

@@ -9,17 +9,19 @@ import { apiClient } from '@/lib/client';
  *
  * 참여 중인 챌린지 + 내 작업물 요약(totalWorks · latestWork)을 커서 방식으로 가져와요.
  *
- * @param {{ cursor?: number|null, limit?: number }} [query]
+ * @param {{ cursor?: number|null, limit?: number, q?: string }} [query]
  *   cursor — 이전 응답의 cursor 값. 첫 페이지는 생략(null)이에요.
  *   limit  — 한 번에 받을 개수 (서버 기본값 사용 시 생략)
+ *   q      — 제목·원문본문 검색어 (빈 값이면 보내지 않아요)
  * @returns {Promise<{ items: Array, cursor: number|null, limit: number, hasMore: boolean }>}
  */
-export async function getParticipating({ cursor, limit } = {}) {
+export async function getParticipating({ cursor, limit, q } = {}) {
   const search = new URLSearchParams();
 
   // cursor 가 0 일 수도 있으니 != null 로 확인해요 (0 은 유효한 커서예요)
   if (cursor != null) search.set('cursor', String(cursor));
   if (limit != null) search.set('limit', String(limit));
+  if (q) search.set('q', q);
 
   const queryString = search.toString();
 
