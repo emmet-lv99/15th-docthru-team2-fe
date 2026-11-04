@@ -40,7 +40,11 @@ export function ParticipatingList() {
         <ul className={styles.list}>
           {items.map((item) => (
             <li key={item.participationId}>
-              <ChallengeCardLocal title={item.challenge.title} />
+              <ChallengeCardLocal
+                title={item.challenge.title}
+                category={item.challenge.category}
+                documentType={item.challenge.documentType}
+              />
             </li>
           ))}
         </ul>
