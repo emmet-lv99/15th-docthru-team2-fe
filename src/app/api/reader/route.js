@@ -3,12 +3,61 @@ import { Readability } from '@mozilla/readability';
 import { JSDOM } from 'jsdom';
 import { NextResponse } from 'next/server';
 
+function isSafePublicUrl(urlString) {
+  try {
+    const parsed = new URL(urlString);
+
+    // 1. HTTP / HTTPS 프로토콜만 허용
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return false;
+    }
+
+    const hostname = parsed.hostname.toLowerCase();
+
+    // 2. 루프백 및 로컬 주소 차단
+    if (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '0.0.0.0' ||
+      hostname === '::1'
+    ) {
+      return false;
+    }
+
+    // 3. 내부 사설망(Private IP) 및 클라우드 메타데이터 IP(Link-Local) 차단
+    // - 10.0.0.0/8
+    // - 172.16.0.0/12
+    // - 192.168.0.0/16
+    // - 169.254.0.0/16 (AWS / GCP / Azure 인스턴스 메타데이터)
+    if (
+      /^10\./.test(hostname) ||
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname) ||
+      /^192\.168\./.test(hostname) ||
+      /^169\.254\./.test(hostname)
+    ) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const targetUrl = searchParams.get('url');
 
   if (!targetUrl) {
     return NextResponse.json({ error: 'URL이 필요합니다.' }, { status: 400 });
+  }
+
+  // SSRF 방어 검증
+  if (!isSafePublicUrl(targetUrl)) {
+    return NextResponse.json(
+      { error: '보안 정책상 내부망 또는 허용되지 않는 URL 대상입니다.' },
+      { status: 400 },
+    );
   }
 
   try {
