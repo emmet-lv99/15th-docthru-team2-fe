@@ -26,6 +26,31 @@ export const challengeTitle = style({
   lineHeight: 1,
 });
 
-export const floatingSourceButton = style({});
+export const floatingSourceButton = style({
+  position: 'fixed',
+  right: 0,
+  top: '180px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '4px',
+  padding: '12px 10px',
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E2E8F0',
+  borderRight: 'none',
+  borderRadius: '12px 0 0 12px',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+  cursor: 'pointer',
+  fontSize: '12px',
+  fontWeight: 600,
+  color: '#334155',
+  zIndex: 40,
+  transition: 'all 0.15s ease',
+  ':hover': {
+    backgroundColor: '#F8FAFC',
+    color: '#0F172A',
+  },
+});
 
 export const workspace = style({});
