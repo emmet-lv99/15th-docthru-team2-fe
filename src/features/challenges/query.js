@@ -5,16 +5,19 @@ export const CHALLENGE_STATUSES = ['IN_PROGRESS', 'CLOSED'];
 export const CHALLENGE_SORTS = ['latest', 'deadline', 'popular'];
 export const CHALLENGE_PAGE_SIZE = 9;
 
+/** 허용된 필터 값만 서버 요청에 포함하기 위한 검사입니다. */
 function allowedValue(value, choices) {
   return typeof value === 'string' && choices.includes(value) ? value : '';
 }
 
+/** 페이지 쿼리를 유효한 양의 정수로 정규화합니다. */
 function positivePage(value) {
   const page = Number(value);
   return Number.isSafeInteger(page) && page > 0 ? page : 1;
 }
 
 // Next.js searchParams: category가 한 개면 문자열, 반복되면 배열이다.
+/** URL 검색 파라미터를 서버 계약에 맞는 필터 객체로 정규화합니다. */
 export function normalizeChallengeFilters(raw = {}) {
   const categoryValues = Array.isArray(raw.category) ? raw.category : [raw.category];
   return {
@@ -29,6 +32,7 @@ export function normalizeChallengeFilters(raw = {}) {
 }
 
 // 여러 category를 category=A&category=B 로 보내야 백엔드 Zod 배열 계약과 일치한다.
+/** 분야 다중 선택 값을 반복 파라미터로 직렬화해 목록 API 쿼리를 생성합니다. */
 export function buildChallengeQuery(filters = {}) {
   const f = normalizeChallengeFilters(filters);
   const params = new URLSearchParams();

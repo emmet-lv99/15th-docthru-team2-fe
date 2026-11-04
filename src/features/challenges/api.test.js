@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import MockAdapter from 'axios-mock-adapter';
-import { httpClient } from '../../lib/client.js';
+import { httpClient } from '@/lib/client';
 import {
   getChallengeList,
   getChallengeDetail,
   getChallengeParticipants,
   joinChallenge,
   abandonChallenge,
-} from './api.js';
-import { buildChallengeQuery, normalizeChallengeFilters } from './query.js';
+} from '@/features/challenges/api';
+import { buildChallengeQuery, normalizeChallengeFilters } from '@/features/challenges/query';
 
 let mock;
 
