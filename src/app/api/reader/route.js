@@ -86,9 +86,11 @@ export async function GET(request) {
     }
 
     // 2. JSDOM에 올린 뒤 문서의 baseURI(CDN 주소 등) 기준으로 상대 경로를 절대 URL로 변환
-    const dom = new JSDOM(html, { url: targetUrl });
+    // 리다이렉트가 발생했을 경우 최종 도착한 response.url을 우선 기준으로 사용
+    const finalUrl = response.url || targetUrl;
+    const dom = new JSDOM(html, { url: finalUrl });
     const doc = dom.window.document;
-    const baseUrl = doc.baseURI || targetUrl;
+    const baseUrl = doc.baseURI || finalUrl;
 
     // 상대 경로 이미지 src를 절대 URL로 보정
     doc.querySelectorAll('img').forEach((img) => {
