@@ -35,119 +35,11 @@ import Link from 'next/link';
 import * as styles from './page.css.js';
 import { useState } from 'react';
 
-// 임시 신청 데이터
-const applications = [
-  {
-    id: 1023,
-    field: '공식문서',
-    category: 'Next.js',
-    title: 'Next.js - App Router: Routing Fundamentals',
-    maxParticipants: 10,
-    appliedAt: '24/01/16',
-    deadline: '24/02/24',
-    status: 'PENDING',
-  },
-  {
-    id: 1022,
-    field: '블로그',
-    category: 'API',
-    title: 'Fetch API, 너는 에러를 제대로 핸들링 하고 있는가?',
-    maxParticipants: 5,
-    appliedAt: '24/01/16',
-    deadline: '24/02/23',
-    status: 'APPROVED',
-  },
-  {
-    id: 1021,
-    field: '공식문서',
-    category: 'API',
-    title: 'Fetch API 사용법 번역 챌린지',
-    maxParticipants: 10,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'REJECTED',
-  },
-  {
-    id: 1020,
-    field: '블로그',
-    category: 'Career',
-    title: '개발자로서 자신만의 브랜드를 구축하는 방법',
-    maxParticipants: 5,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'REJECTED',
-  },
-  {
-    id: 1019,
-    field: '공식문서',
-    category: 'Next.js',
-    title: 'Next.js - App Router: Routing Fundamentals',
-    maxParticipants: 10,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'APPROVED',
-  },
-  {
-    id: 1018,
-    field: '공식문서',
-    category: 'API',
-    title: 'Fetch API 에러 핸들링 챌린지',
-    maxParticipants: 5,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'REJECTED',
-  },
-  {
-    id: 1017,
-    field: '공식문서',
-    category: 'API',
-    title: 'Fetch API 활용하기',
-    maxParticipants: 10,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'APPROVED',
-  },
-  {
-    id: 1016,
-    field: '블로그',
-    category: 'Career',
-    title: '개발자로서 자신만의 브랜드를 구축하는 방법',
-    maxParticipants: 5,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'APPROVED',
-  },
-  {
-    id: 1015,
-    field: '블로그',
-    category: 'Next.js',
-    title: 'Next.js - App Router: Routing Fundamentals',
-    maxParticipants: 10,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'APPROVED',
-  },
-  {
-    id: 1013,
-    field: '블로그',
-    category: 'Next.js',
-    title: 'Next.js - App Router: Routing Fundamentals',
-    maxParticipants: 10,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'DELETED',
-  },
-  {
-    id: 1014,
-    field: '블로그',
-    category: 'Next.js',
-    title: 'Next.js - App Router: Routing Fundamentals',
-    maxParticipants: 10,
-    appliedAt: '24/01/16',
-    deadline: '24/02/22',
-    status: 'DELETED',
-  },
-];
+import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@/lib/queryKeys.js';
+import { getMyApplications } from '@/features/challenge-applications/api.js';
+import ApplicationTable from '@/features/challenge-applications/components/ApplicationList/ApplicationTable';
+import ApplicationPagination from '@/features/challenge-applications/components/ApplicationList/ApplicationPagination';
 
 export default function MeApplicationsPage() {
   //현재 선택된 페이지
@@ -157,12 +49,28 @@ export default function MeApplicationsPage() {
   //선택한 신청 상태
   const [selectedStatus, setSelectedStatus] = useState('ALL');
 
+  // 한 페이지에 표시할 데이터 수
   const itemsPerPage = 10;
 
-  //검색어와 일치하는 데이터만 추출
-  const filteredApplications = applications.filter((application) => {
-    //상태드롭다운필터
-    const matchesSearch = application.title
+  // 신청 목록 API 요청
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: queryKeys.applications.mine({
+      page: currentPage,
+      size: itemsPerPage,
+    }),
+    queryFn: () =>
+      getMyApplications({
+        page: currentPage,
+        size: itemsPerPage,
+      }),
+  });
+
+  // 실제 API 신청 목록
+  const myApplications = data?.items ?? [];
+
+  // 검색 및 상태 필터 (현재 페이지 데이터에만 적용되는 임시 방식)
+  const filteredApplications = myApplications.filter((application) => {
+    const matchesSearch = String(application.title ?? '')
       .toLowerCase()
       .includes(searchKeyword.trim().toLowerCase());
 
@@ -171,13 +79,15 @@ export default function MeApplicationsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
+  // 서버가 반환한 전체 페이지 수
+  const totalPages = data?.totalPages ?? 0;
 
-  // 현재페이지에서 시작 위치
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  // 테이블에 전달할 데이터
+  const currentApplications = filteredApplications;
 
-  //현재 페이지에 표시할 데이터
-  const currentApplications = filteredApplications.slice(startIndex, startIndex + itemsPerPage);
+  if (isError) {
+    console.error('신청 목록 조회 실패:', error);
+  }
 
   return (
     <AuthGuard>
@@ -235,93 +145,17 @@ export default function MeApplicationsPage() {
           </div>
 
           {/* 신청한 챌린지 목록 */}
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead className={styles.tableHeader}>
-                <tr>
-                  <th className={styles.tableHeading}>No.</th>
-                  <th className={styles.tableHeading}>분야</th>
-                  <th className={styles.tableHeading}>카테고리</th>
-                  <th className={styles.tableHeading}>챌린지 제목</th>
-                  <th className={styles.tableHeading}>모집 인원</th>
-                  <th className={styles.tableHeading}>신청일</th>
-                  <th className={styles.tableHeading}>마감 기한</th>
-                  <th className={styles.tableHeading}>상태</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {currentApplications.map((application) => (
-                  <tr
-                    key={application.id}
-                    className={
-                      application.status === 'DELETED' ? styles.deletedRow : styles.tableRow
-                    }
-                  >
-                    <td className={styles.tableCell}>{application.id}</td>
-                    <td className={styles.tableCell}>{application.field}</td>
-                    <td className={styles.tableCell}>{application.category}</td>
-                    <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
-                      {application.title}
-                    </td>
-                    <td className={styles.tableCell}>{application.maxParticipants}</td>
-                    <td className={styles.tableCell}>{application.appliedAt}</td>
-                    <td className={styles.tableCell}>{application.deadline}</td>
-                    <td className={styles.tableCell}>
-                      <span
-                        className={`${styles.statusBadge} ${
-                          application.status === 'PENDING'
-                            ? styles.pendingBadge
-                            : application.status === 'APPROVED'
-                              ? styles.approvedBadge
-                              : application.status === 'REJECTED'
-                                ? styles.rejectedBadge
-                                : styles.deletedBadge
-                        }`}
-                      >
-                        {application.status === 'PENDING'
-                          ? '승인 대기'
-                          : application.status === 'APPROVED'
-                            ? '신청 승인'
-                            : application.status === 'REJECTED'
-                              ? '신청 거절'
-                              : '챌린지 삭제'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ApplicationTable
+            applications={currentApplications}
+            isPending={isPending}
+            isError={isError}
+          />
           {/* 페이지네이션 */}
-          <nav className={styles.pagination}>
-            <button
-              type="button"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            >
-              &lt;
-            </button>
-
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-              <button
-                key={pageNumber}
-                type="button"
-                className={currentPage === pageNumber ? styles.activePage : styles.pageButton}
-                aria-current={currentPage === pageNumber ? 'page' : undefined}
-                onClick={() => setCurrentPage(pageNumber)}
-              >
-                {pageNumber}
-              </button>
-            ))}
-            <button
-              type="button"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            >
-              &gt;
-            </button>
-          </nav>
+          <ApplicationPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </main>
       </div>
     </AuthGuard>
