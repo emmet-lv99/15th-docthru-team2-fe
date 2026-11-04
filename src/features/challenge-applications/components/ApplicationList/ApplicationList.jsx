@@ -27,12 +27,16 @@ export default function ApplicationList() {
   // 한 페이지에 표시할 데이터 수
   const itemsPerPage = 10;
 
+  const searchQuery = searchKeyword.trim();
+
   // 신청 목록 API 요청
   const { data, isPending, isError, error } = useQuery({
     queryKey: [
       ...queryKeys.applications.mine({
         page: currentPage,
         size: itemsPerPage,
+        q: searchQuery,
+        status: selectedStatus,
       }),
       user?.id,
     ],
@@ -40,6 +44,8 @@ export default function ApplicationList() {
       getMyApplications({
         page: currentPage,
         size: itemsPerPage,
+        q: searchQuery,
+        status: selectedStatus,
       }),
     enabled: user?.id != null,
   });
@@ -47,22 +53,11 @@ export default function ApplicationList() {
   // 실제 API 신청 목록
   const myApplications = data?.items ?? [];
 
-  // 검색 및 상태 필터 (현재 페이지 데이터에만 적용되는 임시 방식)
-  const filteredApplications = myApplications.filter((application) => {
-    const matchesSearch = String(application.title ?? '')
-      .toLowerCase()
-      .includes(searchKeyword.trim().toLowerCase());
-
-    const matchesStatus = selectedStatus === 'ALL' || application.status === selectedStatus;
-
-    return matchesSearch && matchesStatus;
-  });
-
   // 서버가 반환한 전체 페이지 수
   const totalPages = data?.totalPages ?? 0;
 
   // 테이블에 전달할 데이터
-  const currentApplications = filteredApplications;
+  const currentApplications = myApplications;
 
   if (isError) {
     console.error('신청 목록 조회 실패:', error);
