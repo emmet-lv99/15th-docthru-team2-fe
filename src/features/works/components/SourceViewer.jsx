@@ -1,7 +1,9 @@
 'use client';
 
+import { getReaderContent } from '@/features/works/api.js';
 import { queryKeys } from '@/lib/queryKeys.js';
 import { useQuery } from '@tanstack/react-query';
+import DOMPurify from 'dompurify';
 import * as styles from './SourceViewer.css.js';
 
 function SourceViewer({
@@ -10,20 +12,15 @@ function SourceViewer({
 }) {
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.reader.doc(sourceUrl),
-    queryFn: async () => {
-      const res = await fetch(`/api/reader?url=${encodeURIComponent(sourceUrl)}`);
-      if (!res.ok) {
-        throw new Error('보안 정책 또는 네트워크 문제로 본문을 직접 불러올 수 없습니다.');
-      }
-      const json = await res.json();
-      if (json.error) {
-        throw new Error(json.error);
-      }
-      return json;
-    },
+    queryFn: () => getReaderContent(sourceUrl),
     enabled: Boolean(sourceUrl),
     staleTime: 1000 * 60 * 30, // 30분 동안 캐시 유지
   });
+
+  const sanitizedContent =
+    data?.content && typeof window !== 'undefined'
+      ? DOMPurify.sanitize(data.content, { ADD_ATTR: ['target'] })
+      : '';
 
   return (
     <aside className={styles.container}>
@@ -102,7 +99,10 @@ function SourceViewer({
                 이용해 주세요.
               </p>
             </div>
-            <div className={styles.content} dangerouslySetInnerHTML={{ __html: data.content }} />
+            <div
+              className={styles.content}
+              dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+            />
           </>
         )}
       </div>

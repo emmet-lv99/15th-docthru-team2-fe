@@ -14,3 +14,15 @@ export const submitWork = (challengeId, content) =>
 
 export const abandonChallenge = (challengeId) =>
   apiClient.del(`/challenges/${challengeId}/participation`);
+
+export const getReaderContent = async (sourceUrl) => {
+  const res = await fetch(`/api/reader?url=${encodeURIComponent(sourceUrl)}`);
+  if (!res.ok) {
+    throw new Error('보안 정책 또는 네트워크 문제로 본문을 직접 불러올 수 없습니다.');
+  }
+  const json = await res.json();
+  if (json.error) {
+    throw new Error(json.error);
+  }
+  return json;
+};
