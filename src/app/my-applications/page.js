@@ -154,14 +154,22 @@ export default function MeApplicationsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   //검색창에 입력한 글자
   const [searchKeyword, setSearchKeyword] = useState('');
-  
+  //선택한 신청 상태
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
 
   const itemsPerPage = 10;
 
   //검색어와 일치하는 데이터만 추출
-  const filteredApplications = applications.filter((application) =>
-    application.title.toLowerCase().includes(searchKeyword.trim().toLowerCase()),
-  );
+  const filteredApplications = applications.filter((application) => {
+    //상태드롭다운필터
+    const matchesSearch = application.title
+      .toLowerCase()
+      .includes(searchKeyword.trim().toLowerCase());
+
+    const matchesStatus = selectedStatus === 'ALL' || application.status === selectedStatus;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
 
@@ -211,14 +219,18 @@ export default function MeApplicationsPage() {
 
             <select
               className={styles.statusSelect}
-              defaultValue="PENDING"
+              value={selectedStatus}
+              onChange={(e) => {
+                setSelectedStatus(e.target.value);
+                setCurrentPage(1);
+              }}
               aria-label="신청 상태 필터"
             >
               <option value="ALL">전체 상태</option>
               <option value="PENDING">승인 대기</option>
               <option value="APPROVED">신청 승인</option>
               <option value="REJECTED">신청 거절</option>
-              <option value="CANCELLED">신청 취소</option>
+              <option value="DELETED">챌린지 삭제</option>
             </select>
           </div>
 
