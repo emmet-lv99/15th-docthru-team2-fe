@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { apiClient } from '@/lib/client';
 import {
@@ -65,9 +64,7 @@ describe('알림 API', () => {
 
       const result = await getUnreadNotificationCount();
 
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/notifications/unread-count',
-      );
+      expect(apiClient.get).toHaveBeenCalledWith('/notifications/unread-count');
       expect(result).toEqual(mockResponse);
     });
   });
@@ -78,9 +75,7 @@ describe('알림 API', () => {
 
       await markNotificationAsRead(1);
 
-      expect(apiClient.patch).toHaveBeenCalledWith(
-        '/notifications/1/read',
-      );
+      expect(apiClient.patch).toHaveBeenCalledWith('/notifications/1/read');
     });
   });
 
@@ -90,9 +85,7 @@ describe('알림 API', () => {
 
       await markAllNotificationsAsRead();
 
-      expect(apiClient.post).toHaveBeenCalledWith(
-        '/notifications/read-all',
-      );
+      expect(apiClient.post).toHaveBeenCalledWith('/notifications/read-all');
     });
   });
 });
