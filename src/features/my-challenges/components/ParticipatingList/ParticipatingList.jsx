@@ -41,6 +41,7 @@ export function ParticipatingList() {
           {items.map((item) => (
             <li key={item.participationId}>
               <ChallengeCardLocal
+                challengeId={item.challenge.id}
                 title={item.challenge.title}
                 category={item.challenge.category}
                 documentType={item.challenge.documentType}
@@ -48,6 +49,7 @@ export function ParticipatingList() {
                 participantCount={item.challenge.participantCount}
                 maxParticipants={item.challenge.maxParticipants}
                 isClosed={item.challenge.isClosed}
+                latestWorkId={item.latestWork?.id ?? null}
               />
             </li>
           ))}

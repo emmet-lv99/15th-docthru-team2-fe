@@ -6,7 +6,9 @@
 // 공용 Card/Chip 부품이 아직 뼈대라 화면 안에서만 쓰는 임시 카드로 시작합니다.
 // (공용 부품이 완성되면 이 컴포넌트를 교체하면 됩니다)
 import Image from 'next/image';
+import Link from 'next/link';
 
+import { Button } from '@/components/Button';
 import * as styles from './ChallengeCardLocal.css.js';
 
 /** 카테고리 enum → 화면 라벨 (디자인 원본 Chip 과 동일) */
@@ -39,6 +41,7 @@ function formatDeadline(iso) {
 }
 
 export function ChallengeCardLocal({
+  challengeId,
   title,
   category,
   documentType,
@@ -46,9 +49,15 @@ export function ChallengeCardLocal({
   participantCount,
   maxParticipants,
   isClosed = false,
+  latestWorkId = null,
 }) {
   const deadlineText = formatDeadline(deadline);
   const hasPeople = Number.isFinite(participantCount) && Number.isFinite(maxParticipants);
+
+  // 제출물이 있으면 "이어서 작성", 없으면 챌린지 상세로 보내요 (M-10)
+  const ctaHref = latestWorkId
+    ? `/challenges/${challengeId}/works/${latestWorkId}/edit`
+    : `/challenges/${challengeId}`;
 
   return (
     <article className={styles.card}>
@@ -82,6 +91,18 @@ export function ChallengeCardLocal({
               </span>
             )}
           </div>
+
+          <Button
+            as={Link}
+            href={ctaHref}
+            variant="outline"
+            size="sm"
+            shape="pill"
+            className={styles.cta}
+          >
+            도전 계속하기
+            <Image src="/icons/arrow-right.svg" alt="" width={16} height={16} />
+          </Button>
         </div>
       </div>
     </article>

@@ -115,3 +115,8 @@ export const metaItem = style({
   fontSize: 'var(--font-size-12)',
   color: vars.colorGray600,
 });
+
+/** CTA — 카드 오른쪽 "도전 계속하기" */
+export const cta = style({
+  textDecoration: 'none',
+});
