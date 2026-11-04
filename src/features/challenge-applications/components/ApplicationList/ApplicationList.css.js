@@ -108,7 +108,6 @@ export const deletedRow = style({
   backgroundColor: '#fafafa',
 });
 
-
 // ========= 페이지네이션
 
 //페이지 번호버튼
@@ -142,8 +141,6 @@ export const pagination = style({
   gap: '12px',
   marginTop: '40px',
 });
-
-
 
 export const emptyMessage = style({
   minHeight: '550px',

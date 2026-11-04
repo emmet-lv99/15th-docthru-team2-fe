@@ -1,6 +1,5 @@
 import * as styles from './ApplicationList.css.js';
 
-
 const statusLabels = {
   PENDING: '승인 대기',
   APPROVED: '신청 승인',
@@ -16,18 +15,18 @@ const statusStyles = {
 };
 
 export default function ApplicationTable({ applications, isPending, isError }) {
-  if(isPending) {
-    return <p className={styles.emptyMessage}>불러오는중...</p>
+  if (isPending) {
+    return <p className={styles.emptyMessage}>불러오는중...</p>;
   }
-// API 요청 실패
-if (isError) {
-  return <p className={styles.emptyMessage}>신청 목록을 불러오지 못했습니다.</p>;
-}
+  // API 요청 실패
+  if (isError) {
+    return <p className={styles.emptyMessage}>신청 목록을 불러오지 못했습니다.</p>;
+  }
 
-// 신청 데이터가 없는 경우
-if (applications.length === 0) {
-  return <p className={styles.emptyMessage}>아직 챌린지가 없어요.</p>;
-}
+  // 신청 데이터가 없는 경우
+  if (applications.length === 0) {
+    return <p className={styles.emptyMessage}>아직 챌린지가 없어요.</p>;
+  }
 
   return (
     <div className={styles.tableWrapper}>
