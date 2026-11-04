@@ -47,6 +47,32 @@ describe('챌린지 URL 계약', () => {
   });
 });
 
+describe('빈 필터 입력의 기본값 처리', () => {
+  it('null도 기본 목록 필터로 정규화한다', () => {
+    expect(normalizeChallengeFilters(null)).toMatchObject({
+      q: '',
+      category: [],
+      sort: 'latest',
+      page: 1,
+      size: 9,
+    });
+    expect(new URLSearchParams(buildChallengeQuery(null)).get('page')).toBe('1');
+  });
+
+  it('클라이언트 목록 조회에 null을 전달해도 기본 쿼리로 요청한다', async () => {
+    mock.onGet('/challenges?sort=latest&page=1&size=9').reply(200, { items: [] });
+    await expect(getChallengeList(null)).resolves.toMatchObject({ items: [] });
+  });
+
+  it('클라이언트 참여자 조회에 null을 전달해도 기본 정렬을 사용한다', async () => {
+    mock.onGet('/challenges/5/participants').reply((config) => {
+      expect(config.params).toEqual({ page: 1, size: 10, sort: 'likes' });
+      return [200, { items: [] }];
+    });
+    await expect(getChallengeParticipants(5, null)).resolves.toMatchObject({ items: [] });
+  });
+});
+
 describe('챌린지 HTTP 계약', () => {
   it('검색·필터 포함 목록 조회를 API 클라이언트로 호출한다', async () => {
     mock.onGet(/\/challenges\?/).reply((config) => {

@@ -19,14 +19,15 @@ function positivePage(value) {
 // Next.js searchParams: category가 한 개면 문자열, 반복되면 배열이다.
 /** URL 검색 파라미터를 서버 계약에 맞는 필터 객체로 정규화합니다. */
 export function normalizeChallengeFilters(raw = {}) {
-  const categoryValues = Array.isArray(raw.category) ? raw.category : [raw.category];
+  const filters = raw ?? {};
+  const categoryValues = Array.isArray(filters.category) ? filters.category : [filters.category];
   return {
-    q: typeof raw.q === 'string' ? raw.q.trim() : '',
+    q: typeof filters.q === 'string' ? filters.q.trim() : '',
     category: [...new Set(categoryValues.filter((v) => CHALLENGE_CATEGORIES.includes(v)))],
-    documentType: allowedValue(raw.documentType, CHALLENGE_DOCUMENT_TYPES),
-    status: allowedValue(raw.status, CHALLENGE_STATUSES),
-    sort: allowedValue(raw.sort, CHALLENGE_SORTS) || 'latest',
-    page: positivePage(raw.page),
+    documentType: allowedValue(filters.documentType, CHALLENGE_DOCUMENT_TYPES),
+    status: allowedValue(filters.status, CHALLENGE_STATUSES),
+    sort: allowedValue(filters.sort, CHALLENGE_SORTS) || 'latest',
+    page: positivePage(filters.page),
     size: CHALLENGE_PAGE_SIZE,
   };
 }

@@ -12,10 +12,8 @@ export function getChallengeDetail(challengeId) {
 }
 
 /** 참여자 현황을 지정된 페이지와 정렬 기준으로 조회합니다. */
-export function getChallengeParticipants(
-  challengeId,
-  { page = 1, size = 10, sort = 'likes' } = {},
-) {
+export function getChallengeParticipants(challengeId, filters = {}) {
+  const { page = 1, size = 10, sort = 'likes' } = filters ?? {};
   return apiClient.get('/challenges/' + encodeURIComponent(String(challengeId)) + '/participants', {
     params: { page, size, sort },
   });

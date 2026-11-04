@@ -13,7 +13,8 @@ export function getInitialChallengeDetail(challengeId) {
 }
 
 /** 서버 렌더링 시 참여자 현황의 첫 데이터를 조회합니다. */
-export function getInitialParticipants(challengeId, { page = 1, size = 10, sort = 'likes' } = {}) {
+export function getInitialParticipants(challengeId, filters = {}) {
+  const { page = 1, size = 10, sort = 'likes' } = filters ?? {};
   const params = new URLSearchParams({
     page: String(page),
     size: String(size),
