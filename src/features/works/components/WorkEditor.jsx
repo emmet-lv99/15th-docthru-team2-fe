@@ -9,7 +9,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Toolbar from './Toolbar';
 import * as styles from './WorkEditor.css.js';
 
-function WorkEditor({ initialContent = '', onChange }) {
+function WorkEditor({ initialContent = '', onEditorReady }) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -24,9 +24,9 @@ function WorkEditor({ initialContent = '', onChange }) {
       Color,
     ],
     content: initialContent,
-    onUpdate: ({ editor }) => {
-      if (onChange) {
-        onChange(JSON.stringify(editor.getJSON()));
+    onCreate: ({ editor }) => {
+      if (onEditorReady) {
+        onEditorReady(editor);
       }
     },
   });

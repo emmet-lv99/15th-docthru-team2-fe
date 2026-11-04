@@ -43,18 +43,20 @@
 'use client';
 
 import { AuthGuard } from '@/components/AuthGuard';
-import { getChallenge } from '@/features/works/api.js';
+import { getChallenge, getMyDraft, saveDraft } from '@/features/works/api.js';
 import EditorActionBar from '@/features/works/components/EditorActionBar';
 import SourceViewer from '@/features/works/components/SourceViewer.jsx';
 import WorkEditor from '@/features/works/components/WorkEditor';
 import { queryKeys } from '@/lib/queryKeys.js';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation.js';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import * as styles from './page.css.js';
 
 export default function ChallengeEditPage() {
   const [isSourceOpen, setIsSourceOpen] = useState(false);
+  const [editor, setEditor] = useState(null);
   const { challengeId } = useParams();
 
   const { data: challenge, isLoading: isChallengeLoading } = useQuery({
@@ -63,6 +65,27 @@ export default function ChallengeEditPage() {
     enabled: Boolean(challengeId),
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutate: handleSaveDraft, isPending: isSavingDraft } = useMutation({
+    mutationFn: (content) => saveDraft(challengeId, content),
+    onSuccess: () => {
+      toast.success('임시저장 되었습니다.');
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.draft(challengeId) });
+    },
+    onError: (error) => {
+      toast.error(error.message || '임시저장에 실패했습니다.');
+    },
+  });
+
+  const { data: draftData } = useQuery({
+    queryKey: queryKeys.challenges.draft(challengeId),
+    queryFn: () => getMyDraft(challengeId),
+    enabled: Boolean(challengeId),
+  });
+
+  console.log(draftData);
+
   return (
     <AuthGuard>
       <div className={styles.pageLayout}>
@@ -70,13 +93,22 @@ export default function ChallengeEditPage() {
         <div className={styles.mainContent}>
           <div className={styles.innerContainer}>
             {/* 상단 전용 액션 바 */}
-            <EditorActionBar />
+            <EditorActionBar
+              onSaveDraft={() => {
+                if (!editor || editor.getText().trim() === '') {
+                  toast.warn('임시저장할 내용을 입력해주세요.');
+                  return;
+                }
+                handleSaveDraft(editor.getHTML());
+              }}
+              isSaving={isSavingDraft}
+            />
             {/* 챌린지 원문 제목 */}
             <h1 className={styles.challengeTitle}>
               {isChallengeLoading ? '챌린지 정보를 불러오는 중...' : challenge?.title}
             </h1>
             {/* 에디터 */}
-            <WorkEditor />
+            <WorkEditor onEditorReady={(editorInstance) => setEditor(editorInstance)} />
           </div>
         </div>
         {/* 우측 원문 패널 */}
