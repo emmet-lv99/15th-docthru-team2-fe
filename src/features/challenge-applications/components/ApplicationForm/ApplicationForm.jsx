@@ -1,13 +1,34 @@
-'use Client';
+'use client';
 
 import * as styles from './ApplicationForm.css';
+import { useState } from 'react';
+import ApplicationDropdown from './ApplicationDropdown';
 
 export default function ApplicationForm() {
+  //분야
+  const [category, setCategory] = useState('');
+
+  //문서타입
+  const [documentType, setDocumentType] = useState('');
+
+  const categoryOptions = [
+    { value: 'NEXT_JS', label: 'Next.js' },
+    { value: 'API', label: 'API' },
+    { value: 'CAREER', label: 'Career' },
+    { value: 'MODERN_JS', label: 'Modern JS' },
+    { value: 'WEB', label: 'Web' },
+  ];
+
+  const documentTypeOptions = [
+    { value: 'OFFICIAL', label: '공식문서' },
+    { value: 'BLOG', label: '블로그' },
+  ];
+
   return (
     <main className={styles.container}>
       <h1 className={styles.title}>신규 챌린지 신청</h1>
 
-      <from className={styles.form}>
+      <form className={styles.form}>
         {/* 제목 */}
         <div className={styles.formGroup}>
           <label htmlFor="title">제목</label>
@@ -28,29 +49,28 @@ export default function ApplicationForm() {
 
         {/* 분야 */}
         <div className={styles.formGroup}>
-          <label htmlFor="category">분야</label>
-          <select id="category" name="category" defaultValue="" required>
-            <option value="" disabled>
-              분야를 선택해주세요
-            </option>
-            <option value="NEXT_JS">NEXT_JS</option>
-            <option value="MODERN_JS">Modern JavaScript</option>
-            <option value="API">API</option>
-            <option value="WEB">Web</option>
-            <option value="CAREER">Career</option>
-          </select>
+          <label id="category-label">분야</label>
+
+          <ApplicationDropdown
+            id="category"
+            name="category"
+            value={category}
+            onChange={setCategory}
+            options={categoryOptions}
+          />
         </div>
 
         {/* 문서 타입 */}
         <div className={styles.formGroup}>
-          <label htmlFor="documentType">문서 타입</label>
-          <select id="documentType" name="documentType" defaultValue="" required>
-            <option value="" disabled>
-              문서타입을 선택해 주세요
-            </option>
-            <option value="OFFICIAL">공식 문서</option>
-            <option value="BLOG">블로그</option>
-          </select>
+          <label id="documentType-label">문서 타입</label>
+
+          <ApplicationDropdown
+            id="documentType"
+            name="documentType"
+            value={documentType}
+            onChange={setDocumentType}
+            options={documentTypeOptions}
+          />
         </div>
 
         {/* 마감일 */}
@@ -66,7 +86,7 @@ export default function ApplicationForm() {
             id="maxParticipants"
             name="maxParticipants"
             type="number"
-            placeholder="최대 인원을 입력해 주세요"
+            placeholder="인원을 입력해 주세요"
             required
           />
         </div>
@@ -87,7 +107,7 @@ export default function ApplicationForm() {
         <button className={styles.submitButton} type="submit">
           신청하기
         </button>
-      </from>
+      </form>
     </main>
   );
 }
