@@ -24,13 +24,15 @@ export default function ApplicationList() {
   //api 요청에 사용할 검색어
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
 
+  //검색입력이 멈춘뒤 300ms이후 검색어 갱신
   useEffect(() => {
     const timer = setTimeout(() => {
+      setCurrentPage(1);
       setDebouncedKeyword(searchKeyword.trim());
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchKeyword, setDebouncedKeyword]);
+  }, [searchKeyword, setDebouncedKeyword, setCurrentPage]);
 
   //선택한 신청 상태
   const [selectedStatus, setSelectedStatus] = useState('ALL');
