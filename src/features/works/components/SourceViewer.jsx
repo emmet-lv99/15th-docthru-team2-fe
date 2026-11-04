@@ -1,5 +1,6 @@
 'use client';
 
+import { queryKeys } from '@/lib/queryKeys.js';
 import { useQuery } from '@tanstack/react-query';
 import * as styles from './SourceViewer.css.js';
 
@@ -8,7 +9,7 @@ function SourceViewer({
   onClose,
 }) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['sourceDoc', sourceUrl],
+    queryKey: queryKeys.reader.doc(sourceUrl),
     queryFn: async () => {
       const res = await fetch(`/api/reader?url=${encodeURIComponent(sourceUrl)}`);
       if (!res.ok) {

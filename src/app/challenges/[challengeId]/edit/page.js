@@ -43,14 +43,25 @@
 'use client';
 
 import { AuthGuard } from '@/components/AuthGuard';
+import { getChallenge } from '@/features/works/api.js';
 import EditorActionBar from '@/features/works/components/EditorActionBar';
 import SourceViewer from '@/features/works/components/SourceViewer.jsx';
 import WorkEditor from '@/features/works/components/WorkEditor';
+import { queryKeys } from '@/lib/queryKeys.js';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation.js';
 import { useState } from 'react';
 import * as styles from './page.css.js';
 
 export default function ChallengeEditPage() {
   const [isSourceOpen, setIsSourceOpen] = useState(false);
+  const { challengeId } = useParams();
+
+  const { data: challenge, isLoading: isChallengeLoading } = useQuery({
+    queryKey: queryKeys.challenges.detail(challengeId),
+    queryFn: () => getChallenge(challengeId),
+    enabled: Boolean(challengeId),
+  });
 
   return (
     <AuthGuard>
@@ -61,13 +72,17 @@ export default function ChallengeEditPage() {
             {/* 상단 전용 액션 바 */}
             <EditorActionBar />
             {/* 챌린지 원문 제목 */}
-            <h1 className={styles.challengeTitle}>챌린지 타이틀</h1>
+            <h1 className={styles.challengeTitle}>
+              {isChallengeLoading ? '챌린지 정보를 불러오는 중...' : challenge?.title}
+            </h1>
             {/* 에디터 */}
             <WorkEditor />
           </div>
         </div>
         {/* 우측 원문 패널 */}
-        {isSourceOpen && <SourceViewer onClose={() => setIsSourceOpen(false)} />}
+        {isSourceOpen && (
+          <SourceViewer sourceUrl={challenge?.sourceUrl} onClose={() => setIsSourceOpen(false)} />
+        )}
         {/* 우측 원문 보기 플로팅 버튼 */}
         {!isSourceOpen && (
           <button
