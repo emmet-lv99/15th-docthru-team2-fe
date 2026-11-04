@@ -61,8 +61,9 @@ export async function GET(request) {
   }
 
   try {
-    // 1. 외부 공식 문서 HTML fetch
+    // 1. 외부 공식 문서 HTML fetch (6초 타임아웃 설정으로 서버 지연 방지)
     const response = await fetch(targetUrl, {
+      signal: AbortSignal.timeout(6000),
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -73,7 +74,16 @@ export async function GET(request) {
       throw new Error(`페이지를 불러올 수 없습니다. (${response.status})`);
     }
 
+    // 2. 최대 5MB 크기 제한 (메모리 고갈 방지)
+    const contentLength = response.headers.get('content-length');
+    if (contentLength && parseInt(contentLength, 10) > 5 * 1024 * 1024) {
+      throw new Error('원문 문서의 용량이 너무 큽니다. (최대 5MB 제한)');
+    }
+
     const html = await response.text();
+    if (html.length > 5 * 1024 * 1024) {
+      throw new Error('원문 문서의 용량이 너무 큽니다. (최대 5MB 제한)');
+    }
 
     // 2. JSDOM에 올린 뒤 이미지/링크 상대 경로를 절대 경로로 변환
     const dom = new JSDOM(html, { url: targetUrl });
@@ -115,6 +125,12 @@ export async function GET(request) {
       excerpt: article.excerpt,
     });
   } catch (error) {
+    if (error.name === 'TimeoutError') {
+      return NextResponse.json(
+        { error: '원격 서버의 응답 시간이 초과되었습니다. (6초 제한)' },
+        { status: 504 },
+      );
+    }
     return NextResponse.json(
       { error: error.message || '문서 파싱에 실패했습니다.' },
       { status: 500 },
