@@ -43,14 +43,15 @@
 'use client';
 
 import { AuthGuard } from '@/components/AuthGuard';
-import { getChallenge, getMyDraft, saveDraft } from '@/features/works/api.js';
+import { abandonChallenge, getChallenge, getMyDraft, saveDraft } from '@/features/works/api.js';
+import ConfirmModal from '@/features/works/components/ConfirmModal.jsx';
 import DraftRestoreBanner from '@/features/works/components/DraftRestoreBanner.jsx';
 import EditorActionBar from '@/features/works/components/EditorActionBar';
 import SourceViewer from '@/features/works/components/SourceViewer.jsx';
 import WorkEditor from '@/features/works/components/WorkEditor';
 import { queryKeys } from '@/lib/queryKeys.js';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'next/navigation.js';
+import { useParams, useRouter } from 'next/navigation.js';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import * as styles from './page.css.js';
@@ -59,7 +60,9 @@ export default function ChallengeEditPage() {
   const [isSourceOpen, setIsSourceOpen] = useState(false);
   const [editor, setEditor] = useState(null);
   const [isDraftDismissed, setIsDraftDismissed] = useState(false);
+  const [isAbandonModalOpen, setIsAbandonModalOpen] = useState(false);
   const { challengeId } = useParams();
+  const router = useRouter();
 
   const { data: challenge, isLoading: isChallengeLoading } = useQuery({
     queryKey: queryKeys.challenges.detail(challengeId),
@@ -93,6 +96,19 @@ export default function ChallengeEditPage() {
     setIsDraftDismissed(true);
   };
 
+  const { mutate: handleAbandon } = useMutation({
+    mutationFn: () => abandonChallenge(challengeId),
+    onSuccess: () => {
+      toast.success('챌린지를 포기했습니다.');
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(challengeId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.participation(challengeId) });
+      router.push(`/challenges/${challengeId}`);
+    },
+    onError: (error) => {
+      toast.error(error.message || '챌린지 포기에 실패했습니다.');
+    },
+  });
+
   return (
     <AuthGuard>
       <div className={styles.pageLayout}>
@@ -101,6 +117,9 @@ export default function ChallengeEditPage() {
           <div className={styles.innerContainer}>
             {/* 상단 전용 액션 바 */}
             <EditorActionBar
+              onAbandon={() => {
+                setIsAbandonModalOpen(true);
+              }}
               onSaveDraft={() => {
                 if (!editor || editor.getText().trim() === '') {
                   toast.warn('임시저장할 내용을 입력해주세요.');
@@ -139,6 +158,20 @@ export default function ChallengeEditPage() {
           onClose={() => setIsDraftDismissed(true)}
         />
       )}
+
+      <ConfirmModal
+        isOpen={isAbandonModalOpen}
+        title="챌린지 포기"
+        description="정말 챌린지를 포기하시겠습니까?&#10;작성 중인 내용은 저장되지 않습니다."
+        confirmLabel="포기하기"
+        cancelLabel="계속 작성"
+        isDanger={true}
+        onConfirm={() => {
+          setIsAbandonModalOpen(false);
+          handleAbandon();
+        }}
+        onClose={() => setIsAbandonModalOpen(false)}
+      />
     </AuthGuard>
   );
 }
