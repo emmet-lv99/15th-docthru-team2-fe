@@ -40,9 +40,7 @@ function ConfirmModal({
           <button
             type="button"
             className={
-              isDanger
-                ? styles.confirmButtonVariants.danger
-                : styles.confirmButtonVariants.normal
+              isDanger ? styles.confirmButtonVariants.danger : styles.confirmButtonVariants.normal
             }
             onClick={onConfirm}
           >

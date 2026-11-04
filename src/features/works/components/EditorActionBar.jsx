@@ -19,7 +19,12 @@ function EditorActionBar({
         Docthru
       </Link>
       <div className={styles.actions}>
-        <button className={styles.actionDrop} type="button" onClick={onAbandon} aria-label="챌린지 포기">
+        <button
+          className={styles.actionDrop}
+          type="button"
+          onClick={onAbandon}
+          aria-label="챌린지 포기"
+        >
           <span className={styles.actionDropText}>포기</span>
           <Image src={IconAbandon} alt="포기 아이콘" />
         </button>
