@@ -10,8 +10,10 @@ function ConfirmModal({
   confirmLabel = '확인',
   cancelLabel = '취소',
   isDanger = false,
+  isConfirmDisabled = false,
   onConfirm,
   onClose,
+  children,
 }) {
   useEffect(() => {
     if (!isOpen) return;
@@ -33,12 +35,14 @@ function ConfirmModal({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {title && <h3 className={styles.title}>{title}</h3>}
         {description && <p className={styles.description}>{description}</p>}
+        {children}
         <div className={styles.buttonGroup}>
           <button type="button" className={styles.cancelButton} onClick={onClose}>
             {cancelLabel}
           </button>
           <button
             type="button"
+            disabled={isConfirmDisabled}
             className={
               isDanger ? styles.confirmButtonVariants.danger : styles.confirmButtonVariants.normal
             }
