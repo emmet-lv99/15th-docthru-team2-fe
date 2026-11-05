@@ -63,12 +63,16 @@ export async function generateMetadata({ params }) {
 export default async function WorkDetailPage({ params }) {
   const { challengeId, workId } = await params;
   // 1. 서버에서 작업물 데이터 조회 (SSR)
-  const { ok, data: work } = await apiGet(`/challenges/${challengeId}/works/${workId}`);
-  // 2. 존재하지 않는 작업물이면 404 페이지로 분기
-  if (!ok || !work) {
+  const { ok, status, data: work } = await apiGet(`/challenges/${challengeId}/works/${workId}`);
+  // 2. 404 상태코드(미존재 작업물)일 때만 notFound 페이지로 분기
+  if (status === 404 || (!ok && !work)) {
     notFound();
   }
-  // 3. 클라이언트 인터랙션 컨테이너에 초기 데이터(initialWork) 전달
+  // 3. 500, 503 등 서버 에러는 error.js 화면으로 전달
+  if (!ok) {
+    throw new Error('작업물 상세 정보를 불러오는 중 서버 오류가 발생했습니다.');
+  }
+  // 4. 클라이언트 인터랙션 컨테이너에 초기 데이터(initialWork) 전달
   return (
     <main>
       <WorkDetailView initialWork={work} challengeId={challengeId} workId={workId} />

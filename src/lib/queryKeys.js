@@ -37,7 +37,7 @@ export const queryKeys = {
   works: {
     all: () => ['works'],
     list: (filters) => ['works', 'list', filters ?? 'default'],
-    detail: (workId) => ['works', 'detail', workId],
+    detail: (workId, userId) => ['works', 'detail', Number(workId), userId ?? 'guest'],
   },
 
   // ── 피드백 ─────────────────────────────────────────────────

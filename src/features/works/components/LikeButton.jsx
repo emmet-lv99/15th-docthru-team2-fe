@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/contexts/AuthProvider';
 import { likeWork, unlikeWork } from '@/features/works/api.js';
-import { queryKeys } from '@/lib/queryKeys.js';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import * as styles from './LikeButton.css.js';
@@ -13,7 +12,7 @@ function LikeButton({ workId, initialLiked: isLiked = false, initialCount: count
   const { mutate: toggleLike, isPending } = useMutation({
     mutationFn: () => (isLiked ? unlikeWork(workId) : likeWork(workId)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.works.detail(Number(workId)) });
+      queryClient.invalidateQueries({ queryKey: ['works', 'detail', Number(workId)] });
     },
     onError: (err) => {
       toast.error(err.message || '좋아요 처리에 실패했습니다.');

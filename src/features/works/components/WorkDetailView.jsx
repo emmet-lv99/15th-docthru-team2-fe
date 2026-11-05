@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/contexts/AuthProvider';
 import { queryKeys } from '@/lib/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 import { getWorkDetail } from '../api';
@@ -8,8 +9,10 @@ import WorkDetailHeader from './WorkDetailHeader';
 import * as styles from './WorkDetailView.css.js';
 
 function WorkDetailView({ initialWork, challengeId, workId }) {
+  const { user } = useAuth();
+
   const { data: work } = useQuery({
-    queryKey: queryKeys.works.detail(Number(workId)),
+    queryKey: queryKeys.works.detail(Number(workId), user?.id),
     queryFn: () => getWorkDetail(challengeId, workId),
     initialData: initialWork,
   });
