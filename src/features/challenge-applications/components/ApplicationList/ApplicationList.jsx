@@ -12,6 +12,9 @@ import ApplicationPagination from './ApplicationPagination';
 
 import * as styles from '@/app/my-applications/page.css.js';
 
+import Image from 'next/image';
+import searchIcon from '@/features/challenge-applications/assets/ic_search.svg';
+
 export default function ApplicationList() {
   const { user } = useAuth(true);
 
@@ -80,17 +83,21 @@ export default function ApplicationList() {
     <>
       {/* 검색 및 필터 */}
       <div className={styles.filterBar}>
-        <input
-          type="search"
-          placeholder="챌린지 이름을 검색해 보세요"
-          aria-label="챌린지 검색"
-          className={styles.searchInput}
-          value={searchKeyword}
-          onChange={(e) => {
-            setSearchKeyword(e.target.value);
-            setCurrentPage(1);
-          }}
-        />
+        <div className={styles.searchWrapper}>
+          <Image src={searchIcon} alt="" width={24} height={24} className={styles.searchIcon} />
+
+          <input
+            type="search"
+            placeholder="챌린지 이름을 검색해 보세요"
+            aria-label="챌린지 검색"
+            className={styles.searchInput}
+            value={searchKeyword}
+            onChange={(e) => {
+              setSearchKeyword(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
 
         <select
           className={styles.statusSelect}
