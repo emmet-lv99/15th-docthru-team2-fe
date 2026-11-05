@@ -24,7 +24,7 @@
 // 🧠 에디터 메모 (시안 '작업 도전하기')
 //    · 서식 툴바가 있는 **리치 텍스트 에디터**를 씁니다 — `@tiptap/react`·`@tiptap/starter-kit`·`@tiptap/extension-underline` 설치돼 있어요.
 //      참고 구현: 완성본 prisma-8 `src/features/works/editor/`(TiptapEditor·Toolbar).
-//    · 본문 저장 형식은 **TipTap JSON 문자열**(`JSON.stringify(editor.getJSON())`) — 계약 `content: string` 그대로예요.
+//    · 본문 저장 형식은 백엔드 계약 스펙에 따른 **TipTap HTML 문자열**(`editor.getHTML()`) — 계약 `content: string` 그대로예요.
 //    · 작업물 상세도 같은 에디터를 읽기전용(editable=false)으로 렌더하면 안전해요(dangerouslySetInnerHTML 금지).
 //
 // 💡 구현 메모
@@ -40,14 +40,180 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
+'use client';
+
 import { AuthGuard } from '@/components/AuthGuard';
+import {
+  abandonChallenge,
+  getChallenge,
+  getMyDraft,
+  getMyWork,
+  saveDraft,
+  submitWork,
+} from '@/features/works/api.js';
+import ConfirmModal from '@/features/works/components/ConfirmModal.jsx';
+import DraftRestoreBanner from '@/features/works/components/DraftRestoreBanner.jsx';
+import EditorActionBar from '@/features/works/components/EditorActionBar';
+import SourceViewer from '@/features/works/components/SourceViewer.jsx';
+import WorkEditor from '@/features/works/components/WorkEditor';
+import { queryKeys } from '@/lib/queryKeys.js';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation.js';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import * as styles from './page.css.js';
 
 export default function ChallengeEditPage() {
+  const [isSourceOpen, setIsSourceOpen] = useState(false);
+  const [editor, setEditor] = useState(null);
+  const [isDraftDismissed, setIsDraftDismissed] = useState(false);
+  const [isAbandonModalOpen, setIsAbandonModalOpen] = useState(false);
+  const { challengeId } = useParams();
+  const router = useRouter();
+
+  const { data: challenge, isLoading: isChallengeLoading } = useQuery({
+    queryKey: queryKeys.challenges.detail(challengeId),
+    queryFn: () => getChallenge(challengeId),
+    enabled: Boolean(challengeId),
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate: handleSaveDraft, isPending: isSavingDraft } = useMutation({
+    mutationFn: (content) => saveDraft(challengeId, content),
+    onSuccess: () => {
+      toast.success('임시저장 되었습니다.');
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.draft(challengeId) });
+    },
+    onError: (error) => {
+      toast.error(error.message || '임시저장에 실패했습니다.');
+    },
+  });
+
+  const { data: myWorkData } = useQuery({
+    queryKey: queryKeys.challenges.myWork(challengeId),
+    queryFn: () => getMyWork(challengeId),
+    enabled: Boolean(challengeId),
+  });
+
+  const { data: draftData } = useQuery({
+    queryKey: queryKeys.challenges.draft(challengeId),
+    queryFn: () => getMyDraft(challengeId),
+    enabled: Boolean(challengeId),
+  });
+
+  // 기존 제출본이 존재하는 경우 에디터 초기 내용으로 채움
+  useEffect(() => {
+    if (editor && myWorkData?.work?.content && editor.isEmpty) {
+      editor.commands.setContent(myWorkData.work.content);
+    }
+  }, [editor, myWorkData]);
+
+  const handleRestoreDraft = () => {
+    if (!editor || !draftData?.draft?.content) return;
+    editor.commands.setContent(draftData.draft.content);
+    toast.success('임시저장된 작업물을 불러왔습니다.');
+    setIsDraftDismissed(true);
+  };
+
+  const { mutate: handleAbandon } = useMutation({
+    mutationFn: () => abandonChallenge(challengeId),
+    onSuccess: () => {
+      toast.success('챌린지를 포기했습니다.');
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(challengeId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.participation(challengeId) });
+      router.push(`/challenges/${challengeId}`);
+    },
+    onError: (error) => {
+      toast.error(error.message || '챌린지 포기에 실패했습니다.');
+    },
+  });
+
+  const { mutate: handleSubmitWork, isPending: isSubmitting } = useMutation({
+    mutationFn: (content) => submitWork(challengeId, content),
+    onSuccess: () => {
+      toast.success('번역 작업물이 성공적으로 제출되었습니다!');
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(challengeId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.myWork(challengeId) });
+      // 제출된 작업물 상세 페이지(또는 챌린지 상세)로 이동
+      router.push(`/challenges/${challengeId}`);
+    },
+    onError: (error) => {
+      toast.error(error.message || '작업물 제출에 실패했습니다.');
+    },
+  });
+
   return (
     <AuthGuard>
-      <span>
-        작업 도전 (에디터) — TODO(팀원 ②): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
-      </span>
+      <div className={styles.pageLayout}>
+        {/* 좌측 에디터 영역 */}
+        <div className={styles.mainContent}>
+          <div className={styles.innerContainer}>
+            {/* 상단 전용 액션 바 */}
+            <EditorActionBar
+              onAbandon={() => {
+                setIsAbandonModalOpen(true);
+              }}
+              onSaveDraft={() => {
+                if (!editor || editor.getText().trim() === '') {
+                  toast.warn('임시저장할 내용을 입력해주세요.');
+                  return;
+                }
+                handleSaveDraft(editor.getHTML());
+              }}
+              isSaving={isSavingDraft}
+              onSubmit={() => {
+                if (!editor || editor.getText().trim() === '') {
+                  toast.warn('번역 본문을 입력해주세요.');
+                  return;
+                }
+                handleSubmitWork(editor.getHTML());
+              }}
+              isSubmitting={isSubmitting}
+            />
+            {/* 챌린지 원문 제목 */}
+            <h1 className={styles.challengeTitle}>
+              {isChallengeLoading ? '챌린지 정보를 불러오는 중...' : challenge?.title}
+            </h1>
+            {/* 에디터 */}
+            <WorkEditor onEditorReady={(editorInstance) => setEditor(editorInstance)} />
+          </div>
+        </div>
+        {/* 우측 원문 패널 */}
+        {isSourceOpen && (
+          <SourceViewer sourceUrl={challenge?.sourceUrl} onClose={() => setIsSourceOpen(false)} />
+        )}
+        {/* 우측 원문 보기 플로팅 버튼 */}
+        {!isSourceOpen && (
+          <button
+            type="button"
+            onClick={() => setIsSourceOpen(true)}
+            className={styles.floatingSourceButton}
+          >
+            원문
+          </button>
+        )}
+      </div>
+      {Boolean(draftData?.draft?.content) && !isDraftDismissed && (
+        <DraftRestoreBanner
+          onRestore={handleRestoreDraft}
+          onClose={() => setIsDraftDismissed(true)}
+        />
+      )}
+
+      <ConfirmModal
+        isOpen={isAbandonModalOpen}
+        title="챌린지 포기"
+        description="정말 챌린지를 포기하시겠습니까?&#10;작성 중인 내용은 저장되지 않습니다."
+        confirmLabel="포기하기"
+        cancelLabel="계속 작성"
+        isDanger={true}
+        onConfirm={() => {
+          setIsAbandonModalOpen(false);
+          handleAbandon();
+        }}
+        onClose={() => setIsAbandonModalOpen(false)}
+      />
     </AuthGuard>
   );
 }
