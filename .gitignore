@@ -44,3 +44,5 @@ Thumbs.db
 # pnpm-lock.yaml 은 **커밋합니다** (재현 가능한 설치의 핵심).
 package-lock.json
 yarn.lock
+
+workflow.md
