@@ -13,7 +13,7 @@ import ApplicationPagination from './ApplicationPagination';
 import * as styles from '@/app/my-applications/page.css.js';
 
 import Image from 'next/image';
-import searchIcon from '../../assets/ic_search.svg';
+import searchIcon from '@/features/challenge-applications/assets/ic_search.svg';
 
 export default function ApplicationList() {
   const { user } = useAuth(true);

@@ -3,8 +3,8 @@
 import * as styles from './ApplicationList.css.js';
 import Image from 'next/image';
 
-import arrowLeft from '../../assets/icon_arrow_left.svg';
-import arrowRight from '../../assets/icon_arrow_right.svg';
+import arrowLeft from '@/features/challenge-applications/assets/icon_arrow_left.svg';
+import arrowRight from '@/features/challenge-applications/assets/icon_arrow_right.svg';
 
 export default function ApplicationPagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
