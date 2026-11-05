@@ -70,4 +70,8 @@ export const queryKeys = {
     participating: (filters) => ['myChallenges', 'participating', filters ?? 'default'],
     completed: (filters) => ['myChallenges', 'completed', filters ?? 'default'],
   },
+  reader: {
+    all: () => ['reader'],
+    doc: (url) => ['reader', 'doc', url],
+  },
 };
