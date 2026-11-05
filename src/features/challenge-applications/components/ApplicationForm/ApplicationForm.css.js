@@ -82,17 +82,6 @@ export const submitButton = style({
   fontSize: '16px',
   fontWeight: '600',
   cursor: 'pointer',
-
-  selectors: {
-    '&:hover': {
-      backgroundColor: '#404040',
-    },
-
-    '&:focus-visible': {
-      outline: '2px solid #262626',
-      outlineOffset: '3px',
-    },
-  },
 });
 
 // 드롭다운 ===========================================

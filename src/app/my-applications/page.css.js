@@ -39,6 +39,7 @@ export const newButton = style({
   fontSize: '16px',
   fontWeight: '600',
   textDecoration: 'none',
+  gap: '8px',
 });
 
 //탭 메뉴 전체
@@ -72,11 +73,27 @@ export const filterBar = style({
   marginBottom: '30px',
 });
 
+// 검색창과 돋보기 아이콘을 감싸는 영역
+export const searchWrapper = style({
+  position: 'relative',
+  flex: 1,
+  minWidth: 0,
+});
+
+// 검색창 왼쪽 돋보기 아이콘
+export const searchIcon = style({
+  position: 'absolute',
+  left: '16px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  pointerEvents: 'none',
+});
+
 //검색창
 export const searchInput = style({
   flex: 1,
   minWidth: 0,
-  width: '844px',
+  width: '800px',
   height: '40px',
   padding: '0 20px',
   border: '1px solid #e5e5e5',
@@ -84,13 +101,9 @@ export const searchInput = style({
   backgroundColor: '#FFFFFF',
   fontSize: '16px',
   outline: 'none',
+  paddingLeft: '44px',
 
-  selectors: {
-    '&:focus-visible': {
-      outline: '2px solid #262626',
-      outlineOffset: '2px',
-    },
-  },
+ 
 });
 
 //드롭다운
