@@ -32,6 +32,8 @@
 import { AuthGuard } from '@/components/AuthGuard';
 import Link from 'next/link';
 import * as styles from './page.css.js';
+import Image from 'next/image';
+import plusIcon from '@/features/challenge-applications/assets/plus.svg';
 
 import ApplicationList from '@/features/challenge-applications/components/ApplicationList/ApplicationList';
 
@@ -43,7 +45,8 @@ export default function MeApplicationsPage() {
           <div className={styles.header}>
             <h1 className={styles.title}>나의 챌린지</h1>
             <Link href="/my-applications/new" className={styles.newButton}>
-              신규 챌린지 신청 +
+              신규 챌린지 신청
+              <Image src={plusIcon} alt="" width={14} height={14} />
             </Link>
           </div>
 

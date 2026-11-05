@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { style, globalStyle } from '@vanilla-extract/css';
 
 //표전체
 export const tableWrapper = style({
@@ -150,4 +150,31 @@ export const emptyMessage = style({
   color: '#737373',
   fontSize: '16px',
   fontWeight: 400,
+});
+
+// 페이지네이션의 기본 화살표 버튼
+globalStyle(`${pagination} button:disabled`, {
+  cursor: 'not-allowed',
+});
+
+// 비활성화된 화살표 아이콘을 밝은 회색으로 표시
+globalStyle(`${pagination} button:disabled img`, {
+  opacity: 0.3,
+});
+
+// 활성화된 화살표 아이콘은 진하게 표시
+globalStyle(`${pagination} button:not(:disabled) img`, {
+  opacity: 1,
+});
+
+// 페이지네이션 화살표 버튼 정렬
+export const arrowButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 0,
+  width: '40px',
+  height: '40px',
+  border: 'none',
+  background: 'transparent',
 });

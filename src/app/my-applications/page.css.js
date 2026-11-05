@@ -4,14 +4,13 @@ import { style } from '@vanilla-extract/css';
 export const pageBackground = style({
   backgroundColor: '#FAFAFA',
   minHeight: '100dvh',
-  paddingTop: '30px',
 });
 
 //페이지 전체
 export const container = style({
   maxWidth: '1000px',
   margin: '0 auto',
-  padding: '40px 24px',
+  padding: '24px',
 });
 
 //제목과 신규신청
@@ -40,6 +39,7 @@ export const newButton = style({
   fontSize: '16px',
   fontWeight: '600',
   textDecoration: 'none',
+  gap: '8px',
 });
 
 //탭 메뉴 전체
@@ -73,11 +73,26 @@ export const filterBar = style({
   marginBottom: '30px',
 });
 
-//검색창
-export const searchInput = style({
+// 검색창과 돋보기 아이콘을 감싸는 영역
+export const searchWrapper = style({
+  position: 'relative',
   flex: 1,
   minWidth: 0,
-  width: '844px',
+});
+
+// 검색창 왼쪽 돋보기 아이콘
+export const searchIcon = style({
+  position: 'absolute',
+  left: '16px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  pointerEvents: 'none',
+});
+
+//검색창
+export const searchInput = style({
+  width: '100%',
+  boxSizing: 'border-box',
   height: '40px',
   padding: '0 20px',
   border: '1px solid #e5e5e5',
@@ -85,13 +100,7 @@ export const searchInput = style({
   backgroundColor: '#FFFFFF',
   fontSize: '16px',
   outline: 'none',
-
-  selectors: {
-    '&:focus-visible': {
-      outline: '2px solid #262626',
-      outlineOffset: '2px',
-    },
-  },
+  paddingLeft: '44px',
 });
 
 //드롭다운
