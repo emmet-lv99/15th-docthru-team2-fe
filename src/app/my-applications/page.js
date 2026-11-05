@@ -30,14 +30,39 @@
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
 import { AuthGuard } from '@/components/AuthGuard';
+import Link from 'next/link';
+import * as styles from './page.css.js';
+
+import ApplicationList from '@/features/challenge-applications/components/ApplicationList/ApplicationList';
 
 export default function MeApplicationsPage() {
   return (
     <AuthGuard>
-      <span>
-        내 제안 목록 — TODO(팀원 ⑤ (목록은 팀원 ③ 협력)): 이 파일 상단의 주석 가이드를 따라 구현해
-        주세요
-      </span>
+      <div className={styles.pageBackground}>
+        <main className={styles.container}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>나의 챌린지</h1>
+            <Link href="/my-applications/new" className={styles.newButton}>
+              신규 챌린지 신청 +
+            </Link>
+          </div>
+
+          {/* 탭메뉴 */}
+          <nav className={styles.tabs} aria-label="나의 챌린지 메뉴">
+            <Link href="/my-challenges/participating" className={styles.tab}>
+              참여중인 챌린지
+            </Link>
+            <Link href="/my-challenges/completed" className={styles.tab}>
+              완료한 챌린지
+            </Link>
+            <Link href="/my-applications" className={`${styles.tab} ${styles.activeTab}`}>
+              신청한 챌린지
+            </Link>
+          </nav>
+          {/* 검색, 필터, 테이블, 페이지네이션 */}
+          <ApplicationList />
+        </main>
+      </div>
     </AuthGuard>
   );
 }
