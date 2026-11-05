@@ -221,7 +221,7 @@ export default function ApplicationForm() {
 
         {/* 신청 버튼 */}
         <button className={styles.submitButton} type="submit" disabled={isPending}>
-          신청하기
+          {isPending ? '신청 중...' : '신청하기'}
         </button>
       </form>
     </main>
