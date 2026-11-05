@@ -45,4 +45,5 @@ Thumbs.db
 package-lock.json
 yarn.lock
 
-workflow.md
+WORKFLOW.md
+DEV_LOG.md
