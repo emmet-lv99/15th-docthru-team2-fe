@@ -28,12 +28,7 @@
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
 import { AuthGuard } from '@/components/AuthGuard';
-import ApplicationDetail from '@/features/challenge-applications/components/ApplicationDetail/ApplicationDetail';
 
 export default function ApplicationDetailPage() {
-  return (
-    <AuthGuard>
-      <ApplicationDetail />
-    </AuthGuard>
-  );
+  return <AuthGuard></AuthGuard>;
 }
