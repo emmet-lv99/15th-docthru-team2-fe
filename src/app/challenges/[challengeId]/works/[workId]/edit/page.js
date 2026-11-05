@@ -34,14 +34,154 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
+'use client';
+
+import * as styles from '@/app/challenges/[challengeId]/edit/page.css.js';
 import { AuthGuard } from '@/components/AuthGuard';
+import { useAuth } from '@/contexts/AuthProvider';
+import { getChallenge, getWorkDetail, updateWork } from '@/features/works/api';
+import ConfirmModal from '@/features/works/components/ConfirmModal';
+import EditorActionBar from '@/features/works/components/EditorActionBar';
+import SourceViewer from '@/features/works/components/SourceViewer';
+import WorkEditor from '@/features/works/components/WorkEditor';
+import { queryKeys } from '@/lib/queryKeys';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function WorkEditPage() {
+  const { challengeId, workId } = useParams();
+  const router = useRouter();
+  const { user, isPending: isAuthPending } = useAuth();
+  const [editor, setEditor] = useState(null);
+  const [isSourceOpen, setIsSourceOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+
+  // 챌린지 정보 조회(원문 링크 및 마감 여부 조회)
+  const { data: challenge, isLoading: isChallengeLoading } = useQuery({
+    queryKey: queryKeys.challenges.detail(challengeId),
+    queryFn: () => getChallenge(challengeId),
+    enabled: Boolean(challengeId),
+  });
+
+  // 수정할 기존 작업물 조회
+  const { data: work, isLoading: isWorkLoading } = useQuery({
+    queryKey: queryKeys.works.detail(Number(workId), user?.id),
+    queryFn: () => getWorkDetail(challengeId, workId),
+    enabled: Boolean(challengeId && workId),
+  });
+
+  const isLoading = isAuthPending || isChallengeLoading || isWorkLoading;
+
+  useEffect(() => {
+    if (editor && work?.content && editor.isEmpty) {
+      editor.commands.setContent(work.content);
+    }
+  }, [editor, work]);
+
+  // 권한 가드: 작성자 본인 또는 관리자가 아니면 차단
+  useEffect(() => {
+    // 데이터가 아직 로딩 중일 때는 검사를 건너뜁니다
+    if (isLoading) return;
+    // 작업물이 없는 경우
+    if (!work) {
+      toast.error('존재하지 않는 작업물입니다.');
+      router.replace(`/challenges/${challengeId}`);
+      return;
+    }
+    // 작성자 본인 또는 관리자 여부 확인
+    const isAuthor = Number(user?.id) === Number(work.author?.id ?? work.authorId ?? work.userId);
+    const isAdmin = user?.role === 'ADMIN';
+    if (!isAuthor && !isAdmin) {
+      toast.error('작업물 수정 권한이 없습니다.');
+      router.replace(`/challenges/${challengeId}/works/${workId}`);
+    }
+
+    // 마감된 챌린지 수정 차단 방어
+    const isClosed =
+      challenge?.status === 'CLOSED' ||
+      (challenge?.deadline && new Date() >= new Date(challenge.deadline));
+    if (isClosed) {
+      toast.error('이미 마감된 챌린지의 작업물은 수정할 수 없습니다.');
+      router.replace(`/challenges/${challengeId}/works/${workId}`);
+    }
+  }, [isLoading, work, user, challengeId, workId, router, challenge]);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: handleUpdateWork, isPending: isSubmitting } = useMutation({
+    mutationFn: (content) => updateWork(workId, content),
+    onSuccess: () => {
+      toast.success('작업물이 성공적으로으로수정되었습니다!');
+      // 작업물 상세 리리 쿼리캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['works', 'detail', Number(workId)] });
+      router.refresh();
+      router.push(`/challenges/${challengeId}/works/${workId}`);
+    },
+    onError: (error) => {
+      toast.error(error.message || '작업물 수정에 실패했습니다.');
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!editor || editor.getText().trim() === '') {
+      toast.warn('수정할 본문 내용을 입력해주세요.');
+      return;
+    }
+    handleUpdateWork(editor.getHTML());
+  };
+
   return (
     <AuthGuard>
-      <span>
-        작업물 수정 (작성자 · ADMIN) — TODO(팀원 ②): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
-      </span>
+      <div className={styles.pageLayout}>
+        <div className={styles.mainContent}>
+          <div className={styles.innerContainer}>
+            {/* 상단 수정 전용 액션바 (Docthru 로고 ─── [취소] [수정 완료]) */}
+            <EditorActionBar
+              mode="edit"
+              onCancel={() => setIsCancelModalOpen(true)}
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+            />
+            {/* 챌린지 원문 제목 */}
+            <h1 className={styles.challengeTitle}>
+              {isLoading ? '작업물 정보를 불러오는 중...' : challenge?.title}
+            </h1>
+            {/* 본문 에디터 */}
+            <WorkEditor onEditorReady={(editorInstance) => setEditor(editorInstance)} />
+          </div>
+        </div>
+        {/* 우측 원문 사이드 패널 */}
+        {isSourceOpen && (
+          <SourceViewer sourceUrl={challenge?.sourceUrl} onClose={() => setIsSourceOpen(false)} />
+        )}
+
+        {/* 우측 원문 보기 플로팅 버튼 */}
+        {!isSourceOpen && (
+          <button
+            type="button"
+            onClick={() => setIsSourceOpen(true)}
+            className={styles.floatingSourceButton}
+          >
+            원문
+          </button>
+        )}
+      </div>
+      {/* 수정 취소 확인 모달 */}
+      <ConfirmModal
+        isOpen={isCancelModalOpen}
+        title="수정 취소"
+        description="수정을 취소하시겠습니까?&#10;작성 중인 수정 내용은 저장되지 않습니다."
+        confirmLabel="취소하고 나가기"
+        cancelLabel="계속 수정"
+        isDanger={true}
+        onConfirm={() => {
+          setIsCancelModalOpen(false);
+          router.push(`/challenges/${challengeId}/works/${workId}`);
+        }}
+        onClose={() => setIsCancelModalOpen(false)}
+      />
     </AuthGuard>
   );
 }
