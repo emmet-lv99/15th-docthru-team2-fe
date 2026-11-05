@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import * as styles from './WorkDetailContent.css.js';
 
 function WorkDetailContent({ content }) {
-  // SSR 환경 대비 및 XSS 방어 소독
   const sanitizedContent = useMemo(() => {
     if (!content) return '';
     if (typeof window === 'undefined') return content;
