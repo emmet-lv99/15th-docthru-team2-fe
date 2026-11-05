@@ -126,3 +126,24 @@ export const date = style({
   fontSize: 'var(--font-size-13)',
   color: vars.colorGray400,
 });
+
+export const reasonInput = style({
+  width: '100%',
+  minHeight: '80px',
+  padding: `${space.sm} ${space.md}`,
+  border: `1px solid ${vars.colorGray300}`,
+  borderRadius: radius.md,
+  fontSize: 'var(--font-size-14)',
+  color: vars.colorGray900,
+  resize: 'none',
+  outline: 'none',
+  marginBottom: space.lg,
+  boxSizing: 'border-box',
+  fontFamily: 'inherit',
+  ':focus': {
+    borderColor: vars.colorGray800,
+  },
+  '::placeholder': {
+    color: vars.colorGray400,
+  },
+});

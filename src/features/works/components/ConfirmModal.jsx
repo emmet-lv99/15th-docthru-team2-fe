@@ -12,6 +12,7 @@ function ConfirmModal({
   isDanger = false,
   onConfirm,
   onClose,
+  children,
 }) {
   useEffect(() => {
     if (!isOpen) return;
@@ -33,6 +34,7 @@ function ConfirmModal({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {title && <h3 className={styles.title}>{title}</h3>}
         {description && <p className={styles.description}>{description}</p>}
+        {children}
         <div className={styles.buttonGroup}>
           <button type="button" className={styles.cancelButton} onClick={onClose}>
             {cancelLabel}

@@ -39,7 +39,10 @@ function WorkDetailHeader({ work }) {
   const isAuthor = user?.id === work?.author?.id;
   const isAdmin = user?.role === 'ADMIN';
   const canManage = Boolean(isAuthor || isAdmin);
+  const isDeletingAsAdmin = isAdmin && !isAuthor;
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
@@ -47,11 +50,18 @@ function WorkDetailHeader({ work }) {
   const workId = work?.id;
 
   const handleDeleteConfirm = async () => {
+    // 관리자가 타인 작업물 삭제 시 사유 필수 검증
+    if (isDeletingAsAdmin && !deleteReason.trim()) {
+      toast.warning('관리자 삭제 사유를 입력해 주세요.');
+      return;
+    }
+
     try {
       setIsDeleting(true);
-      await deleteWork(workId);
+      // 관리자 타인 삭제일 때만 reason 전달, 본인 삭제는 reason 생략
+      await deleteWork(workId, isDeletingAsAdmin ? deleteReason.trim() : undefined);
       setIsDeleteModalOpen(false);
-      // 삭제 후 해당 챌린지 상세 페이지로 이동
+      toast.success('작업물이 삭제되었습니다.');
       router.push(`/challenges/${challengeId}`);
     } catch (error) {
       toast.error(error.message || '작업물 삭제에 실패했습니다.');
@@ -106,13 +116,31 @@ function WorkDetailHeader({ work }) {
       {/* 삭제 확인 모달 */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
-        title="작업물 삭제"
-        description="정말 이 작업물을 삭제하시겠습니까? 삭제된 작업물은 복구할 수 없습니다."
+        title={isDeletingAsAdmin ? '작업물 관리자 강제 삭제' : '작업물 삭제'}
+        description={
+          isDeletingAsAdmin
+            ? '관리자 권한으로 타인의 작업물을 삭제합니다.\n삭제 사유를 반드시 입력해 주세요.'
+            : '정말 이 작업물을 삭제하시겠습니까? 삭제된 작업물은 복구할 수 없습니다.'
+        }
         confirmLabel={isDeleting ? '삭제 중...' : '삭제'}
         isDanger={true}
         onConfirm={handleDeleteConfirm}
-        onClose={() => setIsDeleteModalOpen(false)}
-      />
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDeleteReason(''); // 닫을 때 사유 초기화
+        }}
+      >
+        {isDeletingAsAdmin && (
+          <textarea
+            className={styles.reasonInput}
+            placeholder="삭제 사유를 입력하세요 (예: 부적절한 게시물, 스팸 등)"
+            value={deleteReason}
+            onChange={(e) => setDeleteReason(e.target.value)}
+            disabled={isDeleting}
+            maxLength={200}
+          />
+        )}
+      </ConfirmModal>
     </header>
   );
 }
