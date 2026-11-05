@@ -125,11 +125,17 @@ export const dropdownValue = style({
   color: '#262626',
 });
 
-// 드롭다운 화살표
+// 드롭다운 화살표 기본 크기
 export const dropdownArrow = style({
-  fontSize: '22px',
-  color: '#262626',
-  lineHeight: 1,
+  width: '20px',
+  height: '20px',
+  flexShrink: 0,
+  display: 'block',
+});
+
+// 드롭다운이 열리면 화살표를 180도 회전
+export const dropdownArrowOpen = style({
+  transform: 'rotate(180deg)',
 });
 
 // 펼쳐지는 옵션 목록
@@ -209,4 +215,29 @@ export const dateEmpty = style({
 export const dateSelected = style({
   color: '#262626',
   WebkitTextFillColor: '#262626',
+});
+
+// 브라우저 기본 달력 아이콘 숨기기
+globalStyle(`${dateWrapper} input::-webkit-calendar-picker-indicator`, {
+  display: 'none',
+});
+
+// 커스텀 달력 아이콘 버튼
+export const calendarButton = style({
+  position: 'absolute',
+  right: '16px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  width: '24px',
+  height: '24px',
+  padding: 0,
+  border: 'none',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+  zIndex: 2,
 });

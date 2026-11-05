@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as styles from './ApplicationForm.css.js';
+import Image from 'next/image';
+
+import arrowDown from '../../assets/icon_arrow_down.svg';
 
 export default function ApplicationDropdown({ id, name, value, onChange, options }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,9 +50,14 @@ export default function ApplicationDropdown({ id, name, value, onChange, options
           {options.find((option) => option.value === value)?.label ?? '카테고리'}
         </span>
 
-        <span aria-hidden="true" className={styles.dropdownArrow}>
-          {isOpen ? '▴' : '▾'}
-        </span>
+        <Image
+          src={arrowDown}
+          alt=""
+          aria-hidden="true"
+          width={15}
+          height={9}
+          className={`${styles.dropdownArrow} ${isOpen ? styles.dropdownArrowOpen : ''}`}
+        />
       </button>
 
       {isOpen && (

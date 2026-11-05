@@ -1,11 +1,13 @@
 'use client';
 
 import * as styles from './ApplicationForm.css';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import ApplicationDropdown from './ApplicationDropdown';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { createApplication } from '../../api';
+import Image from 'next/image';
+import calendarIcon from '../../assets/icon_calendar.svg';
 
 export default function ApplicationForm() {
   //분야
@@ -17,6 +19,7 @@ export default function ApplicationForm() {
   //마감일
   const [desiredDeadline, setDesiredDeadline] = useState('');
 
+  const dateInputRef = useRef(null);
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -133,6 +136,7 @@ export default function ApplicationForm() {
             )}
 
             <input
+              ref={dateInputRef}
               id="desiredDeadline"
               name="desiredDeadline"
               type="date"
@@ -141,6 +145,21 @@ export default function ApplicationForm() {
               className={desiredDeadline ? styles.dateSelected : styles.dateEmpty}
               required
             />
+
+            <button
+              type="button"
+              className={styles.calendarButton}
+              aria-label="마감일 선택"
+              onClick={() => {
+                if (dateInputRef.current?.showPicker) {
+                  dateInputRef.current.showPicker();
+                } else {
+                  dateInputRef.current?.focus();
+                }
+              }}
+            >
+              <Image src={calendarIcon} alt="" width={24} height={24} />
+            </button>
           </div>
         </div>
 
