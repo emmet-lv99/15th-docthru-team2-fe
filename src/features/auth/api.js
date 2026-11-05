@@ -36,9 +36,11 @@ export async function updateMe({ nickname, password }) {
   return apiClient.patch('/auth/me', body);
 }
 
-/** DELETE /auth/me — 소프트 삭제 후 204. apiClient 가 null 을 돌려줘요. */
-export async function deleteMe() {
-  return apiClient.del('/auth/me');
+/** DELETE /auth/me — 소프트 삭제 전 최종 동의와 비밀번호를 확인해요. */
+export async function deleteMe({ password, withdrawalConsent }) {
+  return apiClient.del('/auth/me', {
+    data: { password, withdrawalConsent },
+  });
 }
 
 /** POST /auth/password-reset/request — 계정 존재 여부와 무관하게 같은 안내. */
