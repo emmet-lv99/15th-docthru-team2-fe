@@ -40,6 +40,16 @@ function SourceViewer({
           {data?.title || '원문 문서'}
         </h2>
         <div className={styles.actions}>
+          <button
+            type="button"
+            className={styles.aiTranslateButton}
+            onClick={() => {
+              console.log('AI 번역 클릭!');
+            }}
+          >
+            ✨ AI 번역
+          </button>
+
           {sourceUrl && (
             <a
               href={sourceUrl}
