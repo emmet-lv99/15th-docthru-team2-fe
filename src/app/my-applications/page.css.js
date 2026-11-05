@@ -102,8 +102,6 @@ export const searchInput = style({
   fontSize: '16px',
   outline: 'none',
   paddingLeft: '44px',
-
- 
 });
 
 //드롭다운
