@@ -55,7 +55,7 @@ export default function ApplicationTable({ applications, isPending, isError }) {
           <tr>
             <th className={styles.tableHeading}>No.</th>
             <th className={styles.tableHeading}>분야</th>
-            <th className={styles.tableHeading}>카테고리</th>
+            <th className={styles.tableHeading}>문서 타입</th>
             <th className={styles.tableHeading}>챌린지 제목</th>
             <th className={styles.tableHeading}>모집 인원</th>
             <th className={styles.tableHeading}>신청일</th>
