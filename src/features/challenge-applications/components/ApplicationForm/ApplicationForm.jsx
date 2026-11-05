@@ -44,8 +44,24 @@ export default function ApplicationForm() {
   // 신청하기 버튼을 눌렀을 때 실행
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!category || !documentType) {
+      alert('분야와 문서 타입을 선택해 주세요.');
+      return;
+    }
+
+    if (!desiredDeadline) {
+      alert('마감일을 선택해 주세요.');
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
+
+    const maxParticipants = Number(formData.get('maxParticipants'));
+
+    if (!Number.isInteger(maxParticipants) || maxParticipants < 1 || maxParticipants > 1000) {
+      alert('최대 인원은 1명부터 1,000명까지 입력할 수 있습니다.');
+      return;
+    }
 
     const data = {
       title: String(formData.get('title')).trim(),
@@ -171,6 +187,8 @@ export default function ApplicationForm() {
             name="maxParticipants"
             type="number"
             min="1"
+            max="1000"
+            step="1"
             placeholder="인원을 입력해 주세요"
             required
           />
