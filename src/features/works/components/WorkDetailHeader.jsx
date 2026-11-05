@@ -27,9 +27,17 @@ const DOC_TYPE_MAP = {
 function formatDate(dateString) {
   if (!dateString) return '';
   const d = new Date(dateString);
-  const yy = String(d.getFullYear()).slice(2);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
+  if (Number.isNaN(d.getTime())) return '';
+  const formatter = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const parts = formatter.formatToParts(d);
+  const yy = parts.find((p) => p.type === 'year')?.value ?? '';
+  const mm = parts.find((p) => p.type === 'month')?.value ?? '';
+  const dd = parts.find((p) => p.type === 'day')?.value ?? '';
   return `${yy}/${mm}/${dd}`;
 }
 
@@ -51,6 +59,8 @@ function WorkDetailHeader({ work }) {
 
   const handleDeleteConfirm = async () => {
     // 관리자가 타인 작업물 삭제 시 사유 필수 검증
+    if (isDeleting) return;
+
     if (isDeletingAsAdmin && !deleteReason.trim()) {
       toast.warning('관리자 삭제 사유를 입력해 주세요.');
       return;
@@ -123,6 +133,7 @@ function WorkDetailHeader({ work }) {
             : '정말 이 작업물을 삭제하시겠습니까? 삭제된 작업물은 복구할 수 없습니다.'
         }
         confirmLabel={isDeleting ? '삭제 중...' : '삭제'}
+        isConfirmDisabled={isDeleting}
         isDanger={true}
         onConfirm={handleDeleteConfirm}
         onClose={() => {

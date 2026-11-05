@@ -10,6 +10,7 @@ function ConfirmModal({
   confirmLabel = '확인',
   cancelLabel = '취소',
   isDanger = false,
+  isConfirmDisabled = false,
   onConfirm,
   onClose,
   children,
@@ -41,6 +42,7 @@ function ConfirmModal({
           </button>
           <button
             type="button"
+            disabled={isConfirmDisabled}
             className={
               isDanger ? styles.confirmButtonVariants.danger : styles.confirmButtonVariants.normal
             }
