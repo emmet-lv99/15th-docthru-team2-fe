@@ -11,3 +11,10 @@ export async function getMyApplications({ page = 1, size = 10, q = '', status = 
     },
   });
 }
+
+//신규 챌린지 신청
+export const createApplication = async (data) => {
+  const response = await apiClient.post('/challenge-applications', data);
+
+  return response.data;
+};

@@ -4,14 +4,13 @@ import { style } from '@vanilla-extract/css';
 export const pageBackground = style({
   backgroundColor: '#FAFAFA',
   minHeight: '100dvh',
-  paddingTop: '30px',
 });
 
 //페이지 전체
 export const container = style({
   maxWidth: '1000px',
   margin: '0 auto',
-  padding: '40px 24px',
+  padding: '24px',
 });
 
 //제목과 신규신청

@@ -14,6 +14,26 @@ const statusStyles = {
   DELETED: styles.deletedBadge,
 };
 
+// 날자를 YY.MM.DD 형태로 변환
+const formatDate = (dateString) => {
+  if (!dateString) return '-';
+
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) return '-';
+
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Seoul',
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+
+  const getPart = (type) => parts.find((part) => part.type === type)?.value;
+
+  return `${getPart('year')}/${getPart('month')}/${getPart('day')}`;
+};
+
 export default function ApplicationTable({ applications, isPending, isError }) {
   if (isPending) {
     return <p className={styles.emptyMessage}>불러오는중...</p>;
@@ -64,20 +84,20 @@ export default function ApplicationTable({ applications, isPending, isError }) {
               </td>
             </tr>
           ) : (
-            applications.map((application) => (
+            applications.map((application, index) => (
               <tr
-                key={application.id}
+                key={application.applicationId}
                 className={application.status === 'DELETED' ? styles.deletedRow : styles.tableRow}
               >
-                <td className={styles.tableCell}>{application.id}</td>
-                <td className={styles.tableCell}>{application.field}</td>
+                <td className={styles.tableCell}>{index + 1}</td>
                 <td className={styles.tableCell}>{application.category}</td>
+                <td className={styles.tableCell}>{application.documentType}</td>
                 <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
                   {application.title}
                 </td>
                 <td className={styles.tableCell}>{application.maxParticipants}</td>
-                <td className={styles.tableCell}>{application.appliedAt}</td>
-                <td className={styles.tableCell}>{application.deadline}</td>
+                <td className={styles.tableCell}>{formatDate(application.createdAt)}</td>
+                <td className={styles.tableCell}>{formatDate(application.desiredDeadline)}</td>
                 <td className={styles.tableCell}>
                   <span
                     className={`${styles.statusBadge} ${statusStyles[application.status] ?? ''}`}

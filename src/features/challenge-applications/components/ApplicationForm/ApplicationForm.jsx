@@ -3,6 +3,9 @@
 import * as styles from './ApplicationForm.css';
 import { useState } from 'react';
 import ApplicationDropdown from './ApplicationDropdown';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { createApplication } from '../../api';
 
 export default function ApplicationForm() {
   //분야
@@ -13,6 +16,46 @@ export default function ApplicationForm() {
 
   //마감일
   const [desiredDeadline, setDesiredDeadline] = useState('');
+
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // 신규 신청 API 요청
+  const { mutate: submitApplication, isPending } = useMutation({
+    mutationFn: createApplication,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['applications'],
+      });
+
+      router.push('/my-applications');
+    },
+
+    onError: (error) => {
+      console.error('챌린지 신청 실패:', error);
+      alert('신청에 실패했습니다. 다시 시도해 주세요.');
+    },
+  });
+
+  // 신청하기 버튼을 눌렀을 때 실행
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    const data = {
+      title: String(formData.get('title')).trim(),
+      sourceUrl: String(formData.get('sourceUrl')).trim(),
+      category,
+      documentType,
+      desiredDeadline: new Date(`${desiredDeadline}T00:00:00`).toISOString(),
+      maxParticipants: Number(formData.get('maxParticipants')),
+      content: String(formData.get('content')).trim(),
+    };
+
+    submitApplication(data);
+  };
 
   const categoryOptions = [
     { value: 'NEXT_JS', label: 'Next.js' },
@@ -25,13 +68,15 @@ export default function ApplicationForm() {
   const documentTypeOptions = [
     { value: 'OFFICIAL', label: '공식문서' },
     { value: 'BLOG', label: '블로그' },
+    { value: 'BOOK', label: '책' },
+    { value: 'OTHER', label: '기타' },
   ];
 
   return (
     <main className={styles.container}>
       <h1 className={styles.title}>신규 챌린지 신청</h1>
 
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         {/* 제목 */}
         <div className={styles.formGroup}>
           <label htmlFor="title">제목</label>
@@ -125,8 +170,8 @@ export default function ApplicationForm() {
         </div>
 
         {/* 신청 버튼 */}
-        <button className={styles.submitButton} type="submit">
-          신청하기
+        <button className={styles.submitButton} type="submit" disabled={isPending}>
+          {isPending ? '신청 중...' : '신청하기'}
         </button>
       </form>
     </main>
