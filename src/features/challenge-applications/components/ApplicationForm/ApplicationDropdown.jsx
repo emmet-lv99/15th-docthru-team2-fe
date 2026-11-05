@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as styles from './ApplicationForm.css.js';
 import Image from 'next/image';
 
-import arrowDown from '../../assets/icon_arrow_down.svg';
+import arrowDown from '@/features/challenge-applications/assets/icon_arrow_down.svg';
 
 export default function ApplicationDropdown({ id, name, value, onChange, options }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,6 +40,7 @@ export default function ApplicationDropdown({ id, name, value, onChange, options
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={`${id}-options`}
+        aria-labelledby={`${id}-label ${id}`}
         onClick={() => setIsOpen((prev) => !prev)}
         onKeyDown={(event) => {
           if (event.key === 'Escape') setIsOpen(false);

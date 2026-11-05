@@ -16,5 +16,5 @@ export async function getMyApplications({ page = 1, size = 10, q = '', status = 
 export const createApplication = async (data) => {
   const response = await apiClient.post('/challenge-applications', data);
 
-  return response.data;
+  return response;
 };

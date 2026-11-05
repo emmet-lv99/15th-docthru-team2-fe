@@ -91,9 +91,8 @@ export const searchIcon = style({
 
 //검색창
 export const searchInput = style({
-  flex: 1,
-  minWidth: 0,
-  width: '800px',
+  width: '100%',
+  boxSizing: 'border-box',
   height: '40px',
   padding: '0 20px',
   border: '1px solid #e5e5e5',

@@ -56,6 +56,19 @@ export default function ApplicationForm() {
 
     const formData = new FormData(event.currentTarget);
 
+    const title = String(formData.get('title')).trim();
+    const content = String(formData.get('content')).trim();
+
+    if (!title) {
+      alert('제목을 입력해 주세요.');
+      return;
+    }
+
+    if (!content) {
+      alert('내용을 입력해 주세요.');
+      return;
+    }
+
     const maxParticipants = Number(formData.get('maxParticipants'));
 
     if (!Number.isInteger(maxParticipants) || maxParticipants < 1 || maxParticipants > 1000) {
@@ -64,13 +77,13 @@ export default function ApplicationForm() {
     }
 
     const data = {
-      title: String(formData.get('title')).trim(),
+      title,
       sourceUrl: String(formData.get('sourceUrl')).trim(),
       category,
       documentType,
       desiredDeadline: new Date(`${desiredDeadline}T00:00:00`).toISOString(),
-      maxParticipants: Number(formData.get('maxParticipants')),
-      content: String(formData.get('content')).trim(),
+      maxParticipants,
+      content,
     };
 
     submitApplication(data);
