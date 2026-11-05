@@ -66,7 +66,12 @@ export default function WorkEditPage() {
   });
 
   // 수정할 기존 작업물 조회
-  const { data: work, isLoading: isWorkLoading } = useQuery({
+  const {
+    data: work,
+    isLoading: isWorkLoading,
+    isError: isWorkError,
+    error: workError,
+  } = useQuery({
     queryKey: queryKeys.works.detail(Number(workId), user?.id),
     queryFn: () => getWorkDetail(challengeId, workId),
     enabled: Boolean(challengeId && workId),
@@ -74,16 +79,18 @@ export default function WorkEditPage() {
 
   const isLoading = isAuthPending || isChallengeLoading || isWorkLoading;
 
-  useEffect(() => {
-    if (editor && work?.content && editor.isEmpty) {
-      editor.commands.setContent(work.content);
-    }
-  }, [editor, work]);
-
   // 권한 가드: 작성자 본인 또는 관리자가 아니면 차단
   useEffect(() => {
     // 데이터가 아직 로딩 중일 때는 검사를 건너뜁니다
     if (isLoading) return;
+
+    // 네트워크 / 서버 에러 분기
+    if (isWorkError) {
+      toast.error(workError?.message || '작업물 정보를 불러오는 데 실패했습니다.');
+      router.replace(`/challenges/${challengeId}/works/${workId}`);
+      return;
+    }
+
     // 작업물이 없는 경우
     if (!work) {
       toast.error('존재하지 않는 작업물입니다.');
@@ -106,14 +113,14 @@ export default function WorkEditPage() {
       toast.error('이미 마감된 챌린지의 작업물은 수정할 수 없습니다.');
       router.replace(`/challenges/${challengeId}/works/${workId}`);
     }
-  }, [isLoading, work, user, challengeId, workId, router, challenge]);
+  }, [isLoading, work, user, challengeId, workId, router, challenge, isWorkError, workError]);
 
   const queryClient = useQueryClient();
 
   const { mutate: handleUpdateWork, isPending: isSubmitting } = useMutation({
     mutationFn: (content) => updateWork(workId, content),
     onSuccess: () => {
-      toast.success('작업물이 성공적으로으로수정되었습니다!');
+      toast.success('작업물이 성공적으로 수정되었습니다!');
       // 작업물 상세 리리 쿼리캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['works', 'detail', Number(workId)] });
       router.refresh();
@@ -149,7 +156,16 @@ export default function WorkEditPage() {
               {isLoading ? '작업물 정보를 불러오는 중...' : challenge?.title}
             </h1>
             {/* 본문 에디터 */}
-            <WorkEditor onEditorReady={(editorInstance) => setEditor(editorInstance)} />
+            {isLoading ? (
+              <div style={{ padding: '60px 0', textAlign: 'center', color: '#64748b' }}>
+                기존 작업물 본문을 불러오는 중입니다...
+              </div>
+            ) : (
+              <WorkEditor
+                initialContent={work?.content}
+                onEditorReady={(editorInstance) => setEditor(editorInstance)}
+              />
+            )}
           </div>
         </div>
         {/* 우측 원문 사이드 패널 */}
