@@ -81,7 +81,7 @@ export default function ApplicationForm() {
       sourceUrl: String(formData.get('sourceUrl')).trim(),
       category,
       documentType,
-      desiredDeadline: new Date(`${desiredDeadline}T00:00:00`).toISOString(),
+      desiredDeadline: new Date(`${desiredDeadline}T00:00:00.000Z`).toISOString(),
       maxParticipants,
       content,
     };
