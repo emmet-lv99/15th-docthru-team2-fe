@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import iconFilter from '../assets/filter.svg';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/Card';
@@ -95,7 +96,12 @@ export default function ChallengeListView({ filters, initialData }) {
       </div>
 
       <div className={styles.listToolbar}>
-        <div className={styles.filterAnchor} ref={filterRef}>
+        <div
+          className={[styles.filterAnchor, filterOpen && styles.filterAnchorOpen]
+            .filter(Boolean)
+            .join(' ')}
+          ref={filterRef}
+        >
           <button
             type="button"
             aria-expanded={filterOpen}
@@ -104,7 +110,7 @@ export default function ChallengeListView({ filters, initialData }) {
             onClick={() => setFilterOpen((open) => !open)}
           >
             필터{appliedCount ? ' (' + appliedCount + ')' : ''}
-            <Image src="/icons/challenges/filter.svg" alt="" width={18} height={18} />
+            <Image src={iconFilter} alt="" width={18} height={18} />
           </button>
           {filterOpen && (
             <form

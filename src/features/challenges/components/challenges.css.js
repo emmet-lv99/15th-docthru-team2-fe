@@ -47,6 +47,7 @@ export const listToolbar = style({
   '@media': { '(max-width: 640px)': { gap: '8px', marginBottom: '16px' } },
 });
 export const filterAnchor = style({ position: 'relative', flex: 'none', zIndex: 5 });
+export const filterAnchorOpen = style({ zIndex: 200 });
 export const filterToggle = style({
   height: '40px',
   minWidth: '110px',
@@ -78,6 +79,21 @@ export const filterPopover = style({
   borderRadius: '8px',
   boxShadow: '0 8px 20px rgba(0,0,0,.10)',
   color: vars.colorGray800,
+  '@media': {
+    '(max-width: 640px)': {
+      position: 'fixed',
+      inset: 0,
+      width: '100vw',
+      maxWidth: 'none',
+      height: '100dvh',
+      border: 0,
+      borderRadius: 0,
+      boxShadow: 'none',
+      overflowY: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  },
 });
 export const popoverHeading = style({
   display: 'flex',
@@ -134,7 +150,20 @@ export const sortSelect = style({
   color: vars.colorGray800,
   font: 'inherit',
 });
-export const filterFooter = style({ display: 'flex', gap: '8px', paddingTop: '8px' });
+export const filterFooter = style({
+  display: 'flex',
+  gap: '8px',
+  paddingTop: '8px',
+  '@media': {
+    '(max-width: 640px)': {
+      position: 'sticky',
+      bottom: 0,
+      marginTop: 'auto',
+      backgroundColor: vars.colorGray50,
+      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+    },
+  },
+});
 export const filterReset = style({
   flex: 1,
   height: '40px',
@@ -270,9 +299,13 @@ export const actionPanel = style({
   padding: '16px',
   backgroundColor: vars.colorGray50,
   alignSelf: 'start',
-  '@media': { '(max-width: 800px)': { maxWidth: '350px', width: '100%' } },
+  '@media': {
+    '(max-width: 800px)': { maxWidth: '350px', width: '100%' },
+    '(max-width: 640px)': { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', display: 'grid' },
+  },
 });
 export const detailStats = style({
+  '@media': { '(max-width: 640px)': { gridColumn: '1 / -1' } },
   display: 'flex',
   gap: '10px',
   flexWrap: 'wrap',
@@ -330,6 +363,7 @@ export const challengeAction = style({
   },
 });
 export const actionError = style({
+  '@media': { '(max-width: 640px)': { gridColumn: '1 / -1' } },
   margin: 0,
   color: vars.colorRedError,
   fontSize: '12px',
@@ -379,6 +413,21 @@ export const featuredText = style({
   fontSize: '14px',
   lineHeight: 1.6,
   overflowWrap: 'anywhere',
+  whiteSpace: 'pre-wrap',
+});
+export const featuredExpandButton = style({
+  display: 'block',
+  margin: '0 auto 12px',
+  padding: '4px 12px',
+  border: 0,
+  backgroundColor: 'transparent',
+  color: vars.colorGray800,
+  fontSize: '13px',
+  fontWeight: 600,
+  cursor: 'pointer',
+  selectors: {
+    '&:focus-visible': { outline: '2px solid ' + vars.colorBrand2, outlineOffset: '2px' },
+  },
 });
 export const participantPanel = style({
   marginTop: '24px',
@@ -481,4 +530,75 @@ export const participantDate = style({
   color: vars.colorGray500,
   fontSize: '12px',
   '@media': { '(max-width: 640px)': { display: 'none' } },
+});
+
+export const retryAction = style({
+  '@media': { '(max-width: 640px)': { gridColumn: '1 / -1' } },
+  minHeight: '32px',
+  border: '1px solid ' + vars.colorGray300,
+  borderRadius: '8px',
+  backgroundColor: vars.colorGray50,
+  color: vars.colorGray800,
+  cursor: 'pointer',
+});
+export const abandonAction = style({
+  '@media': { '(max-width: 640px)': { gridColumn: '1 / -1' } },
+  minHeight: '38px',
+  border: '1px solid ' + vars.colorRedError,
+  borderRadius: '9px',
+  backgroundColor: vars.colorGray50,
+  color: vars.colorRedError,
+  cursor: 'pointer',
+  font: 'inherit',
+  fontSize: '13px',
+  selectors: { '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } },
+});
+export const actionHint = style({
+  '@media': { '(max-width: 640px)': { gridColumn: '1 / -1' } },
+  margin: '4px 0 0',
+  fontSize: '12px',
+  lineHeight: 1.5,
+  color: vars.colorGray600,
+});
+export const confirmBox = style({
+  '@media': { '(max-width: 640px)': { gridColumn: '1 / -1' } },
+  padding: '12px',
+  borderRadius: '8px',
+  border: '1px solid ' + vars.colorGray300,
+  color: vars.colorGray800,
+  fontSize: '13px',
+  lineHeight: 1.6,
+});
+export const confirmButtons = style({ display: 'flex', gap: '8px', marginTop: '8px' });
+export const confirmAbandon = style({
+  flex: 1,
+  minHeight: '32px',
+  border: 0,
+  borderRadius: '6px',
+  backgroundColor: vars.colorGray800,
+  color: vars.colorGray50,
+  cursor: 'pointer',
+});
+export const confirmCancel = style({
+  flex: 1,
+  minHeight: '32px',
+  border: '1px solid ' + vars.colorGray300,
+  borderRadius: '6px',
+  backgroundColor: vars.colorGray50,
+  color: vars.colorGray800,
+  cursor: 'pointer',
+});
+export const participantSort = style({
+  display: 'inline-flex',
+  gap: '5px',
+  alignItems: 'center',
+  color: vars.colorGray600,
+  fontSize: '12px',
+});
+export const participantSortSelect = style({
+  minHeight: '28px',
+  borderRadius: '5px',
+  border: '1px solid ' + vars.colorGray300,
+  color: vars.colorGray800,
+  backgroundColor: vars.colorGray50,
 });

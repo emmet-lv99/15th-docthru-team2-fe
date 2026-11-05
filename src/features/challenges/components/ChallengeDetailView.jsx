@@ -1,6 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
+import iconProfile from '../assets/profile.svg';
+import iconProfileOutline from '../assets/profile-outline.svg';
+import iconProfileUnderline from '../assets/profile-underline.svg';
+import iconCrown from '../assets/crown.svg';
+import iconHeart from '../assets/heart.svg';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -8,10 +14,12 @@ import { Chip } from '@/components/Chip';
 import { Empty } from '@/components/Empty';
 import { useAuth } from '@/contexts/AuthProvider';
 import { queryKeys } from '@/lib/queryKeys';
-import { joinChallenge } from '@/features/challenges/api';
+import { abandonChallenge, joinChallenge } from '@/features/challenges/api';
 import {
   useChallengeDetail,
   useChallengeParticipants,
+  useMyChallengeParticipation,
+  useTopLikedWorks,
 } from '@/features/challenges/hooks/useChallenges';
 import {
   CATEGORY_LABEL,
@@ -23,24 +31,26 @@ import * as styles from './challenges.css.js';
 
 function plainText(content) {
   return String(content ?? '')
+    .replace(/<\/?(?:br|p|div|li)\b[^>]*>/gi, '\n')
     .replace(/<[^>]*>/g, '')
-    .replace(/\s+/g, ' ')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 
 function ProfileAvatar() {
   return (
     <span className={styles.avatar} aria-hidden="true">
-      <Image src="/icons/challenges/profile.svg" alt="" width={32} height={32} />
+      <Image src={iconProfile} alt="" width={32} height={32} />
       <Image
-        src="/icons/challenges/profile-outline.svg"
+        src={iconProfileOutline}
         alt=""
         width={24}
         height={14}
         className={styles.avatarOutline}
       />
       <Image
-        src="/icons/challenges/profile-underline.svg"
+        src={iconProfileUnderline}
         alt=""
         width={14.3}
         height={1.8}
@@ -60,7 +70,11 @@ export default function ChallengeDetailView({
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, isPending: authPending } = useAuth();
+  const [confirmAbandon, setConfirmAbandon] = useState(false);
+  const [actionNotice, setActionNotice] = useState('');
+  const [expandedWorkId, setExpandedWorkId] = useState(null);
+
   const {
     data: challenge,
     isPending: detailPending,
@@ -73,17 +87,41 @@ export default function ChallengeDetailView({
     isError: participantsError,
   } = useChallengeParticipants(challengeId, pageFilters, initialParticipants);
 
+  const closed = Boolean(challenge?.isClosed || challenge?.status === 'CLOSED');
+  const isUser = user?.role === 'USER';
+  const {
+    data: myParticipation,
+    isPending: participationPending,
+    isError: participationError,
+    refetch: retryParticipation,
+  } = useMyChallengeParticipation(challengeId, isUser);
+  const {
+    data: featured = [],
+    isPending: featuredPending,
+    isError: featuredError,
+  } = useTopLikedWorks(challengeId, closed);
+
+  async function refreshAfterParticipationChange() {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.challenges.all() }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.myChallenges.all() }),
+    ]);
+    router.refresh();
+  }
+
   const joinMutation = useMutation({
     mutationFn: () => joinChallenge(challengeId),
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(challengeId) }),
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.challenges.participants(challengeId, pageFilters),
-        }),
-      ]);
-      router.push('/challenges/' + challengeId + '/edit');
-      router.refresh();
+      setActionNotice('참여가 완료됐습니다. 작업 이어하기를 선택할 수 있습니다.');
+      await refreshAfterParticipationChange();
+    },
+  });
+  const abandonMutation = useMutation({
+    mutationFn: () => abandonChallenge(challengeId),
+    onSuccess: async () => {
+      setConfirmAbandon(false);
+      setActionNotice('참여를 포기했습니다.');
+      await refreshAfterParticipationChange();
     },
   });
 
@@ -107,30 +145,9 @@ export default function ChallengeDetailView({
       </main>
     );
 
-  const closed = challenge.isClosed || challenge.status === 'CLOSED';
   const source = externalSourceUrl(challenge.sourceUrl);
-  const myParticipation = participants?.items?.find(
-    (participant) => participant.user?.id === user?.id && !participant.isAbandoned,
-  );
   const isAdmin = user?.role === 'ADMIN';
   const cannotJoin = closed || challenge.isFull || isAdmin;
-
-  // 좋아요순 첫 페이지의 작업물 중 최고 하트 수와 동률을 모두 보여줍니다.
-  // 전체 페이지를 아우르는 최다 추천작 판정은 백엔드 별도 검증 대상입니다.
-  const firstPageRankedWorks =
-    closed && participantPage === 1 && participantSort === 'likes'
-      ? (participants?.items ?? [])
-          .filter((participant) => !participant.isAbandoned)
-          .flatMap((participant) =>
-            (participant.works ?? []).map((work) => ({ work, user: participant.user })),
-          )
-          .sort((a, b) => (b.work.likeCount ?? 0) - (a.work.likeCount ?? 0))
-      : [];
-  const highestLikes = firstPageRankedWorks[0]?.work?.likeCount ?? -1;
-  const featured =
-    highestLikes > 0
-      ? firstPageRankedWorks.filter(({ work }) => (work.likeCount ?? 0) === highestLikes)
-      : [];
 
   return (
     <main className={styles.detailPage}>
@@ -174,10 +191,75 @@ export default function ChallengeDetailView({
           ) : (
             <span className={styles.sourceUnavailable}>원문 주소가 없습니다</span>
           )}
-          {myParticipation ? (
-            <Link href={'/challenges/' + challengeId + '/edit'} className={styles.challengeAction}>
-              작업 이어하기
-            </Link>
+          {authPending || (isUser && participationPending) ? (
+            <button type="button" className={styles.challengeAction} disabled>
+              {authPending ? '로그인 상태 확인 중...' : '참여 상태 확인 중...'}
+            </button>
+          ) : isUser && participationError ? (
+            <>
+              <button type="button" className={styles.challengeAction} disabled>
+                참여 상태를 확인할 수 없습니다
+              </button>
+              <button
+                type="button"
+                className={styles.retryAction}
+                onClick={() => retryParticipation()}
+              >
+                다시 확인하기
+              </button>
+            </>
+          ) : myParticipation?.participating ? (
+            <>
+              {closed ? (
+                <button type="button" className={styles.challengeAction} disabled>
+                  챌린지 마감
+                </button>
+              ) : (
+                <Link
+                  href={'/challenges/' + challengeId + '/edit'}
+                  className={styles.challengeAction}
+                >
+                  작업 이어하기
+                </Link>
+              )}
+              {myParticipation.totalWorks > 0 ? (
+                <p className={styles.actionHint}>제출한 번역문이 있어 참여를 포기할 수 없습니다.</p>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className={styles.abandonAction}
+                    onClick={() => setConfirmAbandon(true)}
+                    disabled={abandonMutation.isPending}
+                  >
+                    참여 포기하기
+                  </button>
+                  {confirmAbandon && (
+                    <div className={styles.confirmBox} role="group" aria-label="참여 포기 확인">
+                      <p>참여를 포기하시겠습니까?</p>
+                      <div className={styles.confirmButtons}>
+                        <button
+                          type="button"
+                          className={styles.confirmAbandon}
+                          onClick={() => abandonMutation.mutate()}
+                          disabled={abandonMutation.isPending}
+                        >
+                          {abandonMutation.isPending ? '처리 중...' : '포기 확정'}
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.confirmCancel}
+                          onClick={() => setConfirmAbandon(false)}
+                          disabled={abandonMutation.isPending}
+                        >
+                          취소
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
           ) : !user && !cannotJoin ? (
             <Link href="/login" className={styles.challengeAction}>
               로그인 후 도전하기
@@ -186,7 +268,10 @@ export default function ChallengeDetailView({
             <button
               type="button"
               className={styles.challengeAction}
-              onClick={() => joinMutation.mutate()}
+              onClick={() => {
+                setActionNotice('');
+                joinMutation.mutate();
+              }}
               disabled={cannotJoin || joinMutation.isPending}
             >
               {closed
@@ -200,45 +285,77 @@ export default function ChallengeDetailView({
                       : '작업 도전하기'}
             </button>
           )}
-          {joinMutation.isError && (
+          {actionNotice && (
+            <p role="status" className={styles.actionHint}>
+              {actionNotice}
+            </p>
+          )}
+          {(joinMutation.isError || abandonMutation.isError) && (
             <p role="alert" className={styles.actionError}>
-              참여 요청이 처리되지 않았습니다.{' '}
-              {joinMutation.error?.message ?? '다시 시도해 주세요.'}
+              {joinMutation.error?.message ??
+                abandonMutation.error?.message ??
+                '참여 상태를 변경하지 못했습니다. 다시 시도해 주세요.'}
             </p>
           )}
         </aside>
       </div>
 
+      {closed && featuredPending && (
+        <p role="status" className={styles.muted}>
+          최다 추천 번역을 확인하는 중입니다.
+        </p>
+      )}
+      {closed && featuredError && (
+        <p role="alert" className={styles.actionError}>
+          최다 추천 번역을 불러오지 못했습니다.
+        </p>
+      )}
       {closed && featured.length > 0 && (
         <section aria-label="최다 추천 번역">
           <h2 className={styles.featuredHeading}>최다 추천 번역</h2>
           <div className={styles.featuredScroller}>
-            {featured.map(({ work, user: author }) => (
-              <article className={styles.featuredCard} key={work.id}>
-                <span className={styles.featuredLabel}>
-                  <Image src="/icons/challenges/crown.svg" alt="" width={16} height={16} />
-                  최다 추천 번역
-                </span>
-                <div className={styles.featuredMeta}>
-                  <ProfileAvatar />
-                  <strong>{author?.nickname ?? '참여자'}</strong>
-                  <span className={styles.statItem}>
-                    <Image src="/icons/challenges/heart.svg" alt="" width={16} height={16} />
-                    {work.likeCount ?? 0}
+            {featured.map(({ work, user: author }) => {
+              const content = plainText(work.content) || '번역 내용 보기';
+              const canExpand = content.length > 240;
+              const expanded = expandedWorkId === work.id;
+              return (
+                <article className={styles.featuredCard} key={work.id}>
+                  <span className={styles.featuredLabel}>
+                    <Image src={iconCrown} alt="" width={16} height={16} />
+                    최다 추천 번역
                   </span>
-                  <span>{formatChallengeDate(work.submittedAt)}</span>
-                </div>
-                <p className={styles.featuredText}>
-                  {plainText(work.content).slice(0, 240) || '번역 내용 보기'}
-                </p>
-                <Link
-                  className={styles.workLink}
-                  href={'/challenges/' + challengeId + '/works/' + work.id}
-                >
-                  전체 번역 보기 →
-                </Link>
-              </article>
-            ))}
+                  <div className={styles.featuredMeta}>
+                    <ProfileAvatar />
+                    <strong>{author?.nickname ?? '참여자'}</strong>
+                    <span className={styles.statItem}>
+                      <Image src={iconHeart} alt="" width={16} height={16} />
+                      {work.likeCount ?? 0}
+                    </span>
+                    <span>{formatChallengeDate(work.submittedAt)}</span>
+                  </div>
+                  <p className={styles.featuredText} id={'featured-preview-' + work.id}>
+                    {expanded ? content : content.slice(0, 240)}
+                  </p>
+                  {canExpand && (
+                    <button
+                      type="button"
+                      className={styles.featuredExpandButton}
+                      aria-controls={'featured-preview-' + work.id}
+                      aria-expanded={expanded}
+                      onClick={() => setExpandedWorkId(expanded ? null : work.id)}
+                    >
+                      {expanded ? '접기 ⌃' : '더보기 ⌄'}
+                    </button>
+                  )}
+                  <Link
+                    className={styles.workLink}
+                    href={'/challenges/' + challengeId + '/works/' + work.id}
+                  >
+                    전체 번역 보기 →
+                  </Link>
+                </article>
+              );
+            })}
           </div>
         </section>
       )}
@@ -247,6 +364,18 @@ export default function ChallengeDetailView({
         <div className={styles.participantHeader}>
           <h2 className={styles.sectionTitle}>참여 현황</h2>
           <div className={styles.participantControls}>
+            <label className={styles.participantSort}>
+              정렬
+              <select
+                aria-label="참여 현황 정렬"
+                className={styles.participantSortSelect}
+                value={participantSort}
+                onChange={(event) => changeParticipants(1, event.target.value)}
+              >
+                <option value="likes">하트순</option>
+                <option value="submittedAt">제출순</option>
+              </select>
+            </label>
             <span className={styles.pageIndicator}>
               {participants?.page ?? participantPage} / {Math.max(1, participants?.totalPages ?? 1)}
             </span>
@@ -310,7 +439,7 @@ export default function ChallengeDetailView({
                     </span>
                   )}
                   <span className={styles.participantStats}>
-                    <Image src="/icons/challenges/heart.svg" alt="" width={16} height={16} />
+                    <Image src={iconHeart} alt="" width={16} height={16} />
                     {work?.likeCount ?? 0}
                   </span>
                   {work ? (
