@@ -3,6 +3,8 @@
 import ApplicationStatus from './ApplicationStatus';
 import ApplicationInfo from './ApplicationInfo';
 import * as styles from './ApplicationDetail.css.js';
+import Image from 'next/image';
+import moreIcon from '@/features/challenge-applications/assets/icon_more.svg';
 
 // 임시데이터
 const sampleApplication = {
@@ -28,7 +30,7 @@ export default function ApplicationDetail() {
         {sampleApplication.status === 'PENDING' && (
           <div className={styles.actionGroup}>
             <button type="button" className={styles.settingsButton} aria-label="신청 관리 메뉴">
-              ···
+              <Image src={moreIcon} alt="" width={24} height={24} />
             </button>
 
             <button className={styles.cancelButton} type="button">

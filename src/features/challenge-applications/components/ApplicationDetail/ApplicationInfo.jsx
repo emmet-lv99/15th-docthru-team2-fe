@@ -2,6 +2,21 @@
 
 import ApplicationBadge from './ApplicationBadge.jsx';
 import * as styles from './ApplicationDetail.css.js';
+import Image from 'next/image';
+import deadlineIcon from '@/features/challenge-applications/assets/ic_deadline.svg';
+import personIcon from '@/features/challenge-applications/assets/ic_person.svg';
+
+//마감일을 한국날짜 형식으로 변환
+function formatDeadline(dateString) {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
 
 // 신청한 챌린지의 기본 정보
 export default function ApplicationInfo({ application }) {
@@ -21,8 +36,15 @@ export default function ApplicationInfo({ application }) {
 
       {/* 마감일 및 모집 인원 */}
       <div className={styles.metaInfo}>
-        <span>마감일: {application.desiredDeadline}</span>
-        <span>모집 인원: {application.maxParticipants}명</span>
+        <div className={styles.metaItem}>
+          <Image src={deadlineIcon} alt="" width={20} height={20} />
+          <span>{formatDeadline(application.desiredDeadline)} 마감</span>
+        </div>
+
+        <div className={styles.metaItem}>
+          <Image src={personIcon} alt="" width={20} height={20} />
+          <span>{application.maxParticipants}명</span>
+        </div>
       </div>
 
       {/* 원문 링크 */}

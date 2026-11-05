@@ -5,7 +5,7 @@ export const container = style({
   width: '100%',
   maxWidth: '890px',
   margin: '0 auto',
-  padding: '32px 24px 80px',
+  padding: '24px 24px 80px',
 });
 
 // 상태 안내 배너
@@ -21,12 +21,19 @@ export const statusBanner = style({
 
 export const detailLayout = style({
   position: 'relative',
-  marginTop: '24px',
+  marginTop: '16px',
 });
 
 // 신청 정보 영역
 export const infoSection = style({
   minWidth: 0,
+});
+
+//마감일 모집인원 아이콘 문구
+export const metaItem = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
 });
 
 // 제목 오른쪽 관리 버튼 영역
@@ -40,12 +47,16 @@ export const actionGroup = style({
   gap: '12px',
 });
 
-// 점 세 개 설정 버튼
+// 점 3개 설정 버튼
 export const settingsButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '32px',
+  height: '32px',
+  padding: 0,
   border: 'none',
   backgroundColor: 'transparent',
-  fontSize: '28px',
-  lineHeight: '24px',
   cursor: 'pointer',
 });
 
@@ -140,6 +151,7 @@ export const metaInfo = style({
 
 // 취소하기 버튼
 export const cancelButton = style({
+  width: '140px',
   padding: '10px 16px',
   border: '1px solid #D4D4D4',
   borderRadius: '8px',
@@ -151,8 +163,8 @@ export const cancelButton = style({
 
 // 원문 링크 가로 선
 export const sourceSection = style({
-  marginTop: '32px',
-  paddingTop: '24px',
+  marginTop: '20px',
+  paddingTop: '16px',
   borderTop: '1px solid #E5E5E5',
 });
 
@@ -168,10 +180,8 @@ export const sourceTitle = style({
 export const sourceContent = style({
   position: 'relative',
   width: '100%',
-  minHeight: '420px',
-  border: '1px solid #E5E5E5',
-  borderRadius: '12px',
-  backgroundColor: '#FAFAFA',
+  minHeight: '490px',
+  backgroundColor: '#262626',
   overflow: 'hidden',
 });
 
@@ -192,7 +202,7 @@ export const sourceLink = style({
   top: '16px',
   right: '16px',
   zIndex: 1,
-  padding: '8px 14px',
+  padding: '5px 10px',
   borderRadius: '10px',
   backgroundColor: 'rgba(246, 248, 250, 0.8)',
   color: '#404040',
