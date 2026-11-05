@@ -70,6 +70,13 @@ export const deleteWork = (workId, reason) =>
   apiClient.del(`/works/${workId}`, { data: reason ? { reason } : {} });
 
 /**
+ * 작업물 수정 (본문 PATCH)
+ * @param {string|number} workId - 작업물 식별자
+ * @param {string} content - 수정할 TipTap HTML 본문
+ */
+export const updateWork = (workId, content) => apiClient.patch(`/works/${workId}`, { content });
+
+/**
  * 원문 공식 문서 파싱 본문 요청 (Next.js 내부 리더 API 라우트 호출)
  * @param {string} sourceUrl - 원문 공식 문서 URL
  */
