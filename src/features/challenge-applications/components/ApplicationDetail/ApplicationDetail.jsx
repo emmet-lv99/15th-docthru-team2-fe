@@ -2,6 +2,7 @@
 
 import ApplicationStatus from './ApplicationStatus';
 import ApplicationInfo from './ApplicationInfo';
+import * as styles from './ApplicationDetail.css.js';
 
 // 임시데이터
 const sampleApplication = {
@@ -18,11 +19,24 @@ const sampleApplication = {
 
 export default function ApplicationDetail() {
   return (
-    <main>
+    <main className={styles.container}>
       <ApplicationStatus status={sampleApplication.status} />
-      <ApplicationInfo application={sampleApplication} />
 
-      {sampleApplication.status === 'PENDING' && <button type="button">취소하기</button>}
+      <div className={styles.detailLayout}>
+        <ApplicationInfo application={sampleApplication} />
+
+        {sampleApplication.status === 'PENDING' && (
+          <div className={styles.actionGroup}>
+            <button type="button" className={styles.settingsButton} aria-label="신청 관리 메뉴">
+              ···
+            </button>
+
+            <button className={styles.cancelButton} type="button">
+              취소하기
+            </button>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
