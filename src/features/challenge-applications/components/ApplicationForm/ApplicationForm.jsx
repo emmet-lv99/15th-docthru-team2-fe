@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { createApplication } from '../../api';
 import Image from 'next/image';
-import calendarIcon from '../../assets/icon_calendar.svg';
+import calendarIcon from '@/features/challenge-applications/assets/icon_calendar.svg';
 
 export default function ApplicationForm() {
   //분야

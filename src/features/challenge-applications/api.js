@@ -18,3 +18,13 @@ export const createApplication = async (data) => {
 
   return response;
 };
+
+//신청 상세 조회
+export async function getApplicationDetail(applicationId) {
+  return apiClient.get(`/challenge-applications/me/${applicationId}`);
+}
+
+//신청 취소
+export async function cancelApplication(applicationId) {
+  return apiClient.del(`/challenge-applications/me/${applicationId}`);
+}
