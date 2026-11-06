@@ -81,7 +81,9 @@ export const updateWork = (workId, content) => apiClient.patch(`/works/${workId}
  * @param {string} sourceUrl - 원문 공식 문서 URL
  */
 export const getReaderContent = async (sourceUrl) => {
-  const res = await fetch(`/api/reader?url=${encodeURIComponent(sourceUrl)}`);
+  const res = await fetch(`/api/reader?url=${encodeURIComponent(sourceUrl)}`, {
+    credentials: 'omit',
+  });
   if (!res.ok) {
     throw new Error('보안 정책 또는 네트워크 문제로 본문을 직접 불러올 수 없습니다.');
   }
