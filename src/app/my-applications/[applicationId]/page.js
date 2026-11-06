@@ -30,9 +30,5 @@
 import { AuthGuard } from '@/components/AuthGuard';
 
 export default function ApplicationDetailPage() {
-  return (
-    <AuthGuard>
-      <span>제안 상세 — TODO(팀원 ⑤): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>
-    </AuthGuard>
-  );
+  return <AuthGuard></AuthGuard>;
 }
