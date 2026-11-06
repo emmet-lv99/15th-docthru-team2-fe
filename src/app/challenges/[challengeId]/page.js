@@ -30,11 +30,45 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
-export default function ChallengeDetailPage() {
+import { notFound } from 'next/navigation';
+import ChallengeDetailView from '@/features/challenges/components/ChallengeDetailView';
+import { getInitialChallengeDetail, getInitialParticipants } from '@/features/challenges/server';
+
+export default async function ChallengeDetailPage({ params, searchParams }) {
+  const { challengeId } = await params;
+  const id = Number(challengeId);
+  if (!Number.isSafeInteger(id) || id < 1 || id > 2147483647) notFound();
+
+  const search = await searchParams;
+  const requestedPage = Number(search?.page);
+  const participantPage =
+    Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const participantSort = search?.sort === 'submittedAt' ? 'submittedAt' : 'likes';
+
+  let initialChallenge;
+  let initialParticipants;
+  let detailStatus;
+  try {
+    const [challengeResult, participantResult] = await Promise.all([
+      getInitialChallengeDetail(id),
+      getInitialParticipants(id, { page: participantPage, size: 10, sort: participantSort }),
+    ]);
+    detailStatus = challengeResult.status;
+    if (challengeResult.ok) initialChallenge = challengeResult.data;
+    if (participantResult.ok) initialParticipants = participantResult.data;
+  } catch {
+    // 연결 오류는 화면의 React Query 재시도로 넘긴다.
+  }
+  if (detailStatus === 404) notFound();
+
   return (
-    <span>
-      챌린지 상세 — TODO(팀원 ① (작업 관련은 팀원 ② 협력)): 이 파일 상단의 주석 가이드를 따라 구현해
-      주세요
-    </span>
+    <ChallengeDetailView
+      key={id + ':' + participantPage + ':' + participantSort}
+      challengeId={id}
+      initialChallenge={initialChallenge}
+      initialParticipants={initialParticipants}
+      participantPage={participantPage}
+      participantSort={participantSort}
+    />
   );
 }

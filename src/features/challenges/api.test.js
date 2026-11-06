@@ -7,6 +7,8 @@ import {
   getChallengeParticipants,
   joinChallenge,
   abandonChallenge,
+  getMyChallengeParticipation,
+  getTopLikedWorks,
 } from '@/features/challenges/api';
 import { buildChallengeQuery, normalizeChallengeFilters } from '@/features/challenges/query';
 
@@ -127,5 +129,65 @@ describe('챌린지 HTTP 계약', () => {
     mock.onDelete('/challenges/5/participation').reply(204);
     await expect(joinChallenge(5)).resolves.toMatchObject({ participantId: 3 });
     await expect(abandonChallenge(5)).resolves.toBeNull();
+  });
+});
+
+describe('목록·상세·참여·포기 통합 시나리오의 API 경계', () => {
+  it('내 참여 상태는 현재 참여자 페이지가 아닌 works/me의 200으로 확인한다', async () => {
+    mock.onGet('/challenges/5/works/me').reply(200, {
+      challengeId: 5,
+      participantId: 51,
+      work: null,
+      totalWorks: 0,
+    });
+    await expect(getMyChallengeParticipation(5)).resolves.toEqual({
+      participating: true,
+      totalWorks: 0,
+    });
+  });
+
+  it('비참여 404는 참여 가능 상태이며, 그 밖의 서버 오류는 숨기지 않는다', async () => {
+    mock
+      .onGet('/challenges/5/works/me')
+      .replyOnce(404, {
+        code: 'NOT_FOUND',
+      })
+      .onGet('/challenges/5/works/me')
+      .replyOnce(500, {
+        code: 'INTERNAL_ERROR',
+        message: '서버 오류',
+      });
+    await expect(getMyChallengeParticipation(5)).resolves.toEqual({
+      participating: false,
+      totalWorks: 0,
+    });
+    await expect(getMyChallengeParticipation(5)).rejects.toMatchObject({ status: 500 });
+  });
+
+  it('마감 후 1위 동률은 참여자 페이지 100명 경계를 넘어 모두 포함한다', async () => {
+    const makeItem = (i) => ({
+      participantId: i,
+      user: { id: i, nickname: String(i) },
+      isAbandoned: false,
+      works: [{ id: 100 + i, likeCount: 7, content: '번역' }],
+    });
+    mock.onGet('/challenges/5/participants').reply((config) => {
+      expect(config.params.sort).toBe('likes');
+      expect(config.params.size).toBe(100);
+      return config.params.page === 1
+        ? [200, { items: Array.from({ length: 100 }, (_, i) => makeItem(i + 1)), totalPages: 2 }]
+        : [200, { items: [makeItem(101)], totalPages: 2 }];
+    });
+    const works = await getTopLikedWorks(5);
+    expect(works).toHaveLength(101);
+    expect(works.at(-1).work.id).toBe(201);
+  });
+
+  it('1위 추천이 0개라면 최다 추천작 카드를 임의로 만들지 않는다', async () => {
+    mock.onGet('/challenges/5/participants').reply(200, {
+      items: [{ participantId: 1, isAbandoned: false, works: [{ id: 1, likeCount: 0 }] }],
+      totalPages: 1,
+    });
+    await expect(getTopLikedWorks(5)).resolves.toEqual([]);
   });
 });

@@ -1,21 +1,48 @@
-// src/components/Chip/Chip.css.js
-// 근거: 공용 컴퍼넌트/chip-status.png(알약형 4종) · chip-card-status.png(카드용 2종) · chip-type.png(기술 스택 5색) · chip-category.png
-//
-// ★ 스타일 뼈대 — 값은 담당자가 근거 PNG 에 맞춰 채워 주세요.
-//
-// 🎨 토큰 규칙 — 색은 hex 로 직접 쓰지 말고 theme.css.js 의 vars 토큰을 써 주세요.
-//    이유는 한 군데 고치면 전 화면에 반영되기 때문이에요. 예시는 Button.css.js 를 보세요:
-//
-//      import { style, styleVariants } from '@vanilla-extract/css';
-//      import { vars } from '@/styles/theme.css.js';
-//
-//      export const size = styleVariants({
-//        sm: { height: '32px', padding: '0 12px', fontSize: 'var(--font-size-13)' },
-//      });
-//
-// 🧩 병합 셀렉터(selectors)는 & 로 끝나야 합니다. hover 는 style() 최상위 키로 넣을 수 있어요.
+import { style, styleVariants } from '@vanilla-extract/css';
+import { vars } from '@/styles/theme.css.js';
 
-import { style } from '@vanilla-extract/css';
-
-// 자리표 — 지금은 스타일이 비어 있어요. 채워 주시면 base 이름을 그대로 쓰시면 됩니다.
-export const base = style({});
+export const base = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  maxWidth: '100%',
+  padding: '4px 9px',
+  borderRadius: '8px',
+  fontSize: '13px',
+  fontWeight: 600,
+  lineHeight: 1.3,
+  whiteSpace: 'nowrap',
+});
+export const tone = styleVariants({
+  status: { backgroundColor: vars.colorBrand2, color: vars.colorBrand1 },
+  cardStatus: {
+    backgroundColor: vars.colorGray200,
+    color: vars.colorGray800,
+    borderRadius: '20px',
+  },
+  stack: {
+    backgroundColor: vars.colorBrand3,
+    color: vars.colorGray800,
+    fontFamily: vars.fontQuantico,
+    fontWeight: 700,
+    fontSize: '14px',
+    padding: '3px 12px',
+  },
+  docType: {
+    backgroundColor: vars.colorGray50,
+    color: vars.colorGray600,
+    border: '1px solid ' + vars.colorGray300,
+  },
+  category: { backgroundColor: vars.colorBrand3, color: vars.colorGray800 },
+});
+export const stack = styleVariants({
+  nextjs: { backgroundColor: '#79e16a' },
+  modernjs: { backgroundColor: '#ff6b6b' },
+  api: { backgroundColor: '#ff8855' },
+  web: { backgroundColor: '#f4e94f' },
+  career: { backgroundColor: '#78aceb' },
+});
+export const closedStatus = style({
+  backgroundColor: vars.colorGray800,
+  color: vars.colorGray50,
+});

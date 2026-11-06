@@ -1,21 +1,50 @@
-// src/components/Card/Card.css.js
-// 근거: 공용 컴퍼넌트/card.png (+ 내부 상태 배지 chip-card-status.png · 기술 칩 chip-type.png)
-//
-// ★ 스타일 뼈대 — 값은 담당자가 근거 PNG 에 맞춰 채워 주세요.
-//
-// 🎨 토큰 규칙 — 색은 hex 로 직접 쓰지 말고 theme.css.js 의 vars 토큰을 써 주세요.
-//    이유는 한 군데 고치면 전 화면에 반영되기 때문이에요. 예시는 Button.css.js 를 보세요:
-//
-//      import { style, styleVariants } from '@vanilla-extract/css';
-//      import { vars } from '@/styles/theme.css.js';
-//
-//      export const size = styleVariants({
-//        sm: { height: '32px', padding: '0 12px', fontSize: 'var(--font-size-13)' },
-//      });
-//
-// 🧩 병합 셀렉터(selectors)는 & 로 끝나야 합니다. hover 는 style() 최상위 키로 넣을 수 있어요.
+import { style, styleVariants } from '@vanilla-extract/css';
+import { vars } from '@/styles/theme.css.js';
 
-import { style } from '@vanilla-extract/css';
-
-// 자리표 — 지금은 스타일이 비어 있어요. 채워 주시면 base 이름을 그대로 쓰시면 됩니다.
-export const base = style({});
+export const card = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  padding: '24px',
+  border: '2px solid ' + vars.colorGray800,
+  borderRadius: '12px',
+  backgroundColor: vars.colorGray50,
+  color: vars.colorGray800,
+  textDecoration: 'none',
+  minWidth: 0,
+  selectors: {
+    '&:hover': { backgroundColor: vars.colorGray100 },
+    '&:focus-visible': { outline: '3px solid ' + vars.colorBrand2, outlineOffset: '2px' },
+  },
+  '@media': { '(max-width: 640px)': { padding: '20px 16px' } },
+});
+export const widths = styleVariants({
+  wide: { width: '100%' },
+  medium: { width: '100%', maxWidth: '696px' },
+  narrow: { width: '100%', maxWidth: '343px' },
+});
+export const statusRow = style({ marginBottom: '12px' });
+export const title = style({
+  margin: 0,
+  fontSize: '20px',
+  lineHeight: 1.4,
+  fontWeight: 700,
+  overflowWrap: 'anywhere',
+  '@media': { '(max-width: 640px)': { fontSize: '18px' } },
+});
+export const tags = style({ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px' });
+export const details = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: '100%',
+  gap: '12px',
+  marginTop: '20px',
+  paddingTop: '16px',
+  borderTop: '1px solid ' + vars.colorGray200,
+  fontSize: '13px',
+  lineHeight: 1.5,
+  color: vars.colorGray600,
+  '@media': { '(max-width: 640px)': { gap: '8px', flexDirection: 'column' } },
+});
+export const detailItem = style({ display: 'inline-flex', alignItems: 'center', gap: '5px' });
+export const callToAction = style({ marginTop: '12px', fontSize: '13px', fontWeight: 700 });
