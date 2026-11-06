@@ -1,4 +1,5 @@
 import * as styles from './ApplicationList.css.js';
+import Link from 'next/link';
 
 const statusLabels = {
   PENDING: '승인 대기',
@@ -93,7 +94,12 @@ export default function ApplicationTable({ applications, isPending, isError }) {
                 <td className={styles.tableCell}>{application.category}</td>
                 <td className={styles.tableCell}>{application.documentType}</td>
                 <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
-                  {application.title}
+                  <Link
+                    href={`/my-applications/${application.applicationId}`}
+                    className={styles.detailLink}
+                  >
+                    {application.title}
+                  </Link>
                 </td>
                 <td className={styles.tableCell}>{application.maxParticipants}</td>
                 <td className={styles.tableCell}>{formatDate(application.createdAt)}</td>
