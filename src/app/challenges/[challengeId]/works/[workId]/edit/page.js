@@ -170,7 +170,15 @@ export default function WorkEditPage() {
         </div>
         {/* 우측 원문 사이드 패널 */}
         {isSourceOpen && (
-          <SourceViewer sourceUrl={challenge?.sourceUrl} onClose={() => setIsSourceOpen(false)} />
+          <SourceViewer
+            sourceUrl={challenge?.sourceUrl}
+            onClose={() => setIsSourceOpen(false)}
+            onApplyTranslation={(translatedHtml) => {
+              if (editor) {
+                editor.commands.setContent(translatedHtml);
+              }
+            }}
+          />
         )}
 
         {/* 우측 원문 보기 플로팅 버튼 */}

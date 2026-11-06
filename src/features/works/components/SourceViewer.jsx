@@ -2,13 +2,17 @@
 
 import { getReaderContent } from '@/features/works/api.js';
 import { queryKeys } from '@/lib/queryKeys.js';
+import { useCompletion } from '@ai-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import * as styles from './SourceViewer.css.js';
 
 function SourceViewer({
   sourceUrl = 'https://nextjs.org/docs/app/getting-started/images',
   onClose,
+  onApplyTranslation,
 }) {
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.reader.doc(sourceUrl),
@@ -21,6 +25,46 @@ function SourceViewer({
     data?.content && typeof window !== 'undefined'
       ? DOMPurify.sanitize(data.content, { ADD_ATTR: ['target'] })
       : '';
+
+  const {
+    complete,
+    completion,
+    isLoading: isTranslating,
+  } = useCompletion({
+    api: '/api/translate',
+    streamProtocol: 'text',
+    onFinish: () => {
+      toast.success('AI 초안 번역이 완료되었습니다!');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'AI 번역 중 오류가 발생했습니다.');
+    },
+  });
+
+  useEffect(() => {
+    if (isTranslating && completion && onApplyTranslation) {
+      onApplyTranslation(completion);
+    }
+  }, [isTranslating, completion, onApplyTranslation]);
+
+  // AI 번역 시작 핸들러
+  const handleAiTranslate = () => {
+    if (!data?.content) {
+      toast.warn('번역할 원문 본문이 아직 로드되지 않았습니다.');
+      return;
+    }
+    // HTML 태그를 제거한 순수 텍스트만 추출 (AI 프롬프트 최적화)
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = data.content;
+    const cleanText = (tempDiv.textContent || tempDiv.innerText || '').trim();
+    if (!cleanText) {
+      toast.warn('원문에 번역할 텍스트가 없습니다.');
+      return;
+    }
+    toast.info('🤖 AI가 원문 초안을 번역하고 있습니다...');
+    // 프롬프트 토큰 절약을 위해 핵심 본문 앞부분(최대 3000자)을 번역기로 전송
+    complete(cleanText);
+  };
 
   return (
     <aside className={styles.container}>
@@ -40,6 +84,10 @@ function SourceViewer({
           {data?.title || '원문 문서'}
         </h2>
         <div className={styles.actions}>
+          <button type="button" className={styles.aiTranslateButton} onClick={handleAiTranslate}>
+            {isTranslating ? '번역 중...' : '✨ AI 번역'}
+          </button>
+
           {sourceUrl && (
             <a
               href={sourceUrl}
