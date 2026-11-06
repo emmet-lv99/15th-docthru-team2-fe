@@ -22,6 +22,9 @@ export async function POST(req) {
 - 불필요한 사족이나 인사말은 절대 넣지 말고 오직 '번역된 본문 내용'만 반환한다.
 - 웹 에디터에 주입할 수 있도록 깔끔한 HTML 태그(<p>, <h1>~<h3>, <ul>, <li>, <pre><code> 등)를 적절히 활용하여 서식을 보존하라.`,
       prompt: `다음 영문 기술 문서를 요약 없이 전문을 끝까지 한국어로 완역해줘:\n\n${prompt}`,
+      onError: (error) => {
+        console.error('Gemini Stream Error:', error);
+      },
     });
 
     // 클라이언트로 한 글자씩 실시간 스트리밍 전송
