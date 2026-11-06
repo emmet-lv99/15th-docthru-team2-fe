@@ -141,6 +141,9 @@ export async function GET(request) {
       throw new Error('본문 내용을 추출하지 못했습니다.');
     }
 
+    const originCacheControl = response.headers.get('cache-control') || '';
+    const isNoStore = /(?:^|,)\s*no-store\s*(?:,|$)/i.test(originCacheControl);
+
     return NextResponse.json(
       {
         title: article.title,
@@ -150,7 +153,9 @@ export async function GET(request) {
       },
       {
         headers: {
-          'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600',
+          'Cache-Control': isNoStore
+            ? 'no-store'
+            : 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600',
         },
       },
     );
