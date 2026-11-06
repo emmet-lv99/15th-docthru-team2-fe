@@ -6,9 +6,9 @@ import * as styles from './ApplicationDetail.css.js';
 import Image from 'next/image';
 import moreIcon from '@/features/challenge-applications/assets/icon_more.svg';
 
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { getApplicationDetail } from '../../api';
+import { useRouter, useParams } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getApplicationDetail, cancelApplication } from '../../api';
 
 import { useState } from 'react';
 import ApplicationCancelModal from './ApplicationCancelModal';
@@ -26,6 +26,27 @@ export default function ApplicationDetail() {
     queryKey: ['application', applicationId],
     queryFn: () => getApplicationDetail(applicationId),
     enabled: Boolean(applicationId),
+  });
+
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const { mutate: cancel, isPending: isCancelling } = useMutation({
+    mutationFn: () => cancelApplication(applicationId),
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['applications'] });
+
+      setIsCancelModalOpen(false);
+      router.push('/my-applications');
+    },
+
+    onError: (error) => {
+      console.error('신청 취소 실패:', error);
+      console.error('HTTP 상태 코드:', error.response?.status);
+      console.error('서버 응답:', error.response?.data);
+      alert('신청 취소에 실패했습니다. 다시 시도해 주세요.');
+    },
   });
 
   if (isPending) {
@@ -65,9 +86,8 @@ export default function ApplicationDetail() {
       {isCancelModalOpen && (
         <ApplicationCancelModal
           onClose={() => setIsCancelModalOpen(false)}
-          onConfirm={() => {
-            setIsCancelModalOpen(false);
-          }}
+          onConfirm={() => cancel()}
+          isPending={isCancelling}
         />
       )}
     </main>

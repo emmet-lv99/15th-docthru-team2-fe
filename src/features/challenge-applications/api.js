@@ -23,3 +23,8 @@ export const createApplication = async (data) => {
 export async function getApplicationDetail(applicationId) {
   return apiClient.get(`/challenge-applications/me/${applicationId}`);
 }
+
+//신청 취소
+export async function cancelApplication(applicationId) {
+  return apiClient.del(`/challenge-applications/me/${applicationId}`);
+}
