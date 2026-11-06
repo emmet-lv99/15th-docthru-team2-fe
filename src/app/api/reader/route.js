@@ -63,6 +63,7 @@ export async function GET(request) {
   try {
     // 1. 외부 공식 문서 HTML fetch (6초 타임아웃 설정으로 서버 지연 방지)
     const response = await fetch(targetUrl, {
+      next: { revalidate: 86400 },
       signal: AbortSignal.timeout(6000),
       headers: {
         'User-Agent':
@@ -140,12 +141,19 @@ export async function GET(request) {
       throw new Error('본문 내용을 추출하지 못했습니다.');
     }
 
-    return NextResponse.json({
-      title: article.title,
-      content: article.content,
-      byline: article.byline,
-      excerpt: article.excerpt,
-    });
+    return NextResponse.json(
+      {
+        title: article.title,
+        content: article.content,
+        byline: article.byline,
+        excerpt: article.excerpt,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=3600',
+        },
+      },
+    );
   } catch (error) {
     if (error.name === 'TimeoutError') {
       return NextResponse.json(

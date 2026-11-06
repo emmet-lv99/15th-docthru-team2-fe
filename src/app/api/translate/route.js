@@ -13,7 +13,6 @@ export async function POST(req) {
       return new Response('번역할 원문 텍스트가 필요합니다.', { status: 400 });
     }
 
-    // Google Gemini 1.5 Flash 모델에 스트리밍 번역 요청
     const result = streamText({
       model: google('gemini-3.5-flash'),
       system: `너는 IT 및 소프트웨어 개발 기술 문서를 전문적으로 번역하는 시니어 테크니컬 라이터다.
