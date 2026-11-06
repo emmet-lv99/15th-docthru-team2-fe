@@ -1,4 +1,4 @@
-import { getNotificationMessage } from '../constants';
+import { getNotificationMessage } from '@/features/notifications/constants';
 
 function formatNotificationDate(createdAt) {
   if (!createdAt) return '';
