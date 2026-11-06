@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import iconProfile from '../assets/profile.svg';
-import iconProfileOutline from '../assets/profile-outline.svg';
-import iconProfileUnderline from '../assets/profile-underline.svg';
-import iconCrown from '../assets/crown.svg';
-import iconHeart from '../assets/heart.svg';
+import iconProfile from '@/features/challenges/assets/profile.svg';
+import iconProfileOutline from '@/features/challenges/assets/profile-outline.svg';
+import iconProfileUnderline from '@/features/challenges/assets/profile-underline.svg';
+import iconCrown from '@/features/challenges/assets/crown.svg';
+import iconHeart from '@/features/challenges/assets/heart.svg';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -27,7 +27,7 @@ import {
   formatChallengeDate,
   externalSourceUrl,
 } from '@/features/challenges/labels';
-import * as styles from './challenges.css.js';
+import * as styles from '@/features/challenges/components/challenges.css.js';
 
 function plainText(content) {
   return String(content ?? '')

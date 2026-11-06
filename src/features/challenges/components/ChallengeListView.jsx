@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import iconFilter from '../assets/filter.svg';
+import iconFilter from '@/features/challenges/assets/filter.svg';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/Card';
@@ -23,7 +23,7 @@ import {
   STATUS_LABEL,
   formatChallengeDate,
 } from '@/features/challenges/labels';
-import * as styles from './challenges.css.js';
+import * as styles from '@/features/challenges/components/challenges.css.js';
 
 const SORT_LABEL = { latest: '최신순', popular: '인기순', deadline: '마감 임박순' };
 
