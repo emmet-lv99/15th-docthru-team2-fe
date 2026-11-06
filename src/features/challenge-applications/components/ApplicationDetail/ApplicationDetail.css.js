@@ -346,3 +346,14 @@ export const rejectionDivider = style({
   backgroundColor: '#E5E5E5',
   marginTop: '24px',
 });
+
+// 승인 완료 배너
+export const approvedBanner = style({
+  padding: '8px 16px',
+  borderRadius: '999px',
+  backgroundColor: '#DFF0FF',
+  color: '#4095DE',
+  fontSize: '16px',
+  fontWeight: '600',
+  textAlign: 'center',
+});
