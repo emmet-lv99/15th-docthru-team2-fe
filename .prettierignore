@@ -14,3 +14,7 @@ pnpm-lock.yaml
 # 참조 문서 — 원본 그대로 보존한다 (자동 서식 대상이 아니다)
 API-명세.md
 요구사항.md
+
+# 외부 서비스 인증 파일 — 원본 그대로 보존한다
+public/google*.html
+
