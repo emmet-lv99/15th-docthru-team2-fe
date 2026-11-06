@@ -210,3 +210,82 @@ export const sourceLink = style({
   fontSize: '14px',
   fontWeight: '700',
 });
+
+// 모달 =========================
+
+// 모달 배경
+export const modalOverlay = style({
+  position: 'fixed',
+  inset: 0,
+  zIndex: 1000,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+});
+
+// 모달 본문
+export const modalContent = style({
+  width: '327px',
+  maxWidth: 'calc(100vw - 32px)',
+  padding: '24px',
+  borderRadius: '12px',
+  backgroundColor: '#FFFFFF',
+  border:'2px solid #262626',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '24px',
+});
+
+// 모달 아이콘과 문구 배치
+export const modalMessage = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '24px',
+  width: '100%',
+});
+
+// 확인 문구
+export const modalText = style({
+  margin: 0,
+  fontSize: '16px',
+  fontWeight: '500',
+  color: '#262626',
+  textAlign: 'center',
+});
+
+// 버튼 영역
+export const modalButtons = style({
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '8px',
+  width: '100%',
+});
+
+// 아니오 버튼
+export const modalNoButton = style({
+  width: '90px',
+  height: '40px',
+  border: '1px solid #262626',
+  borderRadius: '12px',
+  backgroundColor: '#FFFFFF',
+  color: '#262626',
+  fontSize: '16px',
+  fontWeight: '600',
+  cursor: 'pointer',
+});
+
+// 네 버튼
+export const modalYesButton = style({
+  width: '90px',
+  height: '40px',
+  border: 'none',
+  borderRadius: '12px',
+  backgroundColor: '#262626',
+  color: '#FFFFFF',
+  fontSize: '16px',
+  fontWeight: '600',
+  cursor: 'pointer',
+});

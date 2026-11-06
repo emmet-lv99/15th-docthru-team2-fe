@@ -10,8 +10,13 @@ import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { getApplicationDetail } from '../../api';
 
+import { useState } from 'react';
+import ApplicationCancelModal from './ApplicationCancelModal';
+
 export default function ApplicationDetail() {
   const { applicationId } = useParams();
+
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const {
     data: application,
@@ -47,12 +52,24 @@ export default function ApplicationDetail() {
               <Image src={moreIcon} alt="" width={24} height={24} />
             </button>
 
-            <button className={styles.cancelButton} type="button">
+            <button
+              className={styles.cancelButton}
+              type="button"
+              onClick={() => setIsCancelModalOpen(true)}
+            >
               취소하기
             </button>
           </div>
         )}
       </div>
+      {isCancelModalOpen && (
+        <ApplicationCancelModal
+          onClose={() => setIsCancelModalOpen(false)}
+          onConfirm={() => {
+            setIsCancelModalOpen(false);
+          }}
+        />
+      )}
     </main>
   );
 }
