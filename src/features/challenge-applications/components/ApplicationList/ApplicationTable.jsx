@@ -85,34 +85,40 @@ export default function ApplicationTable({ applications, isPending, isError }) {
               </td>
             </tr>
           ) : (
-            applications.map((application, index) => (
-              <tr
-                key={application.applicationId}
-                className={application.status === 'DELETED' ? styles.deletedRow : styles.tableRow}
-              >
-                <td className={styles.tableCell}>{index + 1}</td>
-                <td className={styles.tableCell}>{application.category}</td>
-                <td className={styles.tableCell}>{application.documentType}</td>
-                <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
-                  <Link
-                    href={`/my-applications/${application.applicationId}`}
-                    className={styles.detailLink}
-                  >
-                    {application.title}
-                  </Link>
-                </td>
-                <td className={styles.tableCell}>{application.maxParticipants}</td>
-                <td className={styles.tableCell}>{formatDate(application.createdAt)}</td>
-                <td className={styles.tableCell}>{formatDate(application.desiredDeadline)}</td>
-                <td className={styles.tableCell}>
-                  <span
-                    className={`${styles.statusBadge} ${statusStyles[application.status] ?? ''}`}
-                  >
-                    {statusLabels[application.status] ?? application.status}
-                  </span>
-                </td>
-              </tr>
-            ))
+            applications.map((application, index) => {
+              // 승인된 챌린지가 삭제되었는지 확인
+              const isDeleted = Boolean(application.approvedChallenge?.deletedAt);
+
+              // 화면에 표시할 상태 결정
+              const displayStatus = isDeleted ? 'DELETED' : application.status;
+
+              return (
+                <tr
+                  key={application.applicationId}
+                  className={isDeleted ? styles.deletedRow : styles.tableRow}
+                >
+                  <td className={styles.tableCell}>{index + 1}</td>
+                  <td className={styles.tableCell}>{application.category}</td>
+                  <td className={styles.tableCell}>{application.documentType}</td>
+                  <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
+                    <Link
+                      href={`/my-applications/${application.applicationId}`}
+                      className={styles.detailLink}
+                    >
+                      {application.title}
+                    </Link>
+                  </td>
+                  <td className={styles.tableCell}>{application.maxParticipants}</td>
+                  <td className={styles.tableCell}>{formatDate(application.createdAt)}</td>
+                  <td className={styles.tableCell}>{formatDate(application.desiredDeadline)}</td>
+                  <td className={styles.tableCell}>
+                    <span className={`${styles.statusBadge} ${statusStyles[displayStatus] ?? ''}`}>
+                      {statusLabels[displayStatus] ?? displayStatus}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })
           )}
         </tbody>
       </table>
