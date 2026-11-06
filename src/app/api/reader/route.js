@@ -63,7 +63,7 @@ export async function GET(request) {
   try {
     // 1. 외부 공식 문서 HTML fetch (6초 타임아웃 설정으로 서버 지연 방지)
     const response = await fetch(targetUrl, {
-      next: { revalidate: 86400 },
+      cache: 'no-store',
       signal: AbortSignal.timeout(6000),
       headers: {
         'User-Agent':
