@@ -1,21 +1,51 @@
-// src/components/Search/Search.css.js
-// 근거: 공용 컴퍼넌트/search.png
-//
-// ★ 스타일 뼈대 — 값은 담당자가 근거 PNG 에 맞춰 채워 주세요.
-//
-// 🎨 토큰 규칙 — 색은 hex 로 직접 쓰지 말고 theme.css.js 의 vars 토큰을 써 주세요.
-//    이유는 한 군데 고치면 전 화면에 반영되기 때문이에요. 예시는 Button.css.js 를 보세요:
-//
-//      import { style, styleVariants } from '@vanilla-extract/css';
-//      import { vars } from '@/styles/theme.css.js';
-//
-//      export const size = styleVariants({
-//        sm: { height: '32px', padding: '0 12px', fontSize: 'var(--font-size-13)' },
-//      });
-//
-// 🧩 병합 셀렉터(selectors)는 & 로 끝나야 합니다. hover 는 style() 최상위 키로 넣을 수 있어요.
-
 import { style } from '@vanilla-extract/css';
+import { vars } from '@/styles/theme.css.js';
 
-// 자리표 — 지금은 스타일이 비어 있어요. 채워 주시면 base 이름을 그대로 쓰시면 됩니다.
-export const base = style({});
+export const form = style({
+  display: 'flex',
+  alignItems: 'center',
+  width: '100%',
+  minWidth: 0,
+  height: '40px',
+  border: '1px solid ' + vars.colorGray200,
+  borderRadius: '20px',
+  backgroundColor: vars.colorGray50,
+  selectors: {
+    '&:focus-within': { outline: '2px solid ' + vars.colorBrand2, outlineOffset: '1px' },
+  },
+});
+export const input = style({
+  flex: 1,
+  width: '100%',
+  minWidth: 0,
+  height: '38px',
+  padding: '0 14px 0 4px',
+  border: 0,
+  outline: 'none',
+  backgroundColor: 'transparent',
+  color: vars.colorGray800,
+  font: 'inherit',
+  fontSize: '14px',
+  '::placeholder': { color: vars.colorGray400 },
+});
+export const submit = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flex: 'none',
+  width: '36px',
+  height: '38px',
+  border: 0,
+  padding: 0,
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+  borderRadius: '20px',
+});
+export const searchIcon = style({
+  position: 'relative',
+  display: 'block',
+  width: '24px',
+  height: '24px',
+});
+export const searchCircle = style({ position: 'absolute', top: '3px', left: '4px' });
+export const searchHandle = style({ position: 'absolute', top: '15px', left: '16px' });
