@@ -1,3 +1,4 @@
+//승인거절화면
 import * as styles from './ApplicationDetail.css.js';
 
 // 거절 결정 시간 형식 변환

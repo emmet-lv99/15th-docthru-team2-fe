@@ -12,7 +12,7 @@ import { getApplicationDetail, cancelApplication } from '../../api';
 
 import { useState } from 'react';
 import ApplicationCancelModal from './ApplicationCancelModal';
-import ApplicationRejectionReason from './ApplicationRejectionReason';
+import ApplicationDecisionReason from './ApplicationDecisionReason';
 
 export default function ApplicationDetail() {
   const { applicationId } = useParams();
@@ -58,15 +58,34 @@ export default function ApplicationDetail() {
     return <p>신청 정보를 불러오지 못했습니다.</p>;
   }
 
+  const isDeleted = Boolean(application.approvedChallenge?.deletedAt);
+
   return (
     <main className={styles.container}>
       {/* 신청 상태 안내 */}
-      <ApplicationStatus status={application.status} />
-
-      {/* 거절된 신청에만 거절 사유 표시 */}
-      {application.status === 'REJECTED' && (
+      <ApplicationStatus status={isDeleted ? 'DELETED' : application.status} />
+      {/* 삭제된 챌린지의 삭제 사유 */}
+      {isDeleted && (
         <>
-          <ApplicationRejectionReason application={application} />
+          <ApplicationDecisionReason
+            title="삭제 사유"
+            reason={application.approvedChallenge.deleteReason}
+            decidedAt={application.approvedChallenge.deletedAt}
+            showOperator={false}
+          />
+          <div className={styles.rejectionDivider} />
+        </>
+      )}
+
+      {/* 삭제된 챌린지 */}
+      {application.status === 'DELETED' && (
+        <>
+          <ApplicationDecisionReason
+            title="삭제 사유"
+            reason={application.deletionReason}
+            decidedAt={application.deletedAt}
+            showOperator={false}
+          />
           <div className={styles.rejectionDivider} />
         </>
       )}

@@ -357,3 +357,14 @@ export const approvedBanner = style({
   fontWeight: '600',
   textAlign: 'center',
 });
+
+// 삭제된 챌린지 배너
+export const deletedBanner = style({
+  padding: '8px 16px',
+  borderRadius: '999px',
+  backgroundColor: '#777777',
+  color: '#FFFFFF',
+  fontSize: '16px',
+  fontWeight: '600',
+  textAlign: 'center',
+});
