@@ -42,10 +42,10 @@ function SourceViewer({
   });
 
   useEffect(() => {
-    if (completion && onApplyTranslation) {
+    if (isTranslating && completion && onApplyTranslation) {
       onApplyTranslation(completion);
     }
-  }, [completion, onApplyTranslation]);
+  }, [isTranslating, completion, onApplyTranslation]);
 
   // AI 번역 시작 핸들러
   const handleAiTranslate = () => {
