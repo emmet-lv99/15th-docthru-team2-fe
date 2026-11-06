@@ -6,28 +6,42 @@ import * as styles from './ApplicationDetail.css.js';
 import Image from 'next/image';
 import moreIcon from '@/features/challenge-applications/assets/icon_more.svg';
 
-// 임시데이터
-const sampleApplication = {
-  applicationId: 20,
-  title: 'Next.js 공식 문서 번역',
-  category: 'NEXT_JS',
-  documentType: 'OFFICIAL',
-  content: 'Next.js 공식 문서를 번역하는 챌린지입니다.',
-  desiredDeadline: '2026-11-20T00:00:00.000Z',
-  maxParticipants: 10,
-  sourceUrl: 'https://nextjs.org/docs',
-  status: 'PENDING',
-};
+import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { getApplicationDetail } from '../../api';
 
 export default function ApplicationDetail() {
+  const { applicationId } = useParams();
+
+  const {
+    data: application,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ['application', applicationId],
+    queryFn: () => getApplicationDetail(applicationId),
+    enabled: Boolean(applicationId),
+  });
+
+  if (isPending) {
+    return <p>신청 정보를 불러오는 중입니다...</p>;
+  }
+
+  if (isError || !application) {
+    return <p>신청 정보를 불러오지 못했습니다.</p>;
+  }
+
   return (
     <main className={styles.container}>
-      <ApplicationStatus status={sampleApplication.status} />
+      {/* 신청 상태 안내 */}
+      <ApplicationStatus status={application.status} />
 
+      {/* 신청 상세 정보 */}
       <div className={styles.detailLayout}>
-        <ApplicationInfo application={sampleApplication} />
+        <ApplicationInfo application={application} />
 
-        {sampleApplication.status === 'PENDING' && (
+        {/* 승인대기 상태에서 관리 버튼 표시 */}
+        {application.status === 'PENDING' && (
           <div className={styles.actionGroup}>
             <button type="button" className={styles.settingsButton} aria-label="신청 관리 메뉴">
               <Image src={moreIcon} alt="" width={24} height={24} />
