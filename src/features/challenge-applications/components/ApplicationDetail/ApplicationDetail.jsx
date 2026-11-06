@@ -12,6 +12,7 @@ import { getApplicationDetail, cancelApplication } from '../../api';
 
 import { useState } from 'react';
 import ApplicationCancelModal from './ApplicationCancelModal';
+import ApplicationRejectionReason from './ApplicationRejectionReason';
 
 export default function ApplicationDetail() {
   const { applicationId } = useParams();
@@ -61,6 +62,14 @@ export default function ApplicationDetail() {
     <main className={styles.container}>
       {/* 신청 상태 안내 */}
       <ApplicationStatus status={application.status} />
+
+      {/* 거절된 신청에만 거절 사유 표시 */}
+      {application.status === 'REJECTED' && (
+        <>
+          <ApplicationRejectionReason application={application} />
+          <div className={styles.rejectionDivider} />
+        </>
+      )}
 
       {/* 신청 상세 정보 */}
       <div className={styles.detailLayout}>

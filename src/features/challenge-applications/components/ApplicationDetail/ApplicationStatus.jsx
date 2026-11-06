@@ -12,7 +12,10 @@ const statusMessages = {
 
 export default function ApplicationStatus({ status }) {
   return (
-    <div role="status" className={styles.statusBanner}>
+    <div
+      role="status"
+      className={`{styles.statusBanner} ${status === 'REJECTED' ? styles.rejectedBanner : ''}`}
+    >
       {statusMessages[status] ?? '신청 상태를 확인할 수 없습니다.'}
     </div>
   );

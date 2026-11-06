@@ -231,7 +231,7 @@ export const modalContent = style({
   padding: '24px',
   borderRadius: '12px',
   backgroundColor: '#FFFFFF',
-  border:'2px solid #262626',
+  border: '2px solid #262626',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -288,4 +288,61 @@ export const modalYesButton = style({
   fontSize: '16px',
   fontWeight: '600',
   cursor: 'pointer',
+});
+
+// 거절 상태 배너
+export const rejectedBanner = style({
+  padding: '8px 16px',
+  borderRadius: '999px',
+  backgroundColor: '#FFF0F0',
+  color: '#E54946',
+  fontSize: '16px',
+  fontWeight: '600',
+  textAlign: 'center',
+});
+
+// 거절 사유 박스
+export const rejectionBox = style({
+  marginTop: '16px',
+  padding: '18px 24px',
+  border: '1px solid #E5E5E5',
+  borderRadius: '16px',
+  backgroundColor: '#FAFAFA',
+});
+
+// 거절 사유 제목
+export const rejectionTitle = style({
+  margin: 0,
+  textAlign: 'center',
+  fontSize: '14px',
+  fontWeight: '600',
+  color: '#262626',
+});
+
+// 거절 사유 내용
+export const rejectionText = style({
+  margin: '12px 0 17px',
+  textAlign: 'center',
+  fontSize: '16px',
+  color: '#404040',
+  whiteSpace: 'pre-wrap',
+  overflowWrap: 'anywhere',
+});
+
+// 거절 처리 정보
+export const rejectionMeta = style({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  gap: '5px',
+  color: '#737373',
+  fontSize: '14px',
+});
+
+// 거절 사유 박스 아래 구분선
+export const rejectionDivider = style({
+  width: '100%',
+  height: '1px',
+  backgroundColor: '#E5E5E5',
+  marginTop: '24px',
 });
