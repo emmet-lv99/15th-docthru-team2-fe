@@ -12,10 +12,18 @@ export const nav = style({
   gap: '24px',
   borderBottom: `1px solid ${vars.colorGray200}`,
   marginBottom: '20px',
+  // 좁은 화면에서 페이지 전체가 가로로 밀리지 않게, 탭 영역만 스크롤해요
+  overflowX: 'auto',
+  scrollbarWidth: 'none',
+  selectors: {
+    '&::-webkit-scrollbar': { display: 'none' },
+  },
 });
 
 const tabBase = style({
   position: 'relative',
+  // flex 안에서 찌그러지지 않고, 넘치면 스크롤되게 해요
+  flex: 'none',
   padding: '8px 0 12px',
   fontFamily: vars.fontFamily,
   fontSize: 'var(--font-size-16)',
@@ -42,7 +50,7 @@ export const activeTab = style([
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: '-1px',
+        bottom: 0,
         height: '2px',
         backgroundColor: vars.colorGray900,
       },
