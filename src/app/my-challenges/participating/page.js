@@ -28,11 +28,12 @@
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
 import { AuthGuard } from '@/components/AuthGuard';
+import { ParticipatingList } from '@/features/my-challenges/components/ParticipatingList/ParticipatingList';
 
 export default function MeParticipatingPage() {
   return (
     <AuthGuard>
-      <span>참여 중인 챌린지 — TODO(팀원 ③): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>
+      <ParticipatingList />
     </AuthGuard>
   );
 }
