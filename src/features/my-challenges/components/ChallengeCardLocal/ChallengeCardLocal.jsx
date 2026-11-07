@@ -50,15 +50,26 @@ export function ChallengeCardLocal({
   maxParticipants,
   isClosed = false,
   latestWorkId = null,
+  mode = 'participating',
 }) {
   const deadlineText = formatDeadline(deadline);
   const hasPeople = Number.isFinite(participantCount) && Number.isFinite(maxParticipants);
 
-  // 제출물이 있으면 "이어서 작성", 없으면 신규 작성(임시저장 복원 포함)으로 보내요.
-  // 편집 화면 하나가 신규·수정을 함께 처리하므로(M-09) 둘 다 edit 으로 이동합니다.
-  const ctaHref = latestWorkId
-    ? `/challenges/${challengeId}/works/${latestWorkId}/edit`
-    : `/challenges/${challengeId}/edit`;
+  const isCompleted = mode === 'completed';
+
+  // 참여 중: 제출물이 있으면 이어서 작성, 없으면 신규 작성(임시저장 복원 포함).
+  // 완료: 내 작업물 상세로 이동하고, 제출물이 없으면 버튼을 숨겨요.
+  let ctaHref = null;
+  if (isCompleted) {
+    ctaHref = latestWorkId ? `/challenges/${challengeId}/works/${latestWorkId}` : null;
+  } else {
+    ctaHref = latestWorkId
+      ? `/challenges/${challengeId}/works/${latestWorkId}/edit`
+      : `/challenges/${challengeId}/edit`;
+  }
+
+  const ctaLabel = isCompleted ? '내 작업물 보기' : '도전 계속하기';
+  const ctaIcon = isCompleted ? '/icons/document-my-work.svg' : '/icons/arrow-right.svg';
 
   return (
     <article className={styles.card}>
@@ -93,17 +104,19 @@ export function ChallengeCardLocal({
             )}
           </div>
 
-          <Button
-            as={Link}
-            href={ctaHref}
-            variant="outline"
-            size="sm"
-            shape="pill"
-            className={styles.cta}
-          >
-            도전 계속하기
-            <Image src="/icons/arrow-right.svg" alt="" width={16} height={16} />
-          </Button>
+          {ctaHref && (
+            <Button
+              as={Link}
+              href={ctaHref}
+              variant="outline"
+              size="sm"
+              shape="pill"
+              className={styles.cta}
+            >
+              {ctaLabel}
+              <Image src={ctaIcon} alt="" width={16} height={16} />
+            </Button>
+          )}
         </div>
       </div>
     </article>
