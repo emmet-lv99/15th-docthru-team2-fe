@@ -28,7 +28,8 @@ export function ParticipatingList() {
     error,
     hasNextPage,
     fetchNextPage,
-    isFetchingNextPage,
+    // background refetch 중에도 '더 보기'를 잠가요 — 클릭하면 진행 중인 refetch 가 취소됩니다
+    isFetching,
     isFetchNextPageError,
   } = useParticipating({ q: keyword });
 
@@ -91,8 +92,8 @@ export function ParticipatingList() {
       {isFetchNextPageError && <p>다음 목록을 불러오지 못했어요. 다시 시도해 주세요.</p>}
 
       {hasNextPage && (
-        <button type="button" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-          {isFetchingNextPage ? '불러오는 중…' : '더 보기'}
+        <button type="button" onClick={() => fetchNextPage()} disabled={isFetching}>
+          {isFetching ? '불러오는 중…' : '더 보기'}
         </button>
       )}
     </section>

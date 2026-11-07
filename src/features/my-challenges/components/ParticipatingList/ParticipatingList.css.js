@@ -55,7 +55,8 @@ export const searchInput = style({
   outline: 'none',
   boxSizing: 'border-box',
   selectors: {
-    '&::placeholder': { color: vars.colorGray400 },
+    // gray500(#737373) — 배경 gray50 대비 4.54:1 로 WCAG 4.5:1 을 넘겨요
+    '&::placeholder': { color: vars.colorGray500 },
     '&:focus': { borderColor: vars.colorBrand1 },
   },
 });

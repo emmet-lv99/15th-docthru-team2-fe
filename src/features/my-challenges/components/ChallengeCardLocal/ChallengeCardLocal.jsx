@@ -54,10 +54,11 @@ export function ChallengeCardLocal({
   const deadlineText = formatDeadline(deadline);
   const hasPeople = Number.isFinite(participantCount) && Number.isFinite(maxParticipants);
 
-  // 제출물이 있으면 "이어서 작성", 없으면 챌린지 상세로 보내요 (M-10)
+  // 제출물이 있으면 "이어서 작성", 없으면 신규 작성(임시저장 복원 포함)으로 보내요.
+  // 편집 화면 하나가 신규·수정을 함께 처리하므로(M-09) 둘 다 edit 으로 이동합니다.
   const ctaHref = latestWorkId
     ? `/challenges/${challengeId}/works/${latestWorkId}/edit`
-    : `/challenges/${challengeId}`;
+    : `/challenges/${challengeId}/edit`;
 
   return (
     <article className={styles.card}>

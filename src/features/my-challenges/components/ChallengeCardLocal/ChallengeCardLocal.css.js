@@ -23,9 +23,9 @@ export const title = style({
   fontSize: 'var(--font-size-18)',
   fontWeight: '700',
   color: vars.colorGray900,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
+  // 긴 제목도 잘리지 않게 줄바꿈을 허용해요 (좁은 화면에서도 전체 제목 확인 가능)
+  lineHeight: '1.4',
+  overflowWrap: 'anywhere',
 });
 
 /** 칩 줄 — 카테고리 + 문서유형 */
