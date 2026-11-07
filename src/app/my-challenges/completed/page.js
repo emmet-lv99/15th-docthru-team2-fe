@@ -5,7 +5,7 @@
 // 👤 담당: 팀원 ③(인증 · 마이)
 // 📍 이 파일: src/app/my-challenges/completed/page.js → /my-challenges/completed
 // 🔗 협력: ②(완료 후 내 작업물 확인 흐름)
-// 🔨 상태: 뼈대(지침서) — 아래 주석(📏 · 🧩 · 💡 · 🏁)을 따라 구현해 주세요
+// 🔨 상태: 탭 + 임시 안내 — 목록은 다음 작업(5일차)에서 채웁니다
 // ══════════════════════════════════════════════════════════════
 //
 // 이 화면이 뭔가요 — 마감된 챌린지와 내 제출물 목록 (요구 2.8).
@@ -28,11 +28,12 @@
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
 import { AuthGuard } from '@/components/AuthGuard';
+import { CompletedPlaceholder } from '@/features/my-challenges/components/CompletedPlaceholder/CompletedPlaceholder';
 
 export default function MeCompletedPage() {
   return (
     <AuthGuard>
-      <span>완료한 챌린지 — TODO(팀원 ③): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>
+      <CompletedPlaceholder />
     </AuthGuard>
   );
 }
