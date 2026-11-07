@@ -1,7 +1,3 @@
-// src/components/GNB/ProfileMenu.css.js
-//
-// 프로필 배지 드롭다운 — 배지 모양은 GNB.css.js 의 badge 를 그대로 쓰고,
-// 여기서는 버튼 리셋과 메뉴 상자만 담당해요.
 import { style } from '@vanilla-extract/css';
 
 import { vars } from '@/styles/theme.css.js';
@@ -12,7 +8,6 @@ export const wrap = style({
   flex: 'none',
 });
 
-/** 배지(badge) 위에 버튼 기본값만 덮어써요 */
 export const trigger = style({
   border: 'none',
   cursor: 'pointer',
@@ -56,4 +51,13 @@ export const link = style({
     '&:hover': { backgroundColor: vars.colorGray50 },
     '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
   },
+});
+
+export const error = style({
+  margin: 0,
+  padding: '8px 12px',
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-12)',
+  lineHeight: 1.4,
+  color: vars.colorRedError,
 });
