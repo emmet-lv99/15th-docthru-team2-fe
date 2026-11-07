@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import { ChallengeCardLocal } from '@/features/my-challenges/components/ChallengeCardLocal/ChallengeCardLocal';
+import { MyChallengesTabs } from '@/features/my-challenges/components/MyChallengesTabs/MyChallengesTabs';
 import { useParticipating } from '@/features/my-challenges/hooks/useParticipating';
 import * as styles from './ParticipatingList.css.js';
 
@@ -41,6 +42,8 @@ export function ParticipatingList() {
   return (
     <section className={styles.page}>
       <h2 className={styles.heading}>나의 챌린지</h2>
+
+      <MyChallengesTabs />
 
       <div className={styles.searchWrap}>
         <Image
