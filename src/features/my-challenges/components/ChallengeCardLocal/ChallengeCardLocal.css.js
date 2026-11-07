@@ -11,7 +11,7 @@ export const card = style({
   flexDirection: 'column',
   gap: '12px',
   padding: '20px 24px',
-  border: `1px solid ${vars.borderColor}`,
+  border: `2px solid ${vars.colorGray800}`,
   borderRadius: '12px',
   backgroundColor: '#fff',
   boxSizing: 'border-box',
