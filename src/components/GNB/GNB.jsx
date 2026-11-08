@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import clsx from 'clsx';
 import { Button } from '@/components/Button';
+import { ProfileMenu } from './ProfileMenu';
 import * as styles from './GNB.css.js';
 
 /**
@@ -49,10 +50,8 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
                 <BellIcon />
               </Link>
 
-              {/* 마이페이지 진입점 — 닉네임/등급 배지를 링크로 만든다 */}
-              <Link href="/mypage" className={styles.badge} title="마이페이지">
-                {grade ?? '내 정보'}
-              </Link>
+              {/* 프로필 메뉴 — 마이페이지 · 나의 챌린지 · 로그아웃 */}
+              <ProfileMenu grade={grade} />
             </>
           )}
 
