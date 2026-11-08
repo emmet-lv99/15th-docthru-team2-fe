@@ -20,7 +20,6 @@ export const header = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: '12px',
-  marginBottom: '16px',
 });
 
 export const heading = style({

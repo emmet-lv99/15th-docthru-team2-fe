@@ -9,7 +9,7 @@ export const wrap = style({
 export const nav = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 0,
+  gap: '24px',
   borderBottom: `1px solid ${vars.colorGray300}`,
   overflowX: 'auto',
   scrollbarWidth: 'none',
@@ -26,7 +26,7 @@ export const navTop = style({
 export const tablist = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 0,
+  gap: '24px',
   borderBottom: `1px solid ${vars.colorGray300}`,
   overflowX: 'auto',
   scrollbarWidth: 'none',
@@ -44,7 +44,7 @@ const tabBase = style({
   fontFamily: vars.fontFamily,
   fontSize: '18px',
   fontWeight: '600',
-  lineHeight: '1.4',
+  lineHeight: '1.5',
   color: vars.colorGray500,
   textDecoration: 'none',
   whiteSpace: 'nowrap',
@@ -60,16 +60,7 @@ export const activeTab = style([
   tabBase,
   {
     color: vars.colorGray800,
-    selectors: {
-      '&::after': {
-        content: '""',
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: '3px',
-        backgroundColor: vars.colorGray800,
-      },
-    },
+    borderBottom: `3px solid ${vars.colorGray800}`,
+    marginBottom: '-1px',
   },
 ]);
