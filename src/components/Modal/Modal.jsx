@@ -8,6 +8,11 @@ export function Modal({ isOpen = true, title, onClose, footer, children, classNa
   const titleId = useId();
   const panelRef = useRef(null);
   const lastFocusedRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -18,7 +23,7 @@ export function Modal({ isOpen = true, title, onClose, footer, children, classNa
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        onClose?.();
+        onCloseRef.current?.();
         return;
       }
 
@@ -31,8 +36,10 @@ export function Modal({ isOpen = true, title, onClose, footer, children, classNa
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
+      const isFirst =
+        document.activeElement === first || document.activeElement === panelRef.current;
 
-      if (event.shiftKey && document.activeElement === first) {
+      if (event.shiftKey && isFirst) {
         event.preventDefault();
         last.focus();
       } else if (!event.shiftKey && document.activeElement === last) {
@@ -48,7 +55,7 @@ export function Modal({ isOpen = true, title, onClose, footer, children, classNa
       document.body.style.overflow = '';
       if (lastFocusedRef.current instanceof HTMLElement) lastFocusedRef.current.focus();
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
