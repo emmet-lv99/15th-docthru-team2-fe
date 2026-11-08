@@ -9,8 +9,8 @@ export const wrap = style({
 export const nav = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '24px',
-  borderBottom: `1px solid ${vars.colorGray200}`,
+  gap: 0,
+  borderBottom: `1px solid ${vars.colorGray300}`,
   overflowX: 'auto',
   scrollbarWidth: 'none',
   selectors: {
@@ -20,14 +20,14 @@ export const nav = style({
 
 export const navTop = style({
   borderBottom: 'none',
-  borderTop: `1px solid ${vars.colorGray200}`,
+  borderTop: `1px solid ${vars.colorGray300}`,
 });
 
 export const tablist = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '24px',
-  borderBottom: `1px solid ${vars.colorGray200}`,
+  gap: 0,
+  borderBottom: `1px solid ${vars.colorGray300}`,
   overflowX: 'auto',
   scrollbarWidth: 'none',
   selectors: {
@@ -38,12 +38,13 @@ export const tablist = style({
 const tabBase = style({
   position: 'relative',
   flex: 'none',
-  padding: '8px 0 12px',
+  padding: '0 24px 16px',
   border: 'none',
   backgroundColor: 'transparent',
   fontFamily: vars.fontFamily,
-  fontSize: 'var(--font-size-16)',
-  fontWeight: '500',
+  fontSize: '18px',
+  fontWeight: '600',
+  lineHeight: '1.4',
   color: vars.colorGray500,
   textDecoration: 'none',
   whiteSpace: 'nowrap',
@@ -58,8 +59,7 @@ export const tab = style([tabBase]);
 export const activeTab = style([
   tabBase,
   {
-    color: vars.colorGray900,
-    fontWeight: '700',
+    color: vars.colorGray800,
     selectors: {
       '&::after': {
         content: '""',
@@ -67,8 +67,8 @@ export const activeTab = style([
         left: 0,
         right: 0,
         bottom: 0,
-        height: '2px',
-        backgroundColor: vars.colorGray900,
+        height: '3px',
+        backgroundColor: vars.colorGray800,
       },
     },
   },
