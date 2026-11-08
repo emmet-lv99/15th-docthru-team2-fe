@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { ChallengeListLocal } from '@/features/my-challenges/components/ChallengeListLocal/ChallengeListLocal';
@@ -27,14 +28,7 @@ export function CompletedList() {
           <h1 className={styles.heading}>나의 챌린지</h1>
           <Link href="/my-applications/new" className={styles.newButton}>
             신규 챌린지 신청
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path
-                d="M2 8H14M8 14V2"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
+            <Image src="/icons/plus-white.svg" alt="" width={14} height={14} />
           </Link>
         </div>
 

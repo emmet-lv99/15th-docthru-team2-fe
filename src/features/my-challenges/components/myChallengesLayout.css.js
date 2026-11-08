@@ -35,20 +35,14 @@ export const newButton = style({
   alignItems: 'center',
   justifyContent: 'center',
   gap: '8px',
-  flex: 'none',
   height: '40px',
   padding: '12px 20px',
   borderRadius: '24px',
   backgroundColor: vars.colorGray800,
   color: '#fff',
-  fontFamily: vars.fontFamily,
   fontSize: '16px',
   fontWeight: '600',
   textDecoration: 'none',
-  whiteSpace: 'nowrap',
-  selectors: {
-    '&:hover': { opacity: 0.9 },
-  },
 });
 
 export const tabs = style({
