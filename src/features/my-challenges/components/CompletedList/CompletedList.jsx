@@ -23,7 +23,7 @@ export function CompletedList() {
 
   return (
     <div className={styles.pageBackground}>
-      <main className={styles.container}>
+      <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.heading}>나의 챌린지</h1>
           <Link href="/my-applications/new" className={styles.newButton}>
@@ -39,7 +39,7 @@ export function CompletedList() {
         <SearchBoxLocal value={inputValue} onChange={setInputValue} />
 
         <ChallengeListLocal query={query} keyword={keyword} mode="completed" empty={EMPTY} />
-      </main>
+      </div>
     </div>
   );
 }
