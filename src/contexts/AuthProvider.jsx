@@ -66,10 +66,17 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
     router.refresh();
   }, [canQuery, initialUser, user, router]);
 
+  // 계정이 바뀌면 남의 목록이 보이지 않도록 사용자 스코프 캐시를 비워요.
+  // (예: A 로그아웃 → 같은 브라우저에서 B 로그인 시 A 의 참여 목록이 잠깐 보이는 문제 방지)
+  const clearUserScopedCache = () => {
+    queryClient.removeQueries({ queryKey: queryKeys.myChallenges.all() });
+  };
+
   const loginMutation = useMutation({
     mutationFn: ({ email, password }) => loginRequest({ email, password }),
     onSuccess: (loggedInUser) => {
       // 로그인 응답은 user 본문이에요 — 캐시를 즉시 채워 쿼리가 꺼져 있어도 화면이 바뀝니다.
+      clearUserScopedCache();
       queryClient.setQueryData(queryKeys.me.info(), loggedInUser ?? null);
       router.refresh();
     },
@@ -78,6 +85,7 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
   const signUpMutation = useMutation({
     mutationFn: ({ email, nickname, password }) => signUpRequest({ email, nickname, password }),
     onSuccess: (signedUpUser) => {
+      clearUserScopedCache();
       queryClient.setQueryData(queryKeys.me.info(), signedUpUser ?? null);
       router.refresh();
     },
@@ -86,6 +94,7 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
   const logoutMutation = useMutation({
     mutationFn: logoutRequest,
     onSuccess: () => {
+      clearUserScopedCache();
       queryClient.setQueryData(queryKeys.me.info(), null);
       queryClient.removeQueries({ queryKey: queryKeys.me.all() });
       router.refresh();
@@ -104,6 +113,7 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
     mutationFn: ({ password, withdrawalConsent }) =>
       deleteMeRequest({ password, withdrawalConsent }),
     onSuccess: () => {
+      clearUserScopedCache();
       queryClient.setQueryData(queryKeys.me.info(), null);
       queryClient.removeQueries({ queryKey: queryKeys.me.all() });
       router.replace('/');
