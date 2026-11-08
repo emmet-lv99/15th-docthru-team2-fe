@@ -5,10 +5,13 @@
 //   · 공용 Modal/ConfirmDialog 가 아직 뼈대라, 탈퇴 확인은 이 화면 안의 가벼운 dialog 로 만들었어요.
 //   · 공용 부품은 건드리지 않았고, 인증 도메인(③) 안에서만 스타일을 씁니다.
 //   · 사용자 정보가 도착한 뒤에만 폼을 마운트(key=user.id)해서 닉네임 초기값을 안전하게 잡아요.
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/Button';
+import { Checkbox } from '@/components/Checkbox';
+import { Input } from '@/components/Input';
+import { Modal } from '@/components/Modal';
 import { useAuth } from '@/contexts/AuthProvider';
 import { AuthField } from '@/features/auth/components/AuthForm';
 import * as styles from './MyPage.css.js';
@@ -50,15 +53,12 @@ function MyPageView() {
   const [success, setSuccess] = useState(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  // ESC 로 탈퇴 확인 모달을 닫아요.
-  useEffect(() => {
-    if (!isDeleteOpen) return undefined;
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') setIsDeleteOpen(false);
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isDeleteOpen]);
+  const closeDelete = () => {
+    setIsDeleteOpen(false);
+    setDeletePassword('');
+    setWithdrawalConsent(false);
+    setDeleteError(null);
+  };
 
   const stats = user.stats ?? {};
   const progress = user.gradeProgress ?? {};
@@ -285,54 +285,17 @@ function MyPageView() {
       </div>
 
       {isDeleteOpen && (
-        <div className={styles.overlay} role="presentation" onClick={() => setIsDeleteOpen(false)}>
-          <div
-            className={styles.dialog}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delete-account-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h2 id="delete-account-title" className={styles.dialogTitle}>
-              정말 탈퇴할까요?
-            </h2>
-            <p className={styles.dialogText}>
-              탈퇴하면 이메일·닉네임 등 개인정보가 익명 처리되고 다시 로그인할 수 없어요. 챌린지
-              참여 기록과 작업물은 보존됩니다.
-            </p>
-
-            <div className={styles.confirmBox}>
-              <label className={styles.confirmRow}>
-                <input
-                  type="checkbox"
-                  checked={withdrawalConsent}
-                  onChange={(event) => setWithdrawalConsent(event.target.checked)}
-                />
-                <span>위 내용을 모두 확인했고, 회원 탈퇴에 동의합니다.</span>
-              </label>
-
-              <input
-                type="password"
-                value={deletePassword}
-                onChange={(event) => setDeletePassword(event.target.value)}
-                placeholder="비밀번호를 다시 입력해 주세요"
-                className={styles.confirmInput}
-                autoComplete="current-password"
-              />
-            </div>
-
-            {deleteError && <p className={styles.feedback}>{deleteError}</p>}
-            <div className={styles.dialogActions}>
+        <Modal
+          isOpen={isDeleteOpen}
+          title="정말 탈퇴할까요?"
+          onClose={closeDelete}
+          footer={
+            <>
               <Button
                 type="button"
                 variant="outline"
                 size="md"
-                onClick={() => {
-                  setIsDeleteOpen(false);
-                  setDeletePassword('');
-                  setWithdrawalConsent(false);
-                  setDeleteError(null);
-                }}
+                onClick={closeDelete}
                 disabled={isDeletingMe}
               >
                 취소
@@ -346,9 +309,37 @@ function MyPageView() {
               >
                 {isDeletingMe ? '탈퇴 처리 중…' : '탈퇴하기'}
               </Button>
-            </div>
+            </>
+          }
+        >
+          <p className={styles.dialogText}>
+            탈퇴하면 이메일·닉네임 등 개인정보가 익명 처리되고 다시 로그인할 수 없어요. 챌린지 참여
+            기록과 작업물은 보존됩니다.
+          </p>
+
+          <div className={styles.confirmBox}>
+            <Checkbox
+              checked={withdrawalConsent}
+              onChange={(event) => setWithdrawalConsent(event.target.checked)}
+              label="위 내용을 모두 확인했고, 회원 탈퇴에 동의합니다."
+            />
+
+            <Input
+              type="password"
+              value={deletePassword}
+              onChange={(event) => setDeletePassword(event.target.value)}
+              placeholder="비밀번호를 다시 입력해 주세요"
+              autoComplete="current-password"
+              aria-label="비밀번호"
+            />
           </div>
-        </div>
+
+          {deleteError && (
+            <p className={styles.feedback} role="alert">
+              {deleteError}
+            </p>
+          )}
+        </Modal>
       )}
     </main>
   );
