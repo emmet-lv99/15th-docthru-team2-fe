@@ -1,4 +1,3 @@
-
 'use client';
 
 import ApplicationStatus from './ApplicationStatus';
@@ -91,6 +90,18 @@ export default function ApplicationDetail() {
       {/* 신청 상태 안내 */}
       <ApplicationStatus status={isDeleted ? 'DELETED' : application.status} />
 
+      {/* 신청 거절 사유 */}
+      {application.status === 'REJECTED' && (
+        <>
+          <ApplicationDecisionReason
+            title="신청 거절 사유"
+            reason={application.rejectionReason || '등록 거절 사유가 없습니다.'}
+            decidedAt={application.decidedAt}
+          />
+          <div className={styles.rejectionDivider} />
+        </>
+      )}
+
       {/* 삭제된 챌린지의 삭제 사유 */}
       {isDeleted && (
         <>
@@ -111,11 +122,7 @@ export default function ApplicationDetail() {
         {/* 승인 대기 상태에서 관리 버튼 표시 */}
         {application.status === 'PENDING' && (
           <div className={styles.actionGroup}>
-            <button
-              type="button"
-              className={styles.settingsButton}
-              aria-label="신청 관리 메뉴"
-            >
+            <button type="button" className={styles.settingsButton} aria-label="신청 관리 메뉴">
               <Image src={moreIcon} alt="" width={24} height={24} />
             </button>
 
