@@ -1,21 +1,88 @@
-// src/components/Input/Input.css.js
-// 근거: 공용 컴퍼넌트/input.png (+ 눈 아이콘은 btn_visibility_off_24px.png · btn_visibility_on_24px.png)
-//
-// ★ 스타일 뼈대 — 값은 담당자가 근거 PNG 에 맞춰 채워 주세요.
-//
-// 🎨 토큰 규칙 — 색은 hex 로 직접 쓰지 말고 theme.css.js 의 vars 토큰을 써 주세요.
-//    이유는 한 군데 고치면 전 화면에 반영되기 때문이에요. 예시는 Button.css.js 를 보세요:
-//
-//      import { style, styleVariants } from '@vanilla-extract/css';
-//      import { vars } from '@/styles/theme.css.js';
-//
-//      export const size = styleVariants({
-//        sm: { height: '32px', padding: '0 12px', fontSize: 'var(--font-size-13)' },
-//      });
-//
-// 🧩 병합 셀렉터(selectors)는 & 로 끝나야 합니다. hover 는 style() 최상위 키로 넣을 수 있어요.
-
 import { style } from '@vanilla-extract/css';
 
-// 자리표 — 지금은 스타일이 비어 있어요. 채워 주시면 base 이름을 그대로 쓰시면 됩니다.
-export const base = style({});
+import { vars } from '@/styles/theme.css.js';
+
+export const field = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '6px',
+  width: '100%',
+  fontFamily: vars.fontFamily,
+});
+
+export const label = style({
+  fontSize: 'var(--font-size-14)',
+  fontWeight: '600',
+  color: vars.colorGray800,
+});
+
+export const control = style({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  width: '100%',
+});
+
+export const input = style({
+  width: '100%',
+  height: '44px',
+  padding: '0 14px',
+  border: `1px solid ${vars.colorGray300}`,
+  borderRadius: '10px',
+  backgroundColor: '#fff',
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-14)',
+  color: vars.colorGray900,
+  outline: 'none',
+  boxSizing: 'border-box',
+  selectors: {
+    '&::placeholder': { color: vars.colorGray500 },
+    '&:focus': { borderColor: vars.colorGray800 },
+    '&:disabled': { backgroundColor: vars.colorGray50, cursor: 'not-allowed' },
+  },
+});
+
+export const inputWithSlot = style({
+  paddingRight: '44px',
+});
+
+export const inputError = style({
+  borderColor: vars.colorRedError,
+  selectors: {
+    '&:focus': { borderColor: vars.colorRedError },
+  },
+});
+export const trailing = style({
+  position: 'absolute',
+  right: '12px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  pointerEvents: 'none',
+});
+
+export const toggle = style({
+  position: 'absolute',
+  right: '6px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '32px',
+  height: '32px',
+  padding: 0,
+  border: 'none',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+});
+
+export const hint = style({
+  margin: 0,
+  fontSize: 'var(--font-size-12)',
+  color: vars.colorGray500,
+});
+
+export const error = style({
+  margin: 0,
+  fontSize: 'var(--font-size-12)',
+  color: vars.colorRedError,
+});

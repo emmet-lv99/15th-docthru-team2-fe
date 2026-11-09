@@ -1,21 +1,78 @@
-// src/components/Modal/Modal.css.js
-// 근거: 공용 컴퍼넌트/modal.png
-//
-// ★ 스타일 뼈대 — 값은 담당자가 근거 PNG 에 맞춰 채워 주세요.
-//
-// 🎨 토큰 규칙 — 색은 hex 로 직접 쓰지 말고 theme.css.js 의 vars 토큰을 써 주세요.
-//    이유는 한 군데 고치면 전 화면에 반영되기 때문이에요. 예시는 Button.css.js 를 보세요:
-//
-//      import { style, styleVariants } from '@vanilla-extract/css';
-//      import { vars } from '@/styles/theme.css.js';
-//
-//      export const size = styleVariants({
-//        sm: { height: '32px', padding: '0 12px', fontSize: 'var(--font-size-13)' },
-//      });
-//
-// 🧩 병합 셀렉터(selectors)는 & 로 끝나야 합니다. hover 는 style() 최상위 키로 넣을 수 있어요.
-
 import { style } from '@vanilla-extract/css';
 
-// 자리표 — 지금은 스타일이 비어 있어요. 채워 주시면 base 이름을 그대로 쓰시면 됩니다.
-export const base = style({});
+import { vars } from '@/styles/theme.css.js';
+
+export const overlay = style({
+  position: 'fixed',
+  inset: 0,
+  zIndex: 1000,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '24px',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  boxSizing: 'border-box',
+});
+
+export const panel = style({
+  position: 'relative',
+  width: '100%',
+  maxWidth: '327px',
+  maxHeight: '90vh',
+  overflow: 'auto',
+  border: `2px solid ${vars.colorGray800}`,
+  borderRadius: '16px',
+  backgroundColor: '#fff',
+  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.16)',
+  outline: 'none',
+  '@media': {
+    '(min-width: 768px)': { maxWidth: '496px' },
+  },
+});
+
+export const header = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '12px',
+  padding: '24px 24px 0',
+});
+
+export const title = style({
+  margin: 0,
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-18)',
+  fontWeight: '700',
+  lineHeight: '26px',
+  color: vars.colorGray800,
+});
+
+export const closeButton = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flex: 'none',
+  width: '24px',
+  height: '24px',
+  padding: 0,
+  border: 'none',
+  backgroundColor: 'transparent',
+  color: vars.colorGray800,
+  cursor: 'pointer',
+});
+
+export const body = style({
+  padding: '24px',
+  fontFamily: vars.fontFamily,
+  fontSize: 'var(--font-size-16)',
+  lineHeight: '1.6',
+  color: vars.colorGray800,
+});
+
+export const footer = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  gap: '8px',
+  padding: '0 24px 24px',
+});

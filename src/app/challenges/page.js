@@ -28,6 +28,30 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
-export default function ChallengesPage() {
-  return <span>챌린지 목록 — TODO(팀원 ①): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>;
+import ChallengeListView from '@/features/challenges/components/ChallengeListView';
+import { getInitialChallenges } from '@/features/challenges/server';
+import { buildChallengeQuery, normalizeChallengeFilters } from '@/features/challenges/query';
+
+export const metadata = {
+  title: '번역 챌린지 목록',
+  description: '개발 문서 번역 챌린지를 검색하고 참여 현황을 확인하세요.',
+};
+
+export default async function ChallengesPage({ searchParams }) {
+  const filters = normalizeChallengeFilters(await searchParams);
+  let initialData;
+  try {
+    const result = await getInitialChallenges(filters);
+    if (result.ok && result.data?.items) initialData = result.data;
+  } catch {
+    // API가 잠시 중단되어도 UI가 깨지지 않고 React Query에서 재시도할 수 있다.
+  }
+
+  return (
+    <ChallengeListView
+      key={buildChallengeQuery(filters)}
+      filters={filters}
+      initialData={initialData}
+    />
+  );
 }
