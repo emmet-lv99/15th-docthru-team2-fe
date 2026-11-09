@@ -112,7 +112,6 @@ export default function ApplicationList() {
           <option value="PENDING">승인 대기</option>
           <option value="APPROVED">신청 승인</option>
           <option value="REJECTED">신청 거절</option>
-          <option value="DELETED">챌린지 삭제</option>
         </select>
       </div>
 
