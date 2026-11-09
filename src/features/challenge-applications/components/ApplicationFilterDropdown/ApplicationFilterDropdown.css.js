@@ -13,7 +13,7 @@ export const trigger = style({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  gap: '8px',
+  gap: '5px',
   border: '1px solid #E5E5E5',
   borderRadius: '30px',
   backgroundColor: '#FFFFFF',
