@@ -64,12 +64,12 @@ export default function AdminApplicationDetail() {
   const { mutate: approveApplication, isPending: isApproving } = useMutation({
     mutationFn: () => approveAdminApplication(applicationId),
 
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
         queryKey: ['adminApplications'],
       });
 
-      await queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ['adminApplication', applicationId],
       });
 
