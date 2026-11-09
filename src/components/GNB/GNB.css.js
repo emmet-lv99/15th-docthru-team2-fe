@@ -153,6 +153,11 @@ const hideOnMobile = style({
   },
 });
 
+const left = style({
+  display: 'flex',
+  gap: '24px',
+});
+
 export {
   badge,
   device,
@@ -161,6 +166,7 @@ export {
   iconButton,
   iconButtonPositioned,
   inner,
+  left,
   logo,
   mobileInner,
   mobileLogo,
