@@ -85,7 +85,7 @@ export default function AdminApplicationTable({ applications, isPending, isError
               </td>
             </tr>
           ) : (
-            applications.map((application, index) => {
+            applications.map((application) => {
               // 승인된 챌린지가 삭제되었는지 확인
               const isDeleted = Boolean(application.approvedChallenge?.deletedAt);
 
@@ -97,7 +97,7 @@ export default function AdminApplicationTable({ applications, isPending, isError
                   key={application.applicationId}
                   className={isDeleted ? styles.deletedRow : styles.tableRow}
                 >
-                  <td className={styles.tableCell}>{index + 1}</td>
+                  <td className={styles.tableCell}>{application.applicationId}</td>
                   <td className={styles.tableCell}>{application.category}</td>
                   <td className={styles.tableCell}>{application.documentType}</td>
                   <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
