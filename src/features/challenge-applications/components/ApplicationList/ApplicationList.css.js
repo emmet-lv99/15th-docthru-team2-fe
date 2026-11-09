@@ -178,3 +178,10 @@ export const arrowButton = style({
   border: 'none',
   background: 'transparent',
 });
+
+// 신청 상세 페이지 이동 링크
+export const detailLink = style({
+  color: 'inherit',
+  textDecoration: 'none',
+  cursor: 'pointer',
+});
