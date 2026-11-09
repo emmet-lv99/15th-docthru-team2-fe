@@ -5,8 +5,8 @@
 //   비로그인 : 로고 + 로그인 버튼
 //   일반     : 로고 + 알림벨 + 등급(ELA) 배지
 //   어드민   : 로고 + 챌린지 관리 + 챌린지 목록 + 어드민 배지
-import { style, styleVariants } from '@vanilla-extract/css';
 import { vars } from '@/styles/theme.css.js';
+import { style, styleVariants } from '@vanilla-extract/css';
 
 const header = style({
   position: 'sticky',
@@ -140,10 +140,12 @@ const mobileInner = style({
   gap: '8px',
 });
 
-const mobileLogo = style({
-  composes: logo,
-  fontSize: 'var(--font-size-16)',
-});
+const mobileLogo = style([
+  logo,
+  {
+    fontSize: 'var(--font-size-16)',
+  },
+]);
 
 const hideOnMobile = style({
   '@media': {
@@ -152,18 +154,18 @@ const hideOnMobile = style({
 });
 
 export {
+  badge,
+  device,
   header,
+  hideOnMobile,
+  iconButton,
+  iconButtonPositioned,
   inner,
   logo,
+  mobileInner,
+  mobileLogo,
   nav,
   navLink,
   navLinkAdmin,
   right,
-  iconButton,
-  iconButtonPositioned,
-  badge,
-  device,
-  mobileInner,
-  mobileLogo,
-  hideOnMobile,
 };
