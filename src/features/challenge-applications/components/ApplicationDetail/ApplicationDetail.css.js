@@ -178,11 +178,13 @@ export const sourceTitle = style({
 
 // 원문 미리보기 전체 영역
 export const sourceContent = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: '240px',
   position: 'relative',
-  width: '100%',
-  minHeight: '490px',
-  backgroundColor: '#262626',
-  overflow: 'hidden',
+  backgroundColor: '#E5E5E5',
+  borderRadius: '8px',
 });
 
 // 추후 미리보기 이미지가 들어갈 영역
@@ -198,16 +200,13 @@ export const previewArea = style({
 
 // 미리보기 오른쪽 상단 링크 버튼
 export const sourceLink = style({
-  position: 'absolute',
-  top: '16px',
-  right: '16px',
   zIndex: 1,
-  padding: '5px 10px',
+  padding: '10px 15px',
   borderRadius: '10px',
-  backgroundColor: 'rgba(246, 248, 250, 0.8)',
+  backgroundColor: '#ffffff',
   color: '#404040',
   textDecoration: 'none',
-  fontSize: '14px',
+  fontSize: '16px',
   fontWeight: '700',
 });
 
