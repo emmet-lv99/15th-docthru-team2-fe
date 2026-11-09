@@ -42,7 +42,7 @@ export default function AdminApplicationDetail() {
     mutationFn: (reason) => rejectAdminApplication(applicationId, reason),
 
     onSuccess: () => {
-      +queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ['adminApplications'],
       });
 
