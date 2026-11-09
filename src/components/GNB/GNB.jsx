@@ -40,7 +40,7 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
             </Button>
           )}
 
-          {isLoggedIn && (
+          {!isAdmin && isLoggedIn && (
             <>
               <Link
                 href="/notifications"
