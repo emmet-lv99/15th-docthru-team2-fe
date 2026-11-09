@@ -12,6 +12,25 @@ export async function getMyApplications({ page = 1, size = 10, q = '', status = 
   });
 }
 
+//관리자 목록
+export const getAdminApplications = ({
+  page = 1,
+  size = 10,
+  q = '',
+  status,
+  sort,
+}) => {
+  return apiClient.get('/admin/challenge-applications', {
+    params: {
+      page,
+      size,
+      ...(q && { q }),
+      ...(status && status !== 'ALL' && { status }),
+      ...(sort && { sort }),
+    },
+  });
+};
+
 //신규 챌린지 신청
 export const createApplication = async (data) => {
   const response = await apiClient.post('/challenge-applications', data);
