@@ -75,13 +75,15 @@ export function ProfileMenu({ grade = null, isAdmin = false }) {
 
       {isOpen && (
         <ul className={styles.menu}>
-          {MENU.map((item) => (
-            <li key={item.key} className={styles.item}>
-              <Link href={item.href} className={styles.link} onClick={() => setIsOpen(false)}>
-                {item.label}
-              </Link>
-            </li>
-          ))}
+          {!isAdmin &&
+            MENU.map((item) => (
+              <li key={item.key} className={styles.item}>
+                <Link href={item.href} className={styles.link} onClick={() => setIsOpen(false)}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+
           <li className={styles.item}>
             <button
               type="button"
