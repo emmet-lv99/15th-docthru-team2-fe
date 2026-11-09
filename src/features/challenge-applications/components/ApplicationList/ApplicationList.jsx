@@ -30,7 +30,6 @@ export default function ApplicationList() {
   //검색입력이 멈춘뒤 300ms이후 검색어 갱신
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCurrentPage(1);
       setDebouncedKeyword(searchKeyword.trim());
     }, 300);
 

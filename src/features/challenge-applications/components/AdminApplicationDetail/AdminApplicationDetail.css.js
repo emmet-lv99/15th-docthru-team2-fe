@@ -37,8 +37,50 @@ export const approveButton = style({
   cursor: 'pointer',
 });
 
+// 번호와 이전·다음 버튼 영역
+export const detailHeader = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '16px',
+});
+
+// 신청 번호
 export const number = style({
   fontSize: '16px',
   fontWeight: '500',
-  marginBottom: '10px',
+  color: '#262626',
+});
+
+// 이전·다음 버튼 그룹
+export const navigation = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+});
+
+// 이전·다음 버튼
+export const navigationButton = style({
+  width: '36px',
+  height: '36px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: '#262626',
+  fontSize: '30px',
+  fontWeight: '300',
+  cursor: 'pointer',
+
+  selectors: {
+    '&:disabled': {
+      color: '#A3A3A3',
+      cursor: 'not-allowed',
+    },
+  },
+});
+
+export const rejectionDivider = style({
+  borderTop: '1px solid #E5E5E5',
+  marginTop: '24px',
+  marginBottom: '16px',
 });

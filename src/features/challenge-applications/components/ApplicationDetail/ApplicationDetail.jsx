@@ -3,8 +3,6 @@
 import ApplicationStatus from './ApplicationStatus';
 import ApplicationInfo from './ApplicationInfo';
 import * as styles from './ApplicationDetail.css.js';
-import Image from 'next/image';
-import moreIcon from '@/features/challenge-applications/assets/icon_more.svg';
 
 import { useRouter, useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -122,10 +120,6 @@ export default function ApplicationDetail() {
         {/* 승인 대기 상태에서 관리 버튼 표시 */}
         {application.status === 'PENDING' && (
           <div className={styles.actionGroup}>
-            <button type="button" className={styles.settingsButton} aria-label="신청 관리 메뉴">
-              <Image src={moreIcon} alt="" width={24} height={24} />
-            </button>
-
             <button
               className={styles.cancelButton}
               type="button"
