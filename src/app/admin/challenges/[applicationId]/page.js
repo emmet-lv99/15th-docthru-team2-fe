@@ -35,7 +35,6 @@ import { AuthGuard } from '@/components/AuthGuard';
 
 import AdminApplicationDetail from '@/features/challenge-applications/components/AdminApplicationDetail/AdminApplicationDetail';
 
-
 export default function AdminApplicationDetailPage() {
   return (
     <AuthGuard role="ADMIN">

@@ -54,8 +54,5 @@ export const rejectAdminApplication = (applicationId, reason) => {
 
 // 관리자 신청 승인
 export const approveAdminApplication = (applicationId, data = {}) => {
-  return apiClient.post(
-    `/admin/challenge-applications/${applicationId}/approve`,
-    data,
-  );
+  return apiClient.post(`/admin/challenge-applications/${applicationId}/approve`, data);
 };
