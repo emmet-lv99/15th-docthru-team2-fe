@@ -37,11 +37,13 @@ import * as styles from './page.css.js';
 export default function AdminPage() {
   return (
     <AuthGuard role="ADMIN">
-      <main className={styles.container}>
-        <h1 className={styles.pageTitle}>챌린지 신청 관리</h1>
+      <div className={styles.pageBackground}>
+        <main className={styles.container}>
+          <h1 className={styles.pageTitle}>챌린지 신청 관리</h1>
 
-        <AdminApplicationList />
-      </main>
+          <AdminApplicationList />
+        </main>
+      </div>
     </AuthGuard>
   );
 }
