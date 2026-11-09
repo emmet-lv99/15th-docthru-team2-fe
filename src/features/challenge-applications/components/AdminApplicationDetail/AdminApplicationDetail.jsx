@@ -41,8 +41,8 @@ export default function AdminApplicationDetail() {
   const { mutate: rejectApplication, isPending: isRejecting } = useMutation({
     mutationFn: (reason) => rejectAdminApplication(applicationId, reason),
 
-  onSuccess: () => {
-+      queryClient.invalidateQueries({
+    onSuccess: () => {
+      +queryClient.invalidateQueries({
         queryKey: ['adminApplications'],
       });
 
