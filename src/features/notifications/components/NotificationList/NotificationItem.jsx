@@ -1,4 +1,5 @@
 import { getNotificationMessage } from '@/features/notifications/constants';
+import * as styles from '@/features/notifications/components/NotificationList/NotificationList.css';
 
 function formatNotificationDate(createdAt) {
   if (!createdAt) return '';
@@ -26,16 +27,21 @@ export default function NotificationItem({ notification, onClick }) {
   }
 
   return (
-    <li>
+    <li className={styles.item}>
       <button
         type="button"
+        className={`${styles.button} ${!isRead ? styles.unread : ''}`}
         onClick={handleClick}
         data-notification-id={id}
         data-read={isRead}
         aria-label={message}
       >
-        <span>{message}</span>
-        {formattedDate && <time dateTime={createdAt}>{formattedDate}</time>}{' '}
+        <span className={styles.message}>{message}</span>
+        {formattedDate && (
+          <time className={styles.date} dateTime={createdAt}>
+            {formattedDate}
+          </time>
+        )}
       </button>
     </li>
   );

@@ -5,6 +5,7 @@ import {
   useMarkNotificationAsRead,
 } from '@/features/notifications/hooks/useNotifications';
 import NotificationItem from '@/features/notifications/components/NotificationItem';
+import * as styles from '@/features/notifications/components/NotificationList/NotificationList.css';
 
 export default function NotificationList({ unreadOnly = false, onNotificationClick }) {
   const { data, isPending, isError } = useNotifications({
@@ -24,19 +25,19 @@ export default function NotificationList({ unreadOnly = false, onNotificationCli
   }
 
   if (isPending) {
-    return <p>알림을 불러오는 중이에요.</p>;
+    return <p className={styles.status}>알림을 불러오는 중이에요.</p>;
   }
 
   if (isError) {
-    return <p>알림을 불러오지 못했어요.</p>;
+    return <p className={styles.status}>알림을 불러오지 못했어요.</p>;
   }
 
   if (notifications.length === 0) {
-    return <p>알림이 없어요.</p>;
+    return <p className={styles.status}>알림이 없어요.</p>;
   }
 
   return (
-    <ul>
+    <ul className={styles.list}>
       {notifications.map((notification) => (
         <NotificationItem
           key={notification.id}
