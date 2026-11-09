@@ -40,7 +40,7 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
             </Button>
           )}
 
-          {!isAdmin && isLoggedIn && (
+          {isLoggedIn && (
             <>
               <Link
                 href="/notifications"
@@ -52,11 +52,11 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
               </Link>
 
               {/* 프로필 메뉴 — 마이페이지 · 나의 챌린지 · 로그아웃 */}
-              <ProfileMenu grade={grade} />
+              <ProfileMenu grade={grade} isAdmin={isAdmin} />
             </>
           )}
 
-          {isAdmin && <span className={styles.badge}>ADMIN</span>}
+          {/* {isAdmin && <span className={styles.badge}>ADMIN</span>} */}
         </div>
       </div>
     </header>
