@@ -57,8 +57,8 @@ export const message = style({
 // 알림 생성 날짜
 export const date = style({
   fontFamily: vars.fontFamily,
-  fontSize: 'var(--font-size-12)',
-  color: vars.colorGray500,
+  fontSize: 'var(--font-size-14)',
+  color: vars.colorGray400,
 });
 
 // 로딩, 오류, 빈 목록
