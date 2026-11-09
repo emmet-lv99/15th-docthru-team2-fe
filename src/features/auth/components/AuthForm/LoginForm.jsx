@@ -18,8 +18,7 @@ import { AuthLogo } from './AuthLogo.jsx';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const GOOGLE_AUTH_URL =
-  process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL ||
-  'http://localhost:5010/api/v1/auth/google?next=/';
+  process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL || 'http://localhost:5010/api/v1/auth/google?next=/';
 
 function GoogleIcon() {
   return (
