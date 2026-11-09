@@ -4,7 +4,7 @@ import {
   useNotifications,
   useMarkNotificationAsRead,
 } from '@/features/notifications/hooks/useNotifications';
-import NotificationItem from '@/features/notifications/components/NotificationItem';
+import NotificationItem from '@/features/notifications/components/NotificationList/NotificationItem';
 import * as styles from '@/features/notifications/components/NotificationList/NotificationList.css';
 
 export default function NotificationList({ unreadOnly = false, onNotificationClick }) {
