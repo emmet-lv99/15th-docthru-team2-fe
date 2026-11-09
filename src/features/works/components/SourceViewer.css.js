@@ -1,4 +1,5 @@
 import { breakpoint } from '@/styles/breakpoints';
+import { radius } from '@/styles/tokens';
 import { globalStyle, style } from '@vanilla-extract/css';
 
 export const container = style({
@@ -287,4 +288,29 @@ globalStyle(`${content} blockquote`, {
   backgroundColor: '#0F172A',
   color: '#94A3B8',
   borderRadius: '0 6px 6px 0',
+});
+
+export const aiTranslateButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  padding: '6px 12px',
+  fontSize: '12px',
+  fontWeight: '600',
+  color: '#FFFFFF',
+  background: 'linear-gradient(135deg, #6366F1 0%, #A855F7 100%)',
+  border: 'none',
+  borderRadius: radius.md,
+  cursor: 'pointer',
+  transition: 'opacity 0.15s ease, transform 0.1s ease',
+  boxShadow: '0 2px 6px rgba(168, 85, 247, 0.25)',
+  ':hover': {
+    opacity: 0.9,
+    transform: 'translateY(-1px)',
+  },
+  ':disabled': {
+    opacity: 0.6,
+    cursor: 'not-allowed',
+    transform: 'none',
+  },
 });

@@ -31,10 +31,51 @@
 //
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
-export default function WorkDetailPage() {
+import WorkDetailView from '@/features/works/components/WorkDetailView';
+import { apiGet } from '@/lib/api';
+import { notFound } from 'next/navigation';
+/**
+ * 외부 검색 엔진(SEO) 및 SNS 링크 공유(Open Graph)용 메타데이터 동적 생성
+ */
+export async function generateMetadata({ params }) {
+  const { challengeId, workId } = await params;
+  const { ok, data: work } = await apiGet(`/challenges/${challengeId}/works/${workId}`);
+  if (!ok || !work) {
+    return {
+      title: '작업물을 찾을 수 없습니다 | Docthru',
+    };
+  }
+  const title = `${work.challenge?.title ?? '번역 작업물'} - ${work.author?.nickname ?? '작성자'} | Docthru`;
+  const description = `${work.author?.nickname}님이 작성한 번역 작업물입니다. 독스루에서 전문을 확인해 보세요.`;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+    },
+  };
+}
+/**
+ * 작업물 상세 서버 컴포넌트 (비회원 접근 가능)
+ */
+export default async function WorkDetailPage({ params }) {
+  const { challengeId, workId } = await params;
+  // 1. 서버에서 작업물 데이터 조회 (SSR)
+  const { ok, status, data: work } = await apiGet(`/challenges/${challengeId}/works/${workId}`);
+  // 2. 404 상태코드(미존재 작업물)일 때만 notFound 페이지로 분기
+  if (status === 404 || (!ok && !work)) {
+    notFound();
+  }
+  // 3. 500, 503 등 서버 에러는 error.js 화면으로 전달
+  if (!ok) {
+    throw new Error('작업물 상세 정보를 불러오는 중 서버 오류가 발생했습니다.');
+  }
+  // 4. 클라이언트 인터랙션 컨테이너에 초기 데이터(initialWork) 전달
   return (
-    <span>
-      작업물 상세 · 피드백 — TODO(팀원 ②): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
-    </span>
+    <main>
+      <WorkDetailView initialWork={work} challengeId={challengeId} workId={workId} />
+    </main>
   );
 }
