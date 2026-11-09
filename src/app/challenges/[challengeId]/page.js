@@ -33,6 +33,34 @@
 import { notFound } from 'next/navigation';
 import ChallengeDetailView from '@/features/challenges/components/ChallengeDetailView';
 import { getInitialChallengeDetail, getInitialParticipants } from '@/features/challenges/server';
+import { buildChallengeDetailMetadata } from '@/features/challenges/metadata';
+
+/**
+ * 검색 결과와 공유 링크에는 실제 챌린지의 제목·내용을 사용합니다.
+ * 목록·상세 SSR과 같은 공개 API를 재사용하고 인증 담당 영역은 수정하지 않습니다.
+ */
+export async function generateMetadata({ params }) {
+  const { challengeId } = await params;
+  const id = Number(challengeId);
+  if (!Number.isSafeInteger(id) || id < 1 || id > 2147483647) {
+    return { title: '챌린지를 찾을 수 없습니다', robots: { index: false, follow: false } };
+  }
+
+  try {
+    const result = await getInitialChallengeDetail(id);
+    if (result.status === 404) {
+      return { title: '챌린지를 찾을 수 없습니다', robots: { index: false, follow: false } };
+    }
+    if (result.ok && result.data) return buildChallengeDetailMetadata(id, result.data);
+  } catch {
+    // 일시적인 API 오류로 상세 페이지 전체가 실패하지 않도록 기본 메타데이터를 사용합니다.
+  }
+
+  return {
+    title: '번역 챌린지',
+    description: '독스루에서 개발 문서 번역 챌린지의 내용을 확인하세요.',
+  };
+}
 
 export default async function ChallengeDetailPage({ params, searchParams }) {
   const { challengeId } = await params;
