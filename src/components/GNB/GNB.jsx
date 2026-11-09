@@ -42,14 +42,16 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
 
           {isLoggedIn && (
             <>
-              <Link
-                href="/notifications"
-                className={clsx(styles.iconButton, styles.iconButtonPositioned)}
-                data-has-unread={unreadCount > 0}
-                aria-label={`알림 ${unreadCount}건`}
-              >
-                <BellIcon />
-              </Link>
+              {!isAdmin && (
+                <Link
+                  href="/notifications"
+                  className={clsx(styles.iconButton, styles.iconButtonPositioned)}
+                  data-has-unread={unreadCount > 0}
+                  aria-label={`알림 ${unreadCount}건`}
+                >
+                  <BellIcon />
+                </Link>
+              )}
 
               {/* 프로필 메뉴 — 마이페이지 · 나의 챌린지 · 로그아웃 */}
               <ProfileMenu grade={grade} isAdmin={isAdmin} />
