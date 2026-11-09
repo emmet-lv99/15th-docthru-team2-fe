@@ -20,8 +20,8 @@ const BCRYPT_MAX_BYTES = 72;
 
 const byteLength = (value) => new TextEncoder().encode(value).length;
 
-const GOOGLE_AUTH_URL =
-  process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL || 'http://localhost:5010/api/v1/auth/google?next=/';
+const GOOGLE_AUTH_URL = '/api/backend/auth/google?next=/';
+
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
