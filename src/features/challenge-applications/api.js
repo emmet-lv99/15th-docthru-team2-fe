@@ -51,3 +51,11 @@ export const getAdminApplicationDetail = (applicationId) => {
 export const rejectAdminApplication = (applicationId, reason) => {
   return apiClient.post(`/admin/challenge-applications/${applicationId}/reject`, { reason });
 };
+
+// 관리자 신청 승인
+export const approveAdminApplication = (applicationId, data = {}) => {
+  return apiClient.post(
+    `/admin/challenge-applications/${applicationId}/approve`,
+    data,
+  );
+};

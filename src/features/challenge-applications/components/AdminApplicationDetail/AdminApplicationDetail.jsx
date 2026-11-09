@@ -2,7 +2,11 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAdminApplicationDetail, rejectAdminApplication } from '../../api';
+import {
+  getAdminApplicationDetail,
+  rejectAdminApplication,
+  approveAdminApplication,
+} from '../../api';
 
 import ApplicationInfo from '../ApplicationDetail/ApplicationInfo';
 import * as styles from '../ApplicationDetail/ApplicationDetail.css.js';
@@ -13,6 +17,7 @@ import AdminRejectModal from './AdminRejectModal';
 
 import ApplicationStatus from '../ApplicationDetail/ApplicationStatus';
 import ApplicationDecisionReason from '../ApplicationDetail/ApplicationDecisionReason';
+import ApplicationCancelModal from '../ApplicationDetail/ApplicationCancelModal';
 
 export default function AdminApplicationDetail() {
   const { applicationId } = useParams();
@@ -21,6 +26,7 @@ export default function AdminApplicationDetail() {
   const queryClient = useQueryClient();
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
 
   const {
     data: application,
@@ -36,26 +42,44 @@ export default function AdminApplicationDetail() {
     mutationFn: (reason) => rejectAdminApplication(applicationId, reason),
 
     onSuccess: async () => {
-      // 관리자 신청 목록 캐시 갱신
       await queryClient.invalidateQueries({
         queryKey: ['adminApplications'],
       });
 
-      // 현재 상세 정보 캐시 무효화
       await queryClient.invalidateQueries({
         queryKey: ['adminApplication', applicationId],
       });
 
-      // 모달 닫기
       setIsRejectModalOpen(false);
 
-      // 관리자 목록으로 이동
       router.push('/admin/challenges');
     },
 
     onError: (error) => {
       console.error('신청 거절 실패:', error);
       alert('신청 거절에 실패했습니다. 다시 시도해 주세요.');
+    },
+  });
+
+  const { mutate: approveApplication, isPending: isApproving } = useMutation({
+    mutationFn: () => approveAdminApplication(applicationId),
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['adminApplications'],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ['adminApplication', applicationId],
+      });
+
+      setIsApproveModalOpen(false);
+      router.push('/admin/challenges');
+    },
+
+    onError: (error) => {
+      console.error('신청 승인 실패:', error);
+      alert('신청 승인에 실패했습니다. 다시 시도해 주세요.');
     },
   });
 
@@ -70,6 +94,9 @@ export default function AdminApplicationDetail() {
   return (
     <main className={styles.container}>
       <p className={adminStyles.number}>No. {application.applicationId}</p>
+
+      {/* 승인 완료 상태 안내 */}
+      {application.status === 'APPROVED' && <ApplicationStatus status="APPROVED" />}
 
       {/* 거절된 신청 상태 안내 */}
       {application.status === 'REJECTED' && (
@@ -99,7 +126,14 @@ export default function AdminApplicationDetail() {
             거절하기
           </button>
 
-          <button type="button" className={adminStyles.approveButton}>
+          <button
+            type="button"
+            className={adminStyles.approveButton}
+            onClick={() => {
+              console.log('승인 버튼 클릭됨');
+              setIsApproveModalOpen(true);
+            }}
+          >
             승인하기
           </button>
         </div>
@@ -109,6 +143,16 @@ export default function AdminApplicationDetail() {
           onClose={() => setIsRejectModalOpen(false)}
           onConfirm={(reason) => rejectApplication(reason)}
           isPending={isRejecting}
+        />
+      )}
+
+      {isApproveModalOpen && (
+        <ApplicationCancelModal
+          message="정말 승인하시겠어요?"
+          pendingMessage="승인 중..."
+          onClose={() => setIsApproveModalOpen(false)}
+          onConfirm={() => approveApplication()}
+          isPending={isApproving}
         />
       )}
     </main>
