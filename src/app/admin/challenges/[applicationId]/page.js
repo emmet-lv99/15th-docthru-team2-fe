@@ -33,12 +33,13 @@
 
 import { AuthGuard } from '@/components/AuthGuard';
 
+import AdminApplicationDetail from '@/features/challenge-applications/components/AdminApplicationDetail/AdminApplicationDetail';
+
+
 export default function AdminApplicationDetailPage() {
   return (
     <AuthGuard role="ADMIN">
-      <span>
-        관리자 — 신청 상세 — TODO(팀원 ⑤): 이 파일 상단의 주석 가이드를 따라 구현해 주세요
-      </span>
+      <AdminApplicationDetail />
     </AuthGuard>
   );
 }
