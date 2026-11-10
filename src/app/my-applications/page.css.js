@@ -45,18 +45,22 @@ export const newButton = style({
 //탭 메뉴 전체
 export const tabs = style({
   display: 'flex',
-  gap: '24px',
+  gap: 'clamp(0px, 2vw, 24px)',
   borderBottom: '1px solid #d4d4d4',
   marginBottom: '30px',
+  overflowX: 'auto',
 });
 
 //탭 단일
 export const tab = style({
-  padding: '0 24px 16px',
+  padding: '0 clamp(4px, 2vw, 24px) 16px',
   fontSize: '18px',
   fontWeight: '600',
   color: '#737373',
   textDecoration: 'none',
+
+  whiteSpace: 'nowrap',
+  flexShrink: 0,
 });
 
 //선택된탭

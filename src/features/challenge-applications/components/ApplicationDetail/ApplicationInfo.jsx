@@ -58,7 +58,7 @@ export default function ApplicationInfo({ application }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            링크 열기 ↗
+            원문 보러가기 ↗
           </a>
         </div>
       </section>

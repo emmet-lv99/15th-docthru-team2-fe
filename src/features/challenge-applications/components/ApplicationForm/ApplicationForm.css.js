@@ -115,6 +115,10 @@ export const dropdownTrigger = style({
   },
 });
 
+export const dropdownError = style({
+  borderColor: '#FF4242',
+});
+
 // 선택 전 안내 문구
 export const dropdownPlaceholder = style({
   color: '#A3A3A3',
@@ -222,6 +226,10 @@ globalStyle(`${dateWrapper} input::-webkit-calendar-picker-indicator`, {
   display: 'none',
 });
 
+export const dateError = style({
+  borderColor: '#FF4242',
+});
+
 // 커스텀 달력 아이콘 버튼
 export const calendarButton = style({
   position: 'absolute',
@@ -240,4 +248,20 @@ export const calendarButton = style({
   backgroundColor: 'transparent',
   cursor: 'pointer',
   zIndex: 2,
+});
+
+export const inputError = style({
+  borderColor: '#FF4242',
+});
+
+globalStyle(`${formGroup} input.${inputError}, ${formGroup} textarea.${inputError}`, {
+  borderColor: '#FF4242',
+  outlineColor: '#FF4242',
+});
+
+export const errorMessage = style({
+  color: '#FF4242',
+  fontSize: '14px',
+  lineHeight: '20px',
+  marginTop: '4px',
 });

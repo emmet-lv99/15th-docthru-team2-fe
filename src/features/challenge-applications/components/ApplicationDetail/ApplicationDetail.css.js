@@ -183,7 +183,8 @@ export const sourceContent = style({
   alignItems: 'center',
   minHeight: '240px',
   position: 'relative',
-  backgroundColor: '#E5E5E5',
+  backgroundColor: '#FAFAFA',
+  border: '1px solid #e5e5e5',
   borderRadius: '8px',
 });
 
@@ -198,13 +199,13 @@ export const previewArea = style({
   fontSize: '14px',
 });
 
-// 미리보기 오른쪽 상단 링크 버튼
+// 링크 버튼
 export const sourceLink = style({
   zIndex: 1,
   padding: '10px 15px',
   borderRadius: '10px',
-  backgroundColor: '#ffffff',
-  color: '#404040',
+  backgroundColor: '#262626',
+  color: '#ffffff',
   textDecoration: 'none',
   fontSize: '16px',
   fontWeight: '700',
