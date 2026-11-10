@@ -30,11 +30,14 @@
 // 아래 자리표는 구현 전 안내 화면이에요 — 구현을 마치면 교체해 주세요
 
 import { AuthGuard } from '@/components/AuthGuard';
+import NotificationList from '@/features/notifications/components/NotificationList/NotificationList';
 
 export default function NotificationsPage() {
   return (
     <AuthGuard>
-      <span>알림함 — TODO(팀원 ④): 이 파일 상단의 주석 가이드를 따라 구현해 주세요</span>
+      <main>
+        <NotificationList />
+      </main>
     </AuthGuard>
   );
 }
