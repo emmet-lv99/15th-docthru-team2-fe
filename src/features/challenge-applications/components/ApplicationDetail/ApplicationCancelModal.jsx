@@ -6,7 +6,13 @@ import * as styles from './ApplicationDetail.css.js';
 import Image from 'next/image.js';
 import checkIcon from '@/features/challenge-applications/assets/check.svg';
 
-export default function ApplicationCancelModal({ onClose, onConfirm, isPending = false }) {
+export default function ApplicationCancelModal({
+  onClose,
+  onConfirm,
+  isPending = false,
+  message = '정말 취소하시겠어요?',
+  pendingMessage = '취소 중...',
+}) {
   return (
     <div className={styles.modalOverlay}>
       <div
@@ -20,7 +26,7 @@ export default function ApplicationCancelModal({ onClose, onConfirm, isPending =
           <Image src={checkIcon} alt="" width={24} height={24} />
 
           <p id="cancel-modal-title" className={styles.modalText}>
-            정말 취소하시겠어요?
+            {message}
           </p>
         </div>
 
@@ -40,7 +46,7 @@ export default function ApplicationCancelModal({ onClose, onConfirm, isPending =
             onClick={onConfirm}
             disabled={isPending}
           >
-            {isPending ? '취소 중...' : '네'}
+            {isPending ? pendingMessage : '네'}
           </button>
         </div>
       </div>

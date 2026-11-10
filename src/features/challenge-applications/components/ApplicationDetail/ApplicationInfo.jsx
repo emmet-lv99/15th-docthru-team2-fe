@@ -52,11 +52,6 @@ export default function ApplicationInfo({ application }) {
         <h2 className={styles.sourceTitle}>원문 링크</h2>
 
         <div className={styles.sourceContent}>
-          {/* 원문 미리보기 이미지가 들어갈 영역 */}
-          <div className={styles.previewArea}>
-            <span>원문 미리보기</span>
-          </div>
-
           <a
             className={styles.sourceLink}
             href={application.sourceUrl}

@@ -53,6 +53,9 @@ COPY . .
 ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
+ARG NEXT_PUBLIC_GOOGLE_AUTH_URL=https://docthru-be-xwfe2o3yfa-du.a.run.app/api/v1/auth/google?next=/
+ENV NEXT_PUBLIC_GOOGLE_AUTH_URL=$NEXT_PUBLIC_GOOGLE_AUTH_URL
+
 # ⚠️ BACKEND_BASE_URL 도 **빌드 시점에 박힙니다**.
 #    next.config.mjs 의 rewrites(브라우저 → 백엔드 프록시 주소)가
 #    빌드 때 정해져서, 실행 시 환경변수를 줘도 rewrite 주소는 안 바뀌어요.
