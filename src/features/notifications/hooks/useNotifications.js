@@ -1,10 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getNotifications,
   getUnreadNotificationCount,
   markNotificationAsRead,
   markAllNotificationsAsRead,
-} from '../api';
+} from '@/features/notifications/api';
 import { queryKeys } from '@/lib/queryKeys';
 
 // 알림 목록 조회
@@ -12,6 +12,21 @@ export function useNotifications(filters = {}) {
   return useQuery({
     queryKey: queryKeys.notifications.list(filters),
     queryFn: () => getNotifications(filters),
+  });
+}
+
+// 알림 목록 무한 스크롤 조회
+export function useInfiniteNotifications(filters = {}) {
+  return useInfiniteQuery({
+    queryKey: [...queryKeys.notifications.list(filters), 'infinite'],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
+      getNotifications({
+        ...filters,
+        page: pageParam,
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
   });
 }
 
