@@ -135,9 +135,12 @@ const device = styleVariants({
 });
 
 const mobileInner = style({
-  maxWidth: 'none',
-  padding: '0 16px',
-  gap: '8px',
+  '@media': {
+    'screen and (max-width: 767px)': {
+      padding: '0 16px',
+      gap: '8px',
+    },
+  },
 });
 
 const mobileLogo = style([
@@ -146,6 +149,17 @@ const mobileLogo = style([
     fontSize: 'var(--font-size-16)',
   },
 ]);
+
+const logoImage = style({
+  width: '110px',
+  height: 'auto',
+
+  '@media': {
+    '(max-width: 767px)': {
+      width: '110px',
+    },
+  },
+});
 
 const hideOnMobile = style({
   '@media': {
@@ -168,6 +182,7 @@ export {
   inner,
   left,
   logo,
+  logoImage,
   mobileInner,
   mobileLogo,
   nav,

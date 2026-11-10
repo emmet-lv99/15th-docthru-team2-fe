@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 
 import { useAuth } from '@/contexts/AuthProvider';
 import * as gnbStyles from './GNB.css.js';
@@ -14,7 +15,7 @@ const MENU = [
   { key: 'my-challenges', label: '나의 챌린지', href: '/my-challenges/participating' },
 ];
 
-export function ProfileMenu({ grade = null, isAdmin = false }) {
+export function ProfileMenu({ isAdmin = false }) {
   const router = useRouter();
   const { logout, isLoggingOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -65,12 +66,16 @@ export function ProfileMenu({ grade = null, isAdmin = false }) {
       <button
         type="button"
         ref={triggerRef}
-        className={clsx(gnbStyles.badge, styles.trigger)}
+        className={clsx(styles.trigger, isAdmin ? gnbStyles.badge : styles.userTrigger)}
         aria-expanded={isOpen}
         aria-label="프로필 메뉴"
         onClick={handleToggle}
       >
-        {isAdmin ? 'ADMIN' : grade || '내정보'}
+        {isAdmin ? (
+          'ADMIN'
+        ) : (
+          <Image src="/icons/profile.svg" alt="" width={32} height={32} aria-hidden="true" />
+        )}
       </button>
 
       {isOpen && (

@@ -16,10 +16,15 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
     <header className={styles.header}>
       <div className={clsx(styles.inner, styles.mobileInner)}>
         <div className={styles.left}>
-          <Link href="/" className={styles.mobileLogo} aria-label="독스루 홈">
-            {/* 원본 prisma-7 로고 자산 — 색/비율을 그대로 씁니다 */}
-            <Image src="/icons/docthru-logo.svg" alt="" width={18} height={21} aria-hidden />
-            Docthru
+          <Link href="/" className={styles.logo} aria-label="독스루 홈">
+            <Image
+              src="/icons/logo.svg"
+              alt=""
+              width={150}
+              height={32}
+              className={styles.logoImage}
+              priority
+            />
           </Link>
 
           {isAdmin && (
@@ -49,7 +54,13 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
                   data-has-unread={unreadCount > 0}
                   aria-label={`알림 ${unreadCount}건`}
                 >
-                  <BellIcon />
+                  <Image
+                    src="/icons/notification.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
                 </Link>
               )}
 
@@ -62,20 +73,6 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
         </div>
       </div>
     </header>
-  );
-}
-
-function BellIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6ZM10.5 20a1.8 1.8 0 0 0 3 0"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
