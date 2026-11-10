@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import * as styles from './GNB.css.js';
 import { ProfileMenu } from './ProfileMenu';
+import NotificationBell from '@/features/notifications/components/NotificationBell/NotificationBell';
 
 /**
  * isLoggedIn · isAdmin 이 권한을, unreadCount 가 알림 점 표시에 쓰인다.
@@ -42,16 +43,7 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
 
           {isLoggedIn && (
             <>
-              {!isAdmin && (
-                <Link
-                  href="/notifications"
-                  className={clsx(styles.iconButton, styles.iconButtonPositioned)}
-                  data-has-unread={unreadCount > 0}
-                  aria-label={`알림 ${unreadCount}건`}
-                >
-                  <BellIcon />
-                </Link>
-              )}
+              {!isAdmin && <NotificationBell unreadCount={unreadCount} />}
 
               {/* 프로필 메뉴 — 마이페이지 · 나의 챌린지 · 로그아웃 */}
               <ProfileMenu grade={grade} isAdmin={isAdmin} />
@@ -62,20 +54,6 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
         </div>
       </div>
     </header>
-  );
-}
-
-function BellIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6ZM10.5 20a1.8 1.8 0 0 0 3 0"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
