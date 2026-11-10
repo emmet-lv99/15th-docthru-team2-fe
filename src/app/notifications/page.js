@@ -31,11 +31,13 @@
 
 import { AuthGuard } from '@/components/AuthGuard';
 import NotificationList from '@/features/notifications/components/NotificationList/NotificationList';
+import NotificationMobileHeader from '@/features/notifications/components/NotificationMobileHeader/NotificationMobileHeader';
 
 export default function NotificationsPage() {
   return (
     <AuthGuard>
       <main>
+        <NotificationMobileHeader />
         <NotificationList />
       </main>
     </AuthGuard>

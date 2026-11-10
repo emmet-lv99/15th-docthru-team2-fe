@@ -12,3 +12,12 @@ export const main = style({
   flex: 1,
   width: '100%',
 });
+
+// 모바일 알림 GNB 숨김 처리
+export const hideGnbOnMobile = style({
+  '@media': {
+    '(max-width: 767px)': {
+      display: 'none',
+    },
+  },
+});
