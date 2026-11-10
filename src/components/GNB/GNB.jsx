@@ -36,7 +36,7 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
           </Link>
 
           {isAdmin && (
-            <nav className={clsx(styles.nav, styles.hideOnMobile)}>
+            <nav className={styles.nav}>
               <Link
                 href="/admin/challenges"
                 className={clsx(styles.navLink, !isChallengeList && styles.activeNavLink)}
