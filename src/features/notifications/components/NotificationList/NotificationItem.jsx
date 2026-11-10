@@ -30,18 +30,20 @@ export default function NotificationItem({ notification, onClick }) {
     <li className={styles.item}>
       <button
         type="button"
-        className={`${styles.button} ${!isRead ? styles.unread : ''}`}
+        className={styles.button}
         onClick={handleClick}
         data-notification-id={id}
         data-read={isRead}
-        aria-label={message}
       >
         <span className={styles.message}>{message}</span>
+
         {formattedDate && (
           <time className={styles.date} dateTime={createdAt}>
             {formattedDate}
           </time>
         )}
+
+        {!isRead && <span className={styles.unreadDot} aria-hidden="true" />}
       </button>
     </li>
   );
