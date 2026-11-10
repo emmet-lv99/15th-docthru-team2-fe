@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { GNB } from '@/components/GNB';
 import * as styles from './GlobalLayout.css.js';
+import clsx from 'clsx';
 
 /** 풀스크린/비-GNB 라우트 (원본 GlobalGNB 와 동일) */
 const NO_GNB_PREFIXES = ['/intro', '/login', '/signup'];
@@ -24,11 +25,16 @@ export function GlobalLayout({
     NO_GNB_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
     pathname.endsWith('/edit');
 
+  const isNotificationsPage = pathname === '/notifications';
+
   return (
     <div className={styles.container}>
       {!hideGnb && (
-        <GNB isLoggedIn={isLoggedIn} isAdmin={isAdmin} grade={grade} unreadCount={unreadCount} />
+        <div className={clsx(isNotificationsPage && styles.hideGnbOnMobile)}>
+          <GNB isLoggedIn={isLoggedIn} isAdmin={isAdmin} grade={grade} unreadCount={unreadCount} />
+        </div>
       )}
+
       <main className={styles.main}>{children}</main>
     </div>
   );

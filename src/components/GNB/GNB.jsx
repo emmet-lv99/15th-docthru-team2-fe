@@ -1,7 +1,8 @@
-// src/components/GNB/GNB.jsx
-// 근거: 공용 컴퍼넌트/gnb.png — 기기 3 × 권한 3 = 9변형
 
 'use client';
+
+// src/components/GNB/GNB.jsx
+// 근거: 공용 컴퍼넌트/gnb.png — 기기 3 × 권한 3 = 9변형
 
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/Button';
@@ -13,10 +14,11 @@ import { ProfileMenu } from './ProfileMenu';
 import NotificationBell from '@/features/notifications/components/NotificationBell/NotificationBell';
 
 /**
- * isLoggedIn · isAdmin 이 권한을, unreadCount 가 알림 점 표시에 쓰인다.
+ * isLoggedIn · isAdmin 이 권한을 결정한다.
+ * 알림 개수 및 읽지 않은 알림 표시는 NotificationBell에서 관리한다.
  * 어드민이면 "챌린지 관리"(검은 배지) · "챌린지 목록" 메뉴가 노출된다.
  */
-function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 0 }) {
+function GNB({ isLoggedIn = false, isAdmin = false, grade = null,}) {
   const pathname = usePathname();
 
   const isChallengeList = pathname.startsWith('/admin/challenges/list');
@@ -54,6 +56,7 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
             </nav>
           )}
         </div>
+
         <div className={styles.right}>
           {!isLoggedIn && (
             <Button as={Link} href="/login" variant="outline" size="md">
@@ -63,22 +66,7 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
 
           {isLoggedIn && (
             <>
-              {!isAdmin && (
-                <Link
-                  href="/notifications"
-                  className={clsx(styles.iconButton, styles.iconButtonPositioned)}
-                  data-has-unread={unreadCount > 0}
-                  aria-label={`알림 ${unreadCount}건`}
-                >
-                  <Image
-                    src="/icons/notification.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                    aria-hidden="true"
-                  />
-                </Link>
-              )}
+              {!isAdmin && <NotificationBell />}
 
               {/* 프로필 메뉴 — 마이페이지 · 나의 챌린지 · 로그아웃 */}
               <ProfileMenu grade={grade} isAdmin={isAdmin} />
