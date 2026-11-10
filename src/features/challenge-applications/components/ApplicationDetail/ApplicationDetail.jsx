@@ -6,6 +6,7 @@ import * as styles from './ApplicationDetail.css.js';
 
 import { useRouter, useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Loading } from '@/components/Loading';
 
 import { getApplicationDetail, cancelApplication } from '../../api';
 
@@ -73,7 +74,7 @@ export default function ApplicationDetail() {
   });
 
   if (isPending) {
-    return <p>신청 정보를 불러오는 중입니다...</p>;
+    return <Loading title="불러오는 중이에요" description="잠시만 기다려 주세요." />;
   }
 
   if (isError || !application) {
