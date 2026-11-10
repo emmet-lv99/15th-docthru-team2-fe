@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 import arrowDown from '@/features/challenge-applications/assets/icon_arrow_down.svg';
 
-export default function ApplicationDropdown({ id, name, value, onChange, options }) {
+export default function ApplicationDropdown({ id, name, value, onChange, options, error = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -36,7 +36,7 @@ export default function ApplicationDropdown({ id, name, value, onChange, options
       <button
         id={id}
         type="button"
-        className={styles.dropdownTrigger}
+        className={`${styles.dropdownTrigger} ${error ? styles.dropdownError : ''}`}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={`${id}-options`}

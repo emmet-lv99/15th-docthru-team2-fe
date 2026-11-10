@@ -3,6 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  getAdminApplications,
   getAdminApplicationDetail,
   rejectAdminApplication,
   approveAdminApplication,
@@ -27,6 +28,52 @@ export default function AdminApplicationDetail() {
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+
+  // 이전·다음 이동을 위한 전체 신청 목록 조회 (최신순)
+  const { data: navigationApplications = [], isPending: isNavigationPending } = useQuery({
+    queryKey: ['adminApplications', 'navigation', 'latest'],
+    queryFn: async () => {
+      const size = 10;
+
+      const firstPage = await getAdminApplications({
+        page: 1,
+        size,
+        status: 'ALL',
+        q: '',
+        sort: 'latest',
+      });
+
+      const totalPages = firstPage.totalPages ?? 1;
+
+      const remainingPages = await Promise.all(
+        Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) =>
+          getAdminApplications({
+            page: index + 2,
+            size,
+            status: 'ALL',
+            q: '',
+            sort: 'latest',
+          }),
+        ),
+      );
+
+      return [firstPage, ...remainingPages].flatMap((page) => page.items ?? []);
+    },
+    staleTime: 60 * 1000,
+  });
+
+  // 현재 신청이 전체 목록에서 몇 번째인지 확인
+  const currentIndex = navigationApplications.findIndex(
+    (item) => String(item.applicationId) === String(applicationId),
+  );
+
+  const previousApplicationId =
+    currentIndex > 0 ? navigationApplications[currentIndex - 1].applicationId : null;
+
+  const nextApplicationId =
+    currentIndex >= 0 && currentIndex < navigationApplications.length - 1
+      ? navigationApplications[currentIndex + 1].applicationId
+      : null;
 
   const {
     data: application,
@@ -93,7 +140,33 @@ export default function AdminApplicationDetail() {
 
   return (
     <main className={styles.container}>
-      <p className={adminStyles.number}>No. {application.applicationId}</p>
+      <div className={adminStyles.detailHeader}>
+        <p className={adminStyles.number}>
+          No. <span>{application.applicationId}</span>
+        </p>
+
+        <div className={adminStyles.navigation}>
+          <button
+            type="button"
+            className={adminStyles.navigationButton}
+            aria-label="이전 신청"
+            disabled={isNavigationPending || previousApplicationId == null}
+            onClick={() => router.push(`/admin/challenges/${previousApplicationId}`)}
+          >
+            ‹
+          </button>
+
+          <button
+            type="button"
+            className={adminStyles.navigationButton}
+            aria-label="다음 신청"
+            disabled={isNavigationPending || nextApplicationId == null}
+            onClick={() => router.push(`/admin/challenges/${nextApplicationId}`)}
+          >
+            ›
+          </button>
+        </div>
+      </div>
 
       {/* 승인 완료 상태 안내 */}
       {application.status === 'APPROVED' && <ApplicationStatus status="APPROVED" />}
@@ -110,7 +183,7 @@ export default function AdminApplicationDetail() {
             showOperator={false}
           />
 
-          <div className={styles.rejectionDivider} />
+          <div className={adminStyles.rejectionDivider} />
         </>
       )}
 
