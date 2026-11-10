@@ -48,7 +48,6 @@ export const tabs = style({
   gap: 'clamp(0px, 2vw, 24px)',
   borderBottom: '1px solid #d4d4d4',
   marginBottom: '30px',
-  overflowX: 'auto',
 });
 
 //탭 단일

@@ -14,6 +14,7 @@ import * as styles from '../ApplicationDetail/ApplicationDetail.css.js';
 import * as adminStyles from './AdminApplicationDetail.css.js';
 
 import { useState } from 'react';
+import { Loading } from '@/components/Loading';
 import AdminRejectModal from './AdminRejectModal';
 
 import ApplicationStatus from '../ApplicationDetail/ApplicationStatus';
@@ -131,7 +132,7 @@ export default function AdminApplicationDetail() {
   });
 
   if (isPending) {
-    return <p>신청 정보를 불러오는 중입니다...</p>;
+    return <Loading title="불러오는 중이에요" description="잠시만 기다려 주세요." />;
   }
 
   if (isError || !application) {
