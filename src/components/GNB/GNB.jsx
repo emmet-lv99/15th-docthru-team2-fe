@@ -1,4 +1,3 @@
-
 'use client';
 
 // src/components/GNB/GNB.jsx
@@ -18,7 +17,7 @@ import NotificationBell from '@/features/notifications/components/NotificationBe
  * 알림 개수 및 읽지 않은 알림 표시는 NotificationBell에서 관리한다.
  * 어드민이면 "챌린지 관리"(검은 배지) · "챌린지 목록" 메뉴가 노출된다.
  */
-function GNB({ isLoggedIn = false, isAdmin = false, grade = null,}) {
+function GNB({ isLoggedIn = false, isAdmin = false, grade = null }) {
   const pathname = usePathname();
 
   const isChallengeList = pathname.startsWith('/admin/challenges/list');

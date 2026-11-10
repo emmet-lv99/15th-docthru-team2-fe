@@ -61,7 +61,7 @@ export function getNotificationHref(notification) {
   switch (type) {
     case NOTIFICATION_TYPES.CHALLENGE_APPROVED:
       return relatedChallengeId ? challengeHref : '/my-applications';
-      
+
     case NOTIFICATION_TYPES.CHALLENGE_REJECTED:
       return '/my-applications';
 
