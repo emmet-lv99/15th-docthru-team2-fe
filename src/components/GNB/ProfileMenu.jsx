@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import { useAuth } from '@/contexts/AuthProvider';
-import * as gnbStyles from './GNB.css.js';
 import * as styles from './ProfileMenu.css.js';
 
 const MENU = [
@@ -66,16 +65,17 @@ export function ProfileMenu({ isAdmin = false }) {
       <button
         type="button"
         ref={triggerRef}
-        className={clsx(styles.trigger, isAdmin ? gnbStyles.badge : styles.userTrigger)}
+        className={clsx(styles.trigger, isAdmin ? styles.adminTrigger : styles.userTrigger)}
         aria-expanded={isOpen}
         aria-label="프로필 메뉴"
         onClick={handleToggle}
       >
-        {isAdmin ? (
-          'ADMIN'
-        ) : (
-          <Image src="/icons/profile.svg" alt="" width={32} height={32} aria-hidden="true" />
-        )}
+        <Image
+          src={isAdmin ? '/icons/admin-profile.svg' : '/icons/profile.svg'}
+          alt=""
+          width={32}
+          height={32}
+        />
       </button>
 
       {isOpen && (

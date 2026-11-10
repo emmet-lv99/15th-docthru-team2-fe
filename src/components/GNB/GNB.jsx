@@ -1,5 +1,9 @@
 // src/components/GNB/GNB.jsx
 // 근거: 공용 컴퍼넌트/gnb.png — 기기 3 × 권한 3 = 9변형
+
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/Button';
 import clsx from 'clsx';
 import Image from 'next/image';
@@ -12,6 +16,10 @@ import { ProfileMenu } from './ProfileMenu';
  * 어드민이면 "챌린지 관리"(검은 배지) · "챌린지 목록" 메뉴가 노출된다.
  */
 function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 0 }) {
+  const pathname = usePathname();
+
+  const isChallengeList = pathname.startsWith('/admin/challenges/list');
+
   return (
     <header className={styles.header}>
       <div className={clsx(styles.inner, styles.mobileInner)}>
@@ -29,10 +37,17 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null, unreadCount = 
 
           {isAdmin && (
             <nav className={clsx(styles.nav, styles.hideOnMobile)}>
-              <Link href="/admin/challenges" className={styles.navLinkAdmin}>
-                신청 관리
+              <Link
+                href="/admin/challenges"
+                className={clsx(styles.navLink, !isChallengeList && styles.activeNavLink)}
+              >
+                챌린지 관리
               </Link>
-              <Link href="/admin/challenges/list" className={styles.navLink}>
+
+              <Link
+                href="/admin/challenges/list"
+                className={clsx(styles.navLink, isChallengeList && styles.activeNavLink)}
+              >
                 챌린지 목록
               </Link>
             </nav>

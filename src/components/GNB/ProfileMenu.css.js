@@ -14,15 +14,25 @@ export const trigger = style({
   padding: '0 6px',
 });
 
-export const userTrigger = style({
+export const adminTrigger = style({
   width: '32px',
   height: '32px',
-  minWidth: '32px',
   padding: 0,
-  borderRadius: '50%',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
+  borderRadius: '50%',
+  backgroundColor: 'transparent',
+});
+
+export const userTrigger = style({
+  width: '32px',
+  height: '32px',
+  padding: 0,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
   backgroundColor: 'transparent',
 });
 
