@@ -8,6 +8,7 @@ import { getAdminApplications } from '@/features/challenge-applications/api.js';
 
 import AdminApplicationTable from './AdminApplicationTable';
 import ApplicationPagination from '../ApplicationList/ApplicationPagination';
+import ApplicationFilterDropdown from '../ApplicationFilterDropdown/ApplicationFilterDropdown';
 
 import * as styles from '@/app/my-applications/page.css.js';
 
@@ -36,6 +37,7 @@ export default function ApplicationList() {
 
   //선택한 신청 상태
   const [selectedStatus, setSelectedStatus] = useState('ALL');
+  const [sortOrder, setSortOrder] = useState('');
 
   // 한 페이지에 표시할 데이터 수
   const itemsPerPage = 10;
@@ -58,8 +60,25 @@ export default function ApplicationList() {
   // 서버가 반환한 전체 페이지 수
   const totalPages = data?.totalPages ?? 0;
 
-  // 테이블에 전달할 데이터
-  const currentApplications = myApplications;
+  const currentApplications = [...myApplications].sort((a, b) => {
+    if (sortOrder === 'latest') {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+
+    if (sortOrder === 'oldest') {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    }
+
+    if (sortOrder === 'deadlineAsc') {
+      return new Date(a.desiredDeadline) - new Date(b.desiredDeadline);
+    }
+
+    if (sortOrder === 'deadlineDesc') {
+      return new Date(b.desiredDeadline) - new Date(a.desiredDeadline);
+    }
+
+    return 0;
+  });
 
   if (isError) {
     console.error('신청 목록 조회 실패:', error);
@@ -85,20 +104,20 @@ export default function ApplicationList() {
           />
         </div>
 
-        <select
-          className={styles.statusSelect}
-          value={selectedStatus}
-          onChange={(e) => {
-            setSelectedStatus(e.target.value);
+        <ApplicationFilterDropdown
+          value={sortOrder || selectedStatus}
+          onChange={(value) => {
+            if (['ALL', 'PENDING', 'APPROVED', 'REJECTED'].includes(value)) {
+              setSelectedStatus(value);
+              setSortOrder('');
+            } else {
+              setSelectedStatus('ALL');
+              setSortOrder(value);
+            }
+
             setCurrentPage(1);
           }}
-          aria-label="신청 상태 필터"
-        >
-          <option value="ALL">전체 상태</option>
-          <option value="PENDING">승인 대기</option>
-          <option value="APPROVED">신청 승인</option>
-          <option value="REJECTED">신청 거절</option>
-        </select>
+        />
       </div>
 
       {/* 신청한 챌린지 목록 */}

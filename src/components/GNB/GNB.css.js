@@ -44,7 +44,6 @@ const logo = style({
 const nav = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '20px',
 });
 
 const navLink = style({
@@ -53,21 +52,27 @@ const navLink = style({
   padding: '21px 17px',
   fontFamily: vars.fontFamily,
   fontSize: '15px',
-  fontWeight: '600',
+  fontWeight: '700',
   letterSpacing: '0%',
   color: vars.colorGray500,
   whiteSpace: 'nowrap',
-  ':hover': { color: vars.colorGray700, backgroundColor: vars.colorGray50 },
 });
 
 /** 어드민 전용 메뉴는 검은 배경 + 흰 글씨 (원본 "챌린지 관리") */
 const navLinkAdmin = style({
   composes: navLink,
-  padding: '4px 10px',
-  borderRadius: '6px',
-  backgroundColor: vars.colorBrand1,
-  color: vars.colorGray50,
-  ':hover': { color: vars.colorGray50, backgroundColor: vars.colorGray700 },
+  color: vars.colorGray800,
+  fontWeight: '700',
+
+  ':hover': {
+    color: vars.colorGray900,
+    backgroundColor: vars.colorGray50,
+  },
+});
+
+const activeNavLink = style({
+  color: vars.colorGray800,
+  fontWeight: '700',
 });
 
 const right = style({
@@ -135,9 +140,12 @@ const device = styleVariants({
 });
 
 const mobileInner = style({
-  maxWidth: 'none',
-  padding: '0 16px',
-  gap: '8px',
+  '@media': {
+    'screen and (max-width: 767px)': {
+      padding: '0 16px',
+      gap: '8px',
+    },
+  },
 });
 
 const mobileLogo = style([
@@ -146,6 +154,17 @@ const mobileLogo = style([
     fontSize: 'var(--font-size-16)',
   },
 ]);
+
+const logoImage = style({
+  width: '110px',
+  height: 'auto',
+
+  '@media': {
+    '(max-width: 767px)': {
+      width: '110px',
+    },
+  },
+});
 
 const hideOnMobile = style({
   '@media': {
@@ -168,10 +187,12 @@ export {
   inner,
   left,
   logo,
+  logoImage,
   mobileInner,
   mobileLogo,
   nav,
   navLink,
   navLinkAdmin,
+  activeNavLink,
   right,
 };
