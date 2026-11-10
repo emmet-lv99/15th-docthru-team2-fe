@@ -14,6 +14,28 @@ export const trigger = style({
   padding: '0 6px',
 });
 
+export const adminTrigger = style({
+  width: '32px',
+  height: '32px',
+  padding: 0,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
+  backgroundColor: 'transparent',
+});
+
+export const userTrigger = style({
+  width: '32px',
+  height: '32px',
+  padding: 0,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
+  backgroundColor: 'transparent',
+});
+
 export const menu = style({
   position: 'absolute',
   top: 'calc(100% + 8px)',
