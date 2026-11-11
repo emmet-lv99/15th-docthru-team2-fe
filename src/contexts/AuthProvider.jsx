@@ -5,9 +5,6 @@
 //   · 인증 상태는 React Query 의 GET /auth/me 캐시 하나로 관리해요.
 //   · 보호 화면은 feature 컴포넌트에서 useAuth(true) 한 줄로 로그인 여부를 확인합니다.
 //   · 로그인/로그아웃 성공 시 router.refresh() 로 서버 컴포넌트(GNB·layout)도 새 쿠키를 읽게 합니다.
-import { createContext, useContext, useEffect, useRef } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import {
   deleteMe as deleteMeRequest,
   getMe,
@@ -17,6 +14,9 @@ import {
   updateMe as updateMeRequest,
 } from '@/features/auth/api';
 import { queryKeys } from '@/lib/queryKeys';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { createContext, useContext, useEffect, useRef } from 'react';
 
 const AuthContext = createContext({
   user: null,
@@ -95,8 +95,8 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
     mutationFn: logoutRequest,
     onSuccess: () => {
       clearUserScopedCache();
+      queryClient.clear();
       queryClient.setQueryData(queryKeys.me.info(), null);
-      queryClient.removeQueries({ queryKey: queryKeys.me.all() });
       router.refresh();
     },
   });
@@ -114,8 +114,8 @@ export function AuthProvider({ children, initialUser = null, hasSession = false 
       deleteMeRequest({ password, withdrawalConsent }),
     onSuccess: () => {
       clearUserScopedCache();
+      queryClient.clear();
       queryClient.setQueryData(queryKeys.me.info(), null);
-      queryClient.removeQueries({ queryKey: queryKeys.me.all() });
       router.replace('/');
       router.refresh();
     },
