@@ -41,9 +41,7 @@ export async function generateMetadata({ params }) {
   const { challengeId, workId } = await params;
   const { ok, data: work } = await apiGet(`/challenges/${challengeId}/works/${workId}`);
   if (!ok || !work) {
-    return {
-      title: '작업물을 찾을 수 없습니다 | Docthru',
-    };
+    notFound();
   }
   const title = `${work.challenge?.title ?? '번역 작업물'} - ${work.author?.nickname ?? '작성자'} | Docthru`;
   const description = `${work.author?.nickname}님이 작성한 번역 작업물입니다. 독스루에서 전문을 확인해 보세요.`;
@@ -68,8 +66,8 @@ export default async function WorkDetailPage({ params }) {
   if (status === 404 || (!ok && !work)) {
     notFound();
   }
-  // 3. 500, 503 등 서버 에러는 error.js 화면으로 전달
-  if (!ok) {
+  // 4. 그 외 서버 에러(500, 503 등)는 Next.js error.js 로 던져 오류 화면 표시
+  if (!ok || !work) {
     throw new Error('작업물 상세 정보를 불러오는 중 서버 오류가 발생했습니다.');
   }
   // 4. 클라이언트 인터랙션 컨테이너에 초기 데이터(initialWork) 전달
