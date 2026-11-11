@@ -31,8 +31,62 @@
 //    정본(client/src/components/)을 잠깐 열어 보는 것도 방법이에요 — 팀 동의 후에 참고하는 편이 안전합니다
 
 // 아래 자리표는 구현 전 화면에서 안내용으로만 보입니다 — 구현하시면 교체하시면 돼요
-function TextBox() {
-  return <span>TextBox — TODO(담당자): 이 파일 상단의 주석 지침서를 따라 구현해 주세요</span>;
-}
+'use client';
 
-export default TextBox;
+import { useId } from 'react';
+import clsx from 'clsx';
+import * as styles from '@/components/Input/TextBox.css';
+
+export default function TextBox({
+  label,
+  errorMessage,
+  hint,
+  rows = 5,
+  className,
+  id,
+  readOnly = false,
+  ...restProps
+}) {
+  const autoId = useId();
+  const textBoxId = id ?? autoId;
+
+  const hasError = Boolean(errorMessage);
+  const hintId = hint && !errorMessage ? `${textBoxId}-hint` : undefined;
+  const errorId = errorMessage ? `${textBoxId}-error` : undefined;
+
+  return (
+    <div className={clsx(styles.field, className)}>
+      {label && (
+        <label htmlFor={textBoxId} className={styles.label}>
+          {label}
+        </label>
+      )}
+
+      <textarea
+        id={textBoxId}
+        rows={rows}
+        readOnly={readOnly}
+        className={clsx(
+          styles.textarea,
+          readOnly && styles.readOnly,
+          hasError && styles.textareaError,
+        )}
+        aria-invalid={hasError || undefined}
+        aria-describedby={[hintId, errorId].filter(Boolean).join(' ') || undefined}
+        {...restProps}
+      />
+
+      {hint && !errorMessage && (
+        <p id={hintId} className={styles.hint}>
+          {hint}
+        </p>
+      )}
+
+      {errorMessage && (
+        <p id={errorId} className={styles.error}>
+          {errorMessage}
+        </p>
+      )}
+    </div>
+  );
+}
