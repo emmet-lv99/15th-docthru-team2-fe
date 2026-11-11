@@ -22,7 +22,14 @@ describe('알림 API', () => {
 
   describe('getNotifications', () => {
     it('기본값으로 알림 목록을 조회한다', async () => {
-      const mockResponse = { notifications: [] };
+      const mockResponse = {
+        items: [],
+        page: 1,
+        size: 10,
+        totalItems: 0,
+        totalPages: 0,
+      };
+
       apiClient.get.mockResolvedValue(mockResponse);
 
       const result = await getNotifications();
@@ -39,9 +46,17 @@ describe('알림 API', () => {
     });
 
     it('전달한 조회 조건을 적용한다', async () => {
-      apiClient.get.mockResolvedValue({ notifications: [] });
+      const mockResponse = {
+        items: [],
+        page: 2,
+        size: 5,
+        totalItems: 0,
+        totalPages: 0,
+      };
 
-      await getNotifications({
+      apiClient.get.mockResolvedValue(mockResponse);
+
+      const result = await getNotifications({
         unreadOnly: true,
         page: 2,
         size: 5,
@@ -54,12 +69,15 @@ describe('알림 API', () => {
           size: 5,
         },
       });
+
+      expect(result).toEqual(mockResponse);
     });
   });
 
   describe('getUnreadNotificationCount', () => {
     it('읽지 않은 알림 개수를 조회한다', async () => {
-      const mockResponse = { count: 3 };
+      const mockResponse = { unreadCount: 3 };
+
       apiClient.get.mockResolvedValue(mockResponse);
 
       const result = await getUnreadNotificationCount();
