@@ -135,6 +135,9 @@ export default function AdminApplicationDetail() {
     return <Loading title="불러오는 중이에요" description="잠시만 기다려 주세요." />;
   }
 
+  // 승인된 챌린지가 삭제되었는지 확인
+  const isDeleted = Boolean(application.approvedChallenge?.deletedAt);
+
   if (isError || !application) {
     return <p>신청 정보를 불러오지 못했습니다.</p>;
   }
@@ -169,8 +172,24 @@ export default function AdminApplicationDetail() {
         </div>
       </div>
 
-      {/* 승인 완료 상태 안내 */}
-      {application.status === 'APPROVED' && <ApplicationStatus status="APPROVED" />}
+      {/* 삭제된 챌린지 상태 및 삭제 사유 */}
+      {isDeleted && (
+        <>
+          <ApplicationStatus status="DELETED" />
+
+          <ApplicationDecisionReason
+            title="삭제 사유"
+            reason={application.approvedChallenge.deleteReason || '삭제 사유가 없습니다.'}
+            decidedAt={application.approvedChallenge.deletedAt}
+            showOperator={false}
+          />
+
+          <div className={adminStyles.rejectionDivider} />
+        </>
+      )}
+
+      {/* 삭제되지 않은 승인 완료 상태 */}
+      {application.status === 'APPROVED' && !isDeleted && <ApplicationStatus status="APPROVED" />}
 
       {/* 거절된 신청 상태 안내 */}
       {application.status === 'REJECTED' && (
