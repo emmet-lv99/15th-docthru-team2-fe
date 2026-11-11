@@ -13,23 +13,23 @@ export const NOTIFICATION_TYPES = {
 export function getNotificationMessage(notification) {
   const { type, relatedChallengeTitle } = notification;
 
-  const challengeTitle = relatedChallengeTitle ? `'${relatedChallengeTitle}'` : '챌린지';
+  const challengeTitle = `'${relatedChallengeTitle}' 챌린지`;
 
   switch (type) {
     case NOTIFICATION_TYPES.CHALLENGE_APPROVED:
-      return `${challengeTitle}이/가 승인되었어요`;
+      return `${challengeTitle}가 승인되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_REJECTED:
-      return `${challengeTitle}이/가 거절되었어요`;
+      return `${challengeTitle}가 거절되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_UPDATED:
-      return `${challengeTitle}이/가 수정되었어요`;
+      return `${challengeTitle}가 수정되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_DELETED:
-      return `${challengeTitle}이/가 삭제되었어요`;
+      return `${challengeTitle}가 삭제되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_DEADLINE:
-      return `${challengeTitle}이/가 마감되었어요`;
+      return `${challengeTitle}가 마감되었어요`;
 
     case NOTIFICATION_TYPES.WORK_ADDED:
       return `${challengeTitle}에 작업물이 추가되었어요`;
