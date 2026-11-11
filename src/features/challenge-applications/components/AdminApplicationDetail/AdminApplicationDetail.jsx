@@ -223,7 +223,6 @@ export default function AdminApplicationDetail() {
             type="button"
             className={adminStyles.approveButton}
             onClick={() => {
-              console.log('승인 버튼 클릭됨');
               setIsApproveModalOpen(true);
             }}
           >
