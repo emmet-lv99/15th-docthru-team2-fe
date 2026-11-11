@@ -44,9 +44,13 @@ export default function ApplicationList() {
   // 한 페이지에 표시할 데이터 수
   const itemsPerPage = 10;
 
+  const serverSort =
+    sortOrder === 'latest' ? 'latest' : sortOrder === 'deadlineAsc' ? 'deadline' : undefined;
+
   const searchQuery = debouncedKeyword;
 
   // 신청 목록 API 요청
+
   const { data, isPending, isError, error } = useQuery({
     queryKey: [
       ...queryKeys.applications.mine({
@@ -54,16 +58,21 @@ export default function ApplicationList() {
         size: itemsPerPage,
         q: searchQuery,
         status: selectedStatus,
+        sort: serverSort,
       }),
       user?.id,
+      serverSort,
     ],
+
     queryFn: () =>
       getMyApplications({
         page: currentPage,
         size: itemsPerPage,
         q: searchQuery,
         status: selectedStatus,
+        ...(serverSort && { sort: serverSort }),
       }),
+
     enabled: user?.id != null,
   });
 
@@ -72,26 +81,6 @@ export default function ApplicationList() {
 
   // 서버가 반환한 전체 페이지 수
   const totalPages = data?.totalPages ?? 0;
-
-  const currentApplications = [...myApplications].sort((a, b) => {
-    if (sortOrder === 'latest') {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-
-    if (sortOrder === 'oldest') {
-      return new Date(a.createdAt) - new Date(b.createdAt);
-    }
-
-    if (sortOrder === 'deadlineAsc') {
-      return new Date(a.desiredDeadline) - new Date(b.desiredDeadline);
-    }
-
-    if (sortOrder === 'deadlineDesc') {
-      return new Date(b.desiredDeadline) - new Date(a.desiredDeadline);
-    }
-
-    return 0;
-  });
 
   if (isError) {
     console.error('신청 목록 조회 실패:', error);
@@ -134,11 +123,7 @@ export default function ApplicationList() {
       </div>
 
       {/* 신청한 챌린지 목록 */}
-      <ApplicationTable
-        applications={currentApplications}
-        isPending={isPending}
-        isError={isError}
-      />
+      <ApplicationTable applications={myApplications} isPending={isPending} isError={isError} />
 
       {/* 페이지네이션 */}
       <ApplicationPagination
