@@ -17,19 +17,19 @@ export function getNotificationMessage(notification) {
 
   switch (type) {
     case NOTIFICATION_TYPES.CHALLENGE_APPROVED:
-      return `${challengeTitle}이 승인되었어요`;
+      return `${challengeTitle}이/가 승인되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_REJECTED:
-      return `${challengeTitle}이 거절되었어요`;
+      return `${challengeTitle}이/가 거절되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_UPDATED:
-      return `${challengeTitle}이 수정되었어요`;
+      return `${challengeTitle}이/가 수정되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_DELETED:
-      return `${challengeTitle}이 삭제되었어요`;
+      return `${challengeTitle}이/가 삭제되었어요`;
 
     case NOTIFICATION_TYPES.CHALLENGE_DEADLINE:
-      return `${challengeTitle}이 마감되었어요`;
+      return `${challengeTitle}이/가 마감되었어요`;
 
     case NOTIFICATION_TYPES.WORK_ADDED:
       return `${challengeTitle}에 작업물이 추가되었어요`;
@@ -45,5 +45,40 @@ export function getNotificationMessage(notification) {
 
     default:
       return '새로운 알림이 도착했어요';
+  }
+}
+
+export function getNotificationHref(notification) {
+  const { type, relatedChallengeId, relatedWorkId } = notification;
+
+  const challengeHref = relatedChallengeId ? `/challenges/${relatedChallengeId}` : '/challenges';
+
+  const workHref =
+    relatedChallengeId && relatedWorkId
+      ? `/challenges/${relatedChallengeId}/works/${relatedWorkId}`
+      : challengeHref;
+
+  switch (type) {
+    case NOTIFICATION_TYPES.CHALLENGE_APPROVED:
+      return relatedChallengeId ? challengeHref : '/my-applications';
+
+    case NOTIFICATION_TYPES.CHALLENGE_REJECTED:
+      return '/my-applications';
+
+    case NOTIFICATION_TYPES.CHALLENGE_UPDATED:
+    case NOTIFICATION_TYPES.CHALLENGE_DEADLINE:
+      return challengeHref;
+
+    case NOTIFICATION_TYPES.CHALLENGE_DELETED:
+      return '/challenges';
+
+    case NOTIFICATION_TYPES.WORK_ADDED:
+    case NOTIFICATION_TYPES.FEEDBACK_ADDED:
+    case NOTIFICATION_TYPES.FEEDBACK_UPDATED:
+    case NOTIFICATION_TYPES.FEEDBACK_DELETED:
+      return workHref;
+
+    default:
+      return '/notifications';
   }
 }
