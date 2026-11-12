@@ -14,7 +14,7 @@ export const container = style({
   },
 });
 export const feedbackSection = style({
-  marginTop: '48px',
-  paddingTop: '32px',
-  borderTop: '1px solid #F1F5F9',
+  marginTop: '24px',
+  // paddingTop: '32px',
+  // borderTop: '1px solid #F1F5F9',
 });
