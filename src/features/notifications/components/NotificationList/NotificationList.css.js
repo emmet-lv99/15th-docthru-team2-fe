@@ -115,3 +115,9 @@ export const retryMessage = style({
   color: vars.colorGray500,
   textAlign: 'center',
 });
+
+export const reason = style({
+  display: 'block',
+  marginTop: '4px',
+  color: vars.colorGray400,
+});
