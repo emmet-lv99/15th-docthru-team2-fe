@@ -134,7 +134,7 @@ export default function ApplicationForm() {
   const documentTypeOptions = [
     { value: 'OFFICIAL', label: '공식문서' },
     { value: 'BLOG', label: '블로그' },
-    { value: 'BOOK', label: '책' },
+    { value: 'BOOK', label: '도서' },
     { value: 'OTHER', label: '기타' },
   ];
 

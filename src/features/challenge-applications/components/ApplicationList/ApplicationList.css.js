@@ -63,6 +63,10 @@ export const challengeTitle = style({
   fontSize: '13px',
   fontWidth: '500',
   color: '#404040',
+  maxWidth: '300px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 });
 
 /* =============

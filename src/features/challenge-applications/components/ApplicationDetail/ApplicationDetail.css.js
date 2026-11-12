@@ -179,13 +179,27 @@ export const sourceTitle = style({
 // 원문 미리보기 전체 영역
 export const sourceContent = style({
   display: 'flex',
+  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: '240px',
+  gap: '16px',
+  width: '100%',
+  minHeight: '320px',
+  padding: '32px 24px',
   position: 'relative',
-  backgroundColor: '#FAFAFA',
-  border: '1px solid #e5e5e5',
+  backgroundColor: '#0B0F17',
+  border: '1px solid #1E293B',
   borderRadius: '8px',
+  textAlign: 'center',
+});
+
+export const sourceMessage = style({
+  margin: 0,
+  color: '#94A3B8',
+  fontSize: '14px',
+  fontWeight: '400',
+  lineHeight: '24px',
+  textAlign: 'center',
 });
 
 // 추후 미리보기 이미지가 들어갈 영역
@@ -201,14 +215,26 @@ export const previewArea = style({
 
 // 링크 버튼
 export const sourceLink = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '6px',
   zIndex: 1,
-  padding: '10px 15px',
-  borderRadius: '10px',
-  backgroundColor: '#262626',
-  color: '#ffffff',
+  marginTop: '16px',
+  padding: '10px 18px',
+  border: '1px solid #334155',
+  borderRadius: '6px',
+  backgroundColor: '#1E293B',
+  color: '#38BDF8',
   textDecoration: 'none',
-  fontSize: '16px',
-  fontWeight: '700',
+  fontSize: '14px',
+  fontWeight: '500',
+  transition: 'all 0.15s ease',
+
+  ':hover': {
+    backgroundColor: '#334155',
+    color: '#7DD3FC',
+  },
 });
 
 // 모달 =========================
@@ -356,6 +382,7 @@ export const approvedBanner = style({
   fontSize: '16px',
   fontWeight: '600',
   textAlign: 'center',
+  marginBottom: '17px',
 });
 
 // 삭제된 챌린지 배너

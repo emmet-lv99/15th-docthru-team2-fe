@@ -39,17 +39,34 @@ export default function ApplicationList() {
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [sortOrder, setSortOrder] = useState('');
 
+  const serverSort =
+    sortOrder === 'latest'
+      ? 'latest'
+      : sortOrder === 'oldest'
+        ? 'oldest'
+        : sortOrder === 'deadlineAsc'
+          ? 'deadline'
+          : undefined;
+
   // 한 페이지에 표시할 데이터 수
   const itemsPerPage = 10;
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ['adminApplications', user?.id, currentPage, debouncedKeyword, selectedStatus],
+    queryKey: [
+      'adminApplications',
+      user?.id,
+      currentPage,
+      debouncedKeyword,
+      selectedStatus,
+      serverSort,
+    ],
     queryFn: () =>
       getAdminApplications({
         page: currentPage,
         size: itemsPerPage,
         q: debouncedKeyword,
         status: selectedStatus,
+        ...(serverSort && { sort: serverSort }),
       }),
     enabled: user?.id != null,
   });
@@ -59,26 +76,6 @@ export default function ApplicationList() {
 
   // 서버가 반환한 전체 페이지 수
   const totalPages = data?.totalPages ?? 0;
-
-  const currentApplications = [...myApplications].sort((a, b) => {
-    if (sortOrder === 'latest') {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-
-    if (sortOrder === 'oldest') {
-      return new Date(a.createdAt) - new Date(b.createdAt);
-    }
-
-    if (sortOrder === 'deadlineAsc') {
-      return new Date(a.desiredDeadline) - new Date(b.desiredDeadline);
-    }
-
-    if (sortOrder === 'deadlineDesc') {
-      return new Date(b.desiredDeadline) - new Date(a.desiredDeadline);
-    }
-
-    return 0;
-  });
 
   if (isError) {
     console.error('신청 목록 조회 실패:', error);
@@ -122,7 +119,7 @@ export default function ApplicationList() {
 
       {/* 신청한 챌린지 목록 */}
       <AdminApplicationTable
-        applications={currentApplications}
+        applications={myApplications}
         isPending={isPending}
         isError={isError}
       />

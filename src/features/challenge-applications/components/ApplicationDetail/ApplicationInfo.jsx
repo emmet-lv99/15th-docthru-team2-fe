@@ -52,13 +52,19 @@ export default function ApplicationInfo({ application }) {
         <h2 className={styles.sourceTitle}>원문 링크</h2>
 
         <div className={styles.sourceContent}>
+          <p className={styles.sourceMessage}>
+            🔒 원문을 미리 볼 수 없어요.
+            <br />
+            아래 버튼을 눌러 원문을 새 창에서 확인해 주세요.
+          </p>
+
           <a
             className={styles.sourceLink}
             href={application.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
-            원문 보러가기 ↗
+            새 창에서 원문 열기 ↗
           </a>
         </div>
       </section>
