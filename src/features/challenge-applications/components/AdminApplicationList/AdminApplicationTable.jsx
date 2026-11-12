@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Loading } from '@/components/Loading';
 import * as styles from '../ApplicationList/ApplicationList.css.js';
 
 const statusLabels = {
@@ -37,7 +38,7 @@ const formatDate = (dateString) => {
 
 export default function AdminApplicationTable({ applications, isPending, isError }) {
   if (isPending) {
-    return <p className={styles.emptyMessage}>불러오는중...</p>;
+    return <Loading title="불러오는 중이에요" description="잠시만 기다려 주세요." />;
   }
   // API 요청 실패
   if (isError) {
@@ -66,60 +67,38 @@ export default function AdminApplicationTable({ applications, isPending, isError
         </thead>
 
         <tbody>
-          {isPending ? (
-            <tr>
-              <td colSpan={8} className={styles.tableCell}>
-                신청 목록을 불러오는 중...
-              </td>
-            </tr>
-          ) : isError ? (
-            <tr>
-              <td colSpan={8} className={styles.tableCell}>
-                신청 목록을 불러오지 못했습니다.
-              </td>
-            </tr>
-          ) : applications.length === 0 ? (
-            <tr>
-              <td colSpan={8} className={styles.tableCell}>
-                표시할 신청 내역이 없습니다.
-              </td>
-            </tr>
-          ) : (
-            applications.map((application) => {
-              // 승인된 챌린지가 삭제되었는지 확인
-              const isDeleted = Boolean(application.approvedChallenge?.deletedAt);
+          {applications.map((application) => {
+            const isDeleted = Boolean(application.approvedChallenge?.deletedAt);
 
-              // 화면에 표시할 상태 결정
-              const displayStatus = isDeleted ? 'DELETED' : application.status;
+            const displayStatus = isDeleted ? 'DELETED' : application.status;
 
-              return (
-                <tr
-                  key={application.applicationId}
-                  className={isDeleted ? styles.deletedRow : styles.tableRow}
-                >
-                  <td className={styles.tableCell}>{application.applicationId}</td>
-                  <td className={styles.tableCell}>{application.category}</td>
-                  <td className={styles.tableCell}>{application.documentType}</td>
-                  <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
-                    <Link
-                      href={`/admin/challenges/${application.applicationId}`}
-                      className={styles.detailLink}
-                    >
-                      {application.title}
-                    </Link>
-                  </td>
-                  <td className={styles.tableCell}>{application.maxParticipants}</td>
-                  <td className={styles.tableCell}>{formatDate(application.createdAt)}</td>
-                  <td className={styles.tableCell}>{formatDate(application.desiredDeadline)}</td>
-                  <td className={styles.tableCell}>
-                    <span className={`${styles.statusBadge} ${statusStyles[displayStatus] ?? ''}`}>
-                      {statusLabels[displayStatus] ?? displayStatus}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })
-          )}
+            return (
+              <tr
+                key={application.applicationId}
+                className={isDeleted ? styles.deletedRow : styles.tableRow}
+              >
+                <td className={styles.tableCell}>{application.applicationId}</td>
+                <td className={styles.tableCell}>{application.category}</td>
+                <td className={styles.tableCell}>{application.documentType}</td>
+                <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
+                  <Link
+                    href={`/admin/challenges/${application.applicationId}`}
+                    className={styles.detailLink}
+                  >
+                    {application.title}
+                  </Link>
+                </td>
+                <td className={styles.tableCell}>{application.maxParticipants}</td>
+                <td className={styles.tableCell}>{formatDate(application.createdAt)}</td>
+                <td className={styles.tableCell}>{formatDate(application.desiredDeadline)}</td>
+                <td className={styles.tableCell}>
+                  <span className={`${styles.statusBadge} ${statusStyles[displayStatus] ?? ''}`}>
+                    {statusLabels[displayStatus] ?? displayStatus}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

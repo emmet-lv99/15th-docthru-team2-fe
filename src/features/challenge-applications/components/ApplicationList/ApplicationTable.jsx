@@ -72,6 +72,15 @@ export default function ApplicationTable({ applications, isPending, isError }) {
 
             const displayStatus = isDeleted ? 'DELETED' : application.status;
 
+            const isApproved =
+              application.status === 'APPROVED' &&
+              !isDeleted &&
+              application.approvedChallenge?.id != null;
+
+            const detailHref = isApproved
+              ? `/challenges/${application.approvedChallenge.id}`
+              : `/my-applications/${application.applicationId}`;
+
             return (
               <tr
                 key={application.applicationId}
@@ -81,10 +90,7 @@ export default function ApplicationTable({ applications, isPending, isError }) {
                 <td className={styles.tableCell}>{application.category}</td>
                 <td className={styles.tableCell}>{application.documentType}</td>
                 <td className={`${styles.tableCell} ${styles.challengeTitle}`}>
-                  <Link
-                    href={`/my-applications/${application.applicationId}`}
-                    className={styles.detailLink}
-                  >
+                  <Link href={detailHref} className={styles.detailLink}>
                     {application.title}
                   </Link>
                 </td>
