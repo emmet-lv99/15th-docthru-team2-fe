@@ -20,7 +20,11 @@ import NotificationBell from '@/features/notifications/components/NotificationBe
 function GNB({ isLoggedIn = false, isAdmin = false, grade = null }) {
   const pathname = usePathname();
 
-  const isChallengeList = pathname.startsWith('/admin/challenges/list');
+  const isChallengeList =
+    pathname === '/admin/challenges/list' || pathname.startsWith('/admin/challenges/list/');
+  const isChallengeManagement =
+    (pathname === '/admin/challenges' || pathname.startsWith('/admin/challenges/')) &&
+    !isChallengeList;
 
   return (
     <header className={styles.header}>
@@ -41,7 +45,7 @@ function GNB({ isLoggedIn = false, isAdmin = false, grade = null }) {
             <nav className={styles.nav}>
               <Link
                 href="/admin/challenges"
-                className={clsx(styles.navLink, !isChallengeList && styles.activeNavLink)}
+                className={clsx(styles.navLink, isChallengeManagement && styles.activeNavLink)}
               >
                 챌린지 관리
               </Link>
